@@ -1,15 +1,4 @@
-#include <iostream>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <signal.h>
 #include "client_ue.h"
-using namespace std;
 
 #define BUFFER_SIZE 256
 #define UE_COUNT 12

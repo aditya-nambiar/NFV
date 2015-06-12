@@ -1,7 +1,17 @@
 #include <iostream>
-#include <string>
-#include <netdb.h>
+
+#include <stdio.h>
+#include <stdlib.h>
 #include <cstdlib>
+#include <string.h>
+#include <unistd.h>
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <signal.h>
+
 #include <pthread.h>
 using namespace std;
 
