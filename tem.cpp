@@ -1,65 +1,152 @@
 #include <iostream>
-#include "hss.h"
-#include "server.c"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <string.h>
+#include <signal.h>
 
-DB::DB(){
-	details.server = "localhost";
-	details.user = "root";
-	details.passwd = "mysql";
-	details.database = "NFV";
-}
+#include <pthread.h>
+#include <netdb.h> 
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <sys/types.h>
+using namespace std;
 
-void DB::print_message(const char *message){
-	cout<<"***********************"<<endl;
-	cout<<message<<endl;
-	cout<<"***********************"<<endl;
-}
+#define IMSI_LENGTH 8
+#define BUFFER_SIZE 256
+#define MAX_UE_COUNT 100
 
-void DB::conn_setup(){
-	sql.conn = mysql_init(NULL);;
-	if(!mysql_real_connect(sql.conn,details.server,details.user,details.passwd,details.database,0,NULL,0)){
-		cout<<mysql_error(sql.conn)<<endl;
-		exit(1);
+void handleErrors(void);
+char* read_mme(int sock, unsigned char* buffer, int read_size);
+int write_mme(int sock, unsigned char* write_data, int size_data);
+void *multithreading_func(void *arg);
+static void usage();
+
+int main(int argc, char *argv[]) {
+  int err, s0, res, listenPort;
+  int s1[MAX_UE_COUNT];
+  pthread_t tid;
+  struct sockaddr_in myaddr, peeraddr;
+  socklen_t peeraddr_len; 
+  if(argc > 1 && *(argv[1]) == '-'){
+    usage(); 
+    exit(1);
+  }
+  listenPort = 1234;  
+  if (argc > 1)
+    listenPort = atoi(argv[1]);
+  s0 = socket(AF_INET, SOCK_STREAM, 0);
+  if(s0 < 0){
+    perror("Cannot create a socket"); 
+    exit(1);
+  }
+  bzero((char *) &myaddr, sizeof(myaddr));
+  myaddr.sin_family = AF_INET;
+  myaddr.sin_port = htons(listenPort); 
+  myaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+  
+  res = bind(s0, (struct sockaddr*) &myaddr, sizeof(myaddr));
+  if(res < 0){
+    perror("Cannot bind a socket"); 
+    exit(1);
+  }
+  
+  struct linger linger_opt = { 1, 0 }; 
+  setsockopt(s0, SOL_SOCKET, SO_LINGER, &linger_opt, sizeof(linger_opt));
+	
+	signal(SIGPIPE, SIG_IGN);
+	
+  res = listen(s0, 10);
+  if (res < 0) {
+    perror("Cannot listen"); 
+    exit(1);
+  }
+  
+	peeraddr_len = sizeof(peeraddr);	
+	int i=0;
+	while(1){
+		s1[i] = accept(s0, (struct sockaddr *) &peeraddr, &peeraddr_len);
+		if(s1<0){
+			cout<<"Client Connection Accept Problem - Socket not created\nTry Again\n"; 	
+		}
+		cout<<"Connected with client"<<endl;
+		err = pthread_create(&tid,NULL,multithreading_func,&s1[i]);
+		if(err<0){
+			cout<<"Error in Thread Creation\n";
+		}
+		i++;
 	}
-	print_message("Connected to database");
+  return 0;
 }
 
-void DB::perform_query(const char *query){
-	if(mysql_query(sql.conn, query)){
-		cout<<mysql_error(sql.conn)<<endl;
-		exit(1);
+void *multithreading_func(void *arg){
+	int n, res;
+	int s1 = *(int*)arg;
+	char buffer[BUFFER_SIZE];
+	char *request;
+	char *response = "OK";
+	cout<<"Server-"<<pthread_self()<<" Sockfd is "<<s1<<endl;
+	/*request = read_mme(s1, (unsigned char*)buffer, BUFFER_SIZE-1);
+	if(write_mme(s1, (unsigned char*)response, sizeof(response)-1) == 0){
+		perror("cannot write on socket!");
 	}
-	sql.result = mysql_store_result(sql.conn);
-}
-
-void DB::fetch_result(){
-	int num_fields;
-	MYSQL_ROW row;
-	num_fields = mysql_num_fields(sql.result);
-	print_message("QUERY RESULT");
-	while(row = mysql_fetch_row(sql.result)){
-		for(int i=0;i<num_fields;i++)
-			cout<<(row[i]?row[i]:"NULL")<<" ";
-		cout<<endl;	
+	request = read_mme(s1, (unsigned char*)buffer, BUFFER_SIZE-1);
+	if(write_mme(s1, (unsigned char*)response, sizeof(response)-1) == 0){
+		perror("cannot write on socket!");
+	}	
+	cout<<"Registration successful for a client"<<endl;
+	close(s1);*/
+	read(s1, buffer, BUFFER_SIZE-1);
+	if(write(s1, response, strlen(response)) < 0){
+		perror("cannot write on socket!");
+	}else{
+		read(s1, buffer, BUFFER_SIZE-1);
+		if(write(s1, response, sizeof(response)-1) < 0){
+			perror("cannot write on socket!");
+		}else
+			cout<<"Registration successful for a client with thread "<<pthread_self()<<" and sock is"<<s1<<endl;
 	}
+	close(s1);
 }
 
-DB::~DB(){
-	mysql_free_result(sql.result);
-	mysql_close(sql.conn);
+void handleErrors(void){
+  abort();
 }
 
-void fetch_DBdata(const char *query){
-	DB db;
-	db.conn_setup();
-	db.perform_query(query);
-	db.fetch_result();
+char* read_mme(int sock, unsigned char* buffer, int read_size){
+	int res;
+  memset(buffer, 0, sizeof(buffer));
+  res = read(sock, buffer, read_size);
+  cout<<res<<endl;
+  if (res < 0) {
+    perror("Read error");
+    return 0;
+  }
+  cout<<"Received packet "<<buffer<<endl;
+  return (char*)buffer;
 }
 
-int main(){
-	SERVER server;
-	server.start_listening();
-	server.accept_connections();
-	fetch_DBdata("SELECT * FROM UE");
-	return 0;
+int write_mme(int sock, unsigned char* write_data, int size_data){
+	int res;
+	res = write(sock, write_data, size_data);
+	if(res<0){
+		perror("Error writing data");
+		return 0;
+	}
+	return 1;
+}
+
+static void usage() {
+  printf(
+	 "A simple Internet server application.\n"
+	 "It listens to the port written in command line (default 1234),\n"
+	 "accepts a connection, and sends the \"Hello!\" message to a client.\n"
+	 "Then it receives the answer from a client and terminates.\n\n"
+	 "Usage:\n"
+	 "     server [port_to_listen]\n"
+	 "Default is the port 1234.\n"
+	 );
 }

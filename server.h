@@ -1,37 +1,23 @@
-#include <iostream>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <signal.h>
-
-#include <pthread.h>
-#include <netdb.h> 
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <sys/types.h>
-using namespace std;
-
-#define MAX_CONNECTIONS 100
+#ifndef UTILS_H
+#define UTILS_H
+#include "utils.h"
+#endif
 
 class SERVER{
 	public:
-		int listen_port;
-		int listen_socket;
-		int client_socket[MAX_CONNECTIONS];
-		pthread_t tid[MAX_CONNECTIONS];
+		int server_port;
+		const char *server_address;
+		int server_socket;
 		struct sockaddr_in server_addr;
+		char server_buffer[BUFFER_SIZE];
+		
+		int client_socket[MAX_CONNECTIONS];
 		struct sockaddr_in client_addr;
 		socklen_t client_addr_len; 
+		pthread_t tid[MAX_CONNECTIONS];
 	
-		SERVER();
+		SERVER(int,const char*);
 		void start_listening();
-		void accept_connections();
-		void* multithreading_func(void*);
-		void report_error(int);
-		void print_message(const char*);
+		void accept_connections(void*(*multithreading_func)(void*));
 		~SERVER();
 };
