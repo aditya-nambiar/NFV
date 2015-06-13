@@ -8,7 +8,7 @@ SERVER::SERVER(int server_port, const char *server_address){
   bzero((char *) &server_addr, sizeof(server_addr));
   server_addr.sin_family = AF_INET;
   server_addr.sin_port = htons(server_port); 
-  inet_aton(server_address, &server_addr.sin_addr.s_addr);
+  inet_aton(server_address, &server_addr.sin_addr);
   client_addr_len = sizeof(client_addr);	
 }
 

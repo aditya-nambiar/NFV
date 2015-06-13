@@ -1,13 +1,10 @@
-all:	ue mme hss
+all:	ran mme hss
 
-ue:	ue.cpp ue.h client.h
-	g++ ue.cpp -w -o ue client.cpp
+ran:	ran.cpp ran.h client.h ue.h utils.h
+	g++ ran.cpp -w -o ran client.cpp ue.cpp utils.cpp -lpthread 
 
-mme:	mme.cpp server.h
-	g++ mme.cpp -w -o mme server.cpp -lpthread 
-
-hss:	hss.cpp server.h db.h
-	g++ hss.cpp -w -o hss server.cpp db.cpp `mysql_config --cflags --libs`
+mme:	mme.cpp mme.h server.h utils.h
+	g++ mme.cpp -w -o mme server.cpp utils.cpp -lpthread 
 
 clean:
 	rm -f mme ue hss *~

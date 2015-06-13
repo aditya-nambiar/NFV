@@ -1,14 +1,14 @@
 #include "ran.h"
 
-void multithreading_func(void *arg){
+void* multithreading_func(void *arg){
 	int ue_num = *(int*)arg;
 	CLIENT user;
 	UE ue(ue_num);
 	user.input_server_details(mme_port, mme_address);
 	user.connect_with_server();
-	print_message("UE key is " + ue.key);
-	print_message("UE IMSI is " + ue.IMSI);
-	print_message("UE MSISDN is " + ue.MSISDN);
+	print_message("UE key is ", ue.key);
+	print_message("UE IMSI is ", ue.IMSI);
+	print_message("UE MSISDN is ", ue.MSISDN);
 }
 
 int main(){

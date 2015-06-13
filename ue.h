@@ -10,6 +10,6 @@ class UE{
 		unsigned long long int MSISDN;
 	
 		UE(int);
-		unsigned long long int key_generation();
+		unsigned long long int key_generation(int);
 		~UE();		
 };
