@@ -27,6 +27,22 @@ void CLIENT::connect_with_server(){
 	print_message("Connected with Server");
 }
 
+const char* CLIENT::read_data(){
+	int status;
+	bzero(client_buffer, BUFFER_SIZE);
+	status = read(client_socket, client_buffer, BUFFER_SIZE-1);
+	report_error(status);
+	return (const char*)client_buffer;
+}
+
+void CLIENT::write_data(const char *data){
+	int status;
+	bzero(client_buffer, BUFFER_SIZE);
+	strcpy(client_buffer, data);
+	status = write(client_socket, client_buffer, strlen(client_buffer));
+	report_error(status);
+}
+
 CLIENT::~CLIENT(){
 	close(client_socket);
 }

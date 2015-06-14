@@ -33,6 +33,22 @@ void SERVER::accept_connections(void*(*multithreading_func)(void*)){
 	}
 }
 
+const char* SERVER::read_data(){
+	int status;
+	bzero(server_buffer, BUFFER_SIZE);
+	status = read(server_socket, server_buffer, BUFFER_SIZE-1);
+	report_error(status);
+	return (const char*)server_buffer;
+}
+
+void SERVER::write_data(const char *data){
+	int status;
+	bzero(server_buffer, BUFFER_SIZE);
+	strcpy(server_buffer, data);
+	status = write(server_socket, server_buffer, strlen(server_buffer));
+	report_error(status);
+}
+
 SERVER::~SERVER(){
 	close(server_socket);
 }

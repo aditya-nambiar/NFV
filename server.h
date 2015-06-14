@@ -19,5 +19,7 @@ class SERVER{
 		SERVER(int,const char*);
 		void start_listening();
 		void accept_connections(void*(*multithreading_func)(void*));
+		const char* read_data();
+		void write_data(const char*);	
 		~SERVER();
 };

@@ -15,5 +15,7 @@ class CLIENT{
 		CLIENT();
 		void input_server_details(int,const char*);
 		void connect_with_server();
+		const char* read_data();
+		void write_data(const char*);	
 		~CLIENT();		
 };
