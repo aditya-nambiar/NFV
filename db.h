@@ -15,15 +15,11 @@ struct conn_details{
 	const char *database;
 };
 
-struct sql_data{
-	MYSQL *conn;
-	MYSQL_RES *result;
-};
-
 class DB{
 	public:
 		static conn_details details;
-		sql_data sql;
+		MYSQL *conn;
+		MYSQL_RES *result;
 	
 		DB();
 		void conn_setup();
