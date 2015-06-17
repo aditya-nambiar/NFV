@@ -1,9 +1,10 @@
 //(C++) Operations: Input/Output
 #include <iostream>
 
-//(C++) STL Operations: String, Vector
+//(C++) STL Operations: String, Vector, String stream
 #include <string>
 #include <vector>
+#include <sstream>
 
 //(C) Operations: Input/Output, String, Standard libraries(like atoi, malloc)
 #include <stdio.h>
@@ -25,16 +26,17 @@
 
 using namespace std;
 
-#define MAX_CONNECTIONS 1
-#define MAX_UE_COUNT 1
-#define BUFFER_SIZE 256
+#define MAX_CONNECTIONS 100
+#define UE_COUNT 1
+#define BUFFER_SIZE 1024
 
-extern int mme_port;
-extern int hss_port;
-extern const char *mme_address;
-extern const char *hss_address;
+extern int g_mme_port;
+extern int g_hss_port;
+extern const char *g_mme_address;
+extern const char *g_hss_address;
 
 void report_error(int);
 void print_message(string);
 void print_message(string,int);
-void print_message(string,unsigned long long int);
+void print_message(string,unsigned long long);
+const char* to_char_array(unsigned long long);

@@ -1,15 +1,18 @@
-#ifndef UTILS_H
-#define UTILS_H
-#include "utils.h"
-#endif
+#include "client.h"
 
-class UE{
+class UserEquipment{
 	public:
-		unsigned long long int key;
-		unsigned long long int IMSI;
-		unsigned long long int MSISDN;
-	
-		UE(int);
-		unsigned long long int key_generation(int);
-		~UE();		
+		unsigned long long key;
+		unsigned long long imsi;
+		unsigned long long msisdn;
+		
+		int type;
+		
+		UserEquipment(int);
+		unsigned long long key_generation(int);
+		void authenticate(Client&);
+		void process_autn_request(Client&);
+		void process_autn_response(Client&);
+		unsigned long long get_autn_res(unsigned long long,unsigned long long);
+		~UserEquipment();		
 };

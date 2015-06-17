@@ -8,23 +8,23 @@
 #include <mysql/my_global.h>
 
 
-struct conn_details{
+struct ConnDetails{
 	const char *server;
 	const char *user;
 	const char *passwd;
 	const char *database;
 };
 
-class DB{
+class MySql{
 	public:
-		static conn_details details;
+		static ConnDetails details;
 		MYSQL *conn;
 		MYSQL_RES *result;
 	
-		DB();
+		MySql();
 		void conn_setup();
 		void perform_query(const char*);
 		void fetch_result();
 		void report_error(MYSQL*);
-		~DB();
+		~MySql();
 };
