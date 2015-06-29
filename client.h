@@ -13,7 +13,7 @@ class Client{
 		struct sockaddr_in server_sock_addr;
 		
 		Client();
-		void input_server_details(int,const char*);
+		void input_server_details(int, const char*);
 		void connect_with_server();
 		void read_data();
 		void write_data();	

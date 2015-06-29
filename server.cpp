@@ -13,7 +13,10 @@ Server::Server(int server_port, const char *server_address){
 }
 
 void Server::start_listening(){
-	int status;
+	int status, opt;
+	opt = 1;
+	status = setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
+	report_error(status);	
 	status = bind(server_socket, (struct sockaddr*)&server_sock_addr, sizeof(server_sock_addr));
 	report_error(status);
 	signal(SIGPIPE, SIG_IGN);

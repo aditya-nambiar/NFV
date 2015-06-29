@@ -6,28 +6,16 @@ UserEquipment::UserEquipment(int ue_num){
 	msisdn = 9000000000 + key;
 }
 
-unsigned long long UserEquipment::key_generation(int ue_num){
-	return ue_num;
-}
-
 void UserEquipment::authenticate(Client &user){
-	process_autn_request(user);	
-	process_autn_response(user);
-}
-
-void UserEquipment::process_autn_request(Client &user){
+	unsigned long long autn, rand, res;
+	
 	type = 1;
 	bzero(user.client_buffer, BUFFER_SIZE);
 	memcpy(user.client_buffer, &type, sizeof(type));
 	memcpy(user.client_buffer+sizeof(type), &imsi, sizeof(imsi));
 	memcpy(user.client_buffer+sizeof(type)+sizeof(imsi), &msisdn, sizeof(msisdn));
 	user.write_data();
-}
 
-void UserEquipment::process_autn_response(Client &user){
-	unsigned long long autn;
-	unsigned long long rand;
-	unsigned long long res;
 	user.read_data();
 	memcpy(&autn, user.client_buffer, sizeof(autn));
 	memcpy(&rand, user.client_buffer+sizeof(autn), sizeof(rand));
@@ -41,6 +29,10 @@ void UserEquipment::process_autn_response(Client &user){
 	cout<<"This is the message -"<<user.client_buffer<<endl;
 	if(strcmp(user.client_buffer, "OK") == 0)
 		print_message("Authentication Successful for UserEquipment - ", key);
+}
+
+unsigned long long UserEquipment::key_generation(int ue_num){
+	return ue_num;
 }
 
 unsigned long long UserEquipment::get_autn_res(unsigned long long autn, unsigned long long rand){

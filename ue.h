@@ -9,10 +9,8 @@ class UserEquipment{
 		int type;
 		
 		UserEquipment(int);
-		unsigned long long key_generation(int);
 		void authenticate(Client&);
-		void process_autn_request(Client&);
-		void process_autn_response(Client&);
-		unsigned long long get_autn_res(unsigned long long,unsigned long long);
+		unsigned long long key_generation(int);		
+		unsigned long long get_autn_res(unsigned long long, unsigned long long);
 		~UserEquipment();		
 };

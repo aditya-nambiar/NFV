@@ -27,7 +27,7 @@
 using namespace std;
 
 #define MAX_CONNECTIONS 100
-#define UE_COUNT 1
+#define UE_COUNT 2
 #define BUFFER_SIZE 1024
 
 extern int g_mme_port;
@@ -37,6 +37,6 @@ extern const char *g_hss_address;
 
 void report_error(int);
 void print_message(string);
-void print_message(string,int);
-void print_message(string,unsigned long long);
+void print_message(string, int);
+void print_message(string, unsigned long long);
 const char* to_char_array(unsigned long long);

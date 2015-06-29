@@ -16,7 +16,7 @@ class Server{
 		socklen_t client_addr_len; 
 		pthread_t tid[MAX_CONNECTIONS];
 	
-		Server(int,const char*);
+		Server(int, const char*);
 		void start_listening();
 		void accept_connections(void*(*multithreading_func)(void*));
 		void read_data();
