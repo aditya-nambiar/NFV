@@ -5,8 +5,11 @@ const char *g_query;
 void* multithreading_func(void *arg){
 	int type;
 	unsigned long long imsi, msisdn;
-	Server hss(g_hss_port, g_hss_address);
-	hss.server_socket = *(int*)arg;
+	ClientDetails mme = *(ClientDetails*)arg;
+	Server hss(g_hss_port+mme.num, g_hss_address);
+	//setsockopt(hss.server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));		
+	hss.client_sock_addr = mme.client_sock_addr;
+	hss.connect_with_client();
 	hss.read_data();
 	memcpy(&type, hss.server_buffer, sizeof(type));
 	if(type == 1){
@@ -17,6 +20,7 @@ void* multithreading_func(void *arg){
 	}		
 	close(hss.server_socket);	
 	mysql_thread_end();
+
 }
 
 void authenticate_query(unsigned long long imsi, unsigned long long msisdn, char *xres){
@@ -80,8 +84,7 @@ int main(){
 	if(mysql_library_init(0, NULL, NULL))
 		cout<<"ERROR: mysql library cannot be opened"<<endl;
 	Server hss(g_hss_port, g_hss_address);
-	hss.start_listening();
-	hss.accept_connections(multithreading_func);
+	hss.listen_accept(multithreading_func);
 	mysql_library_end();
 	return 0;
 }

@@ -3,22 +3,24 @@
 #include "utils.h"
 #endif
 
+extern int g_reuse;
+
 class Server{
 	public:
+		int status;
 		int server_port;
 		const char *server_address;
 		int server_socket;
 		struct sockaddr_in server_sock_addr;
 		char server_buffer[BUFFER_SIZE];
 		
-		int client_socket[MAX_CONNECTIONS];
 		struct sockaddr_in client_sock_addr;
-		socklen_t client_addr_len; 
+		ClientDetails clients[MAX_CONNECTIONS];
 		pthread_t tid[MAX_CONNECTIONS];
 	
 		Server(int, const char*);
-		void start_listening();
-		void accept_connections(void*(*multithreading_func)(void*));
+		void listen_accept(void*(*multithreading_func)(void*));
+		void connect_with_client();
 		void read_data();
 		void write_data();	
 		~Server();

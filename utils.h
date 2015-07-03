@@ -26,16 +26,26 @@
 
 using namespace std;
 
-#define MAX_CONNECTIONS 100
-#define UE_COUNT 2
+#define MAX_CONNECTIONS 10000
+#define UE_COUNT 10
 #define BUFFER_SIZE 1024
 
 extern int g_mme_port;
 extern int g_hss_port;
 extern const char *g_mme_address;
 extern const char *g_hss_address;
+extern socklen_t g_addr_len;
+extern timeval g_timeout;
+extern long long g_stack_buf;
 
+struct ClientDetails{
+	int num;
+	struct sockaddr_in client_sock_addr;
+};
+
+void check_conn(int&);
 void report_error(int);
+void report_error(int, const char*);
 void print_message(string);
 void print_message(string, int);
 void print_message(string, unsigned long long);

@@ -8,15 +8,19 @@ UserEquipment::UserEquipment(int ue_num){
 
 void UserEquipment::authenticate(Client &user){
 	unsigned long long autn, rand, res;
-	
 	type = 1;
 	bzero(user.client_buffer, BUFFER_SIZE);
 	memcpy(user.client_buffer, &type, sizeof(type));
 	memcpy(user.client_buffer+sizeof(type), &imsi, sizeof(imsi));
 	memcpy(user.client_buffer+sizeof(type)+sizeof(imsi), &msisdn, sizeof(msisdn));
-	user.write_data();
-
+	user.status = sendto(user.client_socket, user.client_buffer, BUFFER_SIZE-1, 0, (sockaddr*)&user.server_sock_addr, g_addr_len);
+	report_error(user.status);
+	//user.write_data();
 	user.read_data();
+	if(user.status==1000){
+		cout<<"Did not receive"<<endl;
+		exit(EXIT_FAILURE);
+	}
 	memcpy(&autn, user.client_buffer, sizeof(autn));
 	memcpy(&rand, user.client_buffer+sizeof(autn), sizeof(rand));
 	cout<<autn<<"	"<<rand<<endl;
