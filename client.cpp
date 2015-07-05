@@ -3,7 +3,7 @@
 Client::Client(){
 	client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	report_error(client_socket);
-	status = 0;
+	//status = 0;
 	//setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));
 	signal(SIGPIPE, SIG_IGN);			
 }

@@ -9,10 +9,10 @@ Server::Server(int server_port, const char *server_address){
 	server_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	report_error(server_socket);
 	bzero((char *) &server_sock_addr, sizeof(server_sock_addr));
-  	server_sock_addr.sin_family = AF_INET;  	
-  	server_sock_addr.sin_port = htons(server_port); 
-  	inet_aton(server_address, &server_sock_addr.sin_addr);
-  	setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));
+	server_sock_addr.sin_family = AF_INET;  	
+	server_sock_addr.sin_port = htons(server_port); 
+	inet_aton(server_address, &server_sock_addr.sin_addr);
+	setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));
 	signal(SIGPIPE, SIG_IGN);	  
 	status = bind(server_socket, (struct sockaddr*)&server_sock_addr, sizeof(server_sock_addr));
 	report_error(status);	
