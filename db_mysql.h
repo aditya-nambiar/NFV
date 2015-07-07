@@ -7,7 +7,6 @@
 #include <mysql/mysql.h>
 #include <mysql/my_global.h>
 
-
 struct ConnDetails{
 	const char *server;
 	const char *user;

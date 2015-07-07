@@ -46,7 +46,12 @@ struct ClientDetails{
 void check_conn(int&);
 void report_error(int);
 void report_error(int, const char*);
+void print(string);
+void print(int);
+void print(string, int);
 void print_message(string);
 void print_message(string, int);
 void print_message(string, unsigned long long);
 const char* to_char_array(unsigned long long);
+char* allocate_str_mem(int);
+uint8_t* allocate_uint8_mem(int);

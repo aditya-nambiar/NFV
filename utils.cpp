@@ -26,6 +26,18 @@ void report_error(int arg, const char *message){
 	}
 }
 
+void print(string message){
+	cout<<message<<endl;
+}
+
+void print(int arg){
+	cout<<arg<<endl;
+}
+
+void print(string message, int arg){
+	cout<<message<<" "<<arg<<endl;
+}
+
 void print_message(string message){
 	cout<<"***********************"<<endl;
 	cout<<message<<endl;
@@ -51,4 +63,38 @@ const char* to_char_array(unsigned long long arg){
 	tem = out.str();
 	const char *ans = tem.c_str();
 	return ans;
+}
+
+char* allocate_str_mem(int len){
+	char *tem;
+	if(len <= 0){
+		print("ERROR: Given_memory_length<=0");
+		exit (EXIT_FAILURE);
+	}
+	tem = (char*)malloc(len * sizeof (char));
+	if(tem != NULL){
+		memset(tem, 0, len * sizeof (char));
+		return tem;
+	}
+	else{
+		print("ERROR: Memory allocation failure");
+		exit(EXIT_FAILURE);
+	}
+}
+
+uint8_t* allocate_uint8_mem(int){
+	uint8_t *tem;
+	if(len <= 0){
+		print("ERROR: Given_memory_length<=0");
+		exit(EXIT_FAILURE);
+	}
+	tem = (uint8_t*)malloc(len * sizeof (uint8_t));
+	if(tem != NULL){
+		memset(tem, 0, len * sizeof (uint8_t));
+		return tem;
+	} 
+	else{
+		print("ERROR: Memory allocation failure");
+		exit (EXIT_FAILURE);
+	}
 }

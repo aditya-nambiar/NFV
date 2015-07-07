@@ -14,6 +14,7 @@
 #include <sys/ioctl.h>        // macro ioctl is defined
 #include <bits/ioctls.h>      // defines values for argument "request" of ioctl.
 #include <net/if.h>           // struct ifreq
+#include <signal.h>
 
 #include <errno.h>            // errno, perror()
 
@@ -63,7 +64,7 @@ int main ()
 	strcpy (interface, "lo");
 
   // Submit request for a socket descriptor to look up interface.
-	if ((sd = socket (AF_INET, SOCK_RAW, IPPROTO_RAW)) < 0) {
+	if ((sd = socket (AF_INET, SOCK_RAW, IPPROTO_UDP)) < 0) {
 		perror ("socket() failed to get socket descriptor for using ioctl() ");
 		exit (EXIT_FAILURE);
 	}
@@ -218,7 +219,7 @@ int main ()
 
 	cout<<ntohs(sin.sin_port)<<endl;
   // Submit request for a raw socket descriptor.
-	if ((sd = socket (AF_INET, SOCK_RAW, IPPROTO_RAW)) < 0) {
+	if ((sd = socket (AF_INET, SOCK_RAW, IPPROTO_UDP)) < 0) {
 		perror ("socket() failed ");
 		exit (EXIT_FAILURE);
 	}
@@ -234,6 +235,25 @@ int main ()
 		perror ("setsockopt() failed to bind to interface ");
 		exit (EXIT_FAILURE);
 	}
+
+	socklen_t g_addr_len;
+	int client_port;
+	int g_reuse;
+	const char *client_address;
+	sockaddr_in client_sock_addr;
+
+	g_addr_len = sizeof(sockaddr_in);
+	client_port = 4950;
+	client_address = "127.0.0.1";
+	bzero((char *) &client_sock_addr, sizeof(client_sock_addr));
+	client_sock_addr.sin_family = AF_INET;  	
+	client_sock_addr.sin_port = htons(client_port); 
+	inet_aton(client_address, &client_sock_addr.sin_addr);
+	setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));
+	signal(SIGPIPE, SIG_IGN);	  
+	status = bind(sd, (struct sockaddr*)&client_sock_addr, sizeof(client_sock_addr));
+	report_error(status);	
+
 
 	// Send packet.
 	// status = sendto (sd, packet, 2*(IP4_HDRLEN + UDP_HDRLEN) + datalen, 0, (struct sockaddr *) &sin, sizeof(struct sockaddr));
