@@ -1,12 +1,19 @@
 #include "packet.h"
 
-int Packet::ip_flags = {0, 0, 0, 0};
+const int Packet::ip_flags = {0, 0, 0, 0};
 
 Packet::Packet(){
 	src_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	dst_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	data = allocate_uint8_mem(IP_MAXPACKET);
 	packet = allocate_uint8_rmem(IP_MAXPACKET);	
+	data_len = 0;
+	packet_len = 0;
+}
+
+void Packet::fill_gtpc_hdr(int teid){
+	gtpc_hdr.user_num = teid;
+	gtpc_hdr.teid = teid;
 }
 
 void Packet::fill_gtpu_hdr(int teid){
@@ -34,7 +41,7 @@ void Packet::fill_ip_hdr(const char *src_ip, const char *dst_ip){
 		exit (EXIT_FAILURE);
 	}
 	ip_hdr.ip_sum = 0;	
-	ip_hdr.ip_sum = checksum ((uint16_t *) &ip_hdr, IP4_HDRLEN);
+	ip_hdr.ip_sum = checksum((uint16_t*)&ip_hdr, IP4_HDRLEN);		
 }
 
 void Packet::fill_udp_hdr(int src_port, int dst_port){
@@ -43,7 +50,20 @@ void Packet::fill_udp_hdr(int src_port, int dst_port){
 	udp_hdr.source = htons(this->src_port);
 	udp_hdr.dest = htons(this->dst_port);
 	udp_hdr.len = htons(UDP_LEN + data_len);
-	udp_hdr.check = udp4_checksum(ip_hdr, udp_hdr, data, data_len);
+}
+
+void fill_data(int pos, int len, int arg){
+	memcpy(data + pos, &arg, len * sizeof(uint8_t));
+	data_len+= len;
+}
+
+void fill_data(int pos, int len, const char *message){
+	memcpy(data + pos, message, len * sizeof(uint8_t));
+	data_len+= len;
+}
+
+void Packet::eval_udp_checksum(){
+	udp_hdr.check = udp_checksum(ip_hdr, udp_hdr, data, data_len);
 }
 
 uint16_t Packet::ip_checksum(uint16_t *addr, int len){
@@ -111,39 +131,92 @@ uint16_t Packet::udp_checksum(){
   	return checksum((uint16_t*)buf, chk_sum_len);
 }
 
+void Packet::add_gtpc_hdr(){
+	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);
+	memcpy(tem, &gtpc_hdr, GTPC_LEN * sizeof(uint8_t));
+	memcpy((tem + GTPC_LEN), packet, packet_len * sizeof(uint8_t));
+	clear_data();
+	memcpy(data, tem, (packet_len + GTPC_LEN) * sizeof(uint8_t));
+	data_len = packet_len + GTPC_LEN;
+	free(tem);
+}
+
 void Packet::add_gtpu_hdr(){
 	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);
 	memcpy(tem, &gtpu_hdr, GTPU_LEN * sizeof(uint8_t));
-	memcpy((tem + GTPU_LEN), data, data_len * sizeof(uint8_t));
-	data = tem;
-	data_len+= GTPU_LEN;
+	memcpy((tem + GTPU_LEN), packet, packet_len * sizeof(uint8_t));
+	clear_data();
+	memcpy(data, tem, (packet_len + GTPU_LEN) * sizeof(uint8_t));
+	data_len = packet_len + GTPU_LEN;
+	free(tem);
+}
+
+void Packet::rem_gtpc_hdr(){
+	int len;
+	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);
+	memcpy(&gtpc_hdr, data, GTPC_LEN * sizeof(uint8_t));
+	memcpy(tem, (data + GTPC_LEN), (data_len - GTPC_LEN) * sizeof(uint8_t));
+	len = data_len - GTPC_LEN;
+	clear_data();
+	memcpy(data, tem, len * sizeof(uint8_t));
+	data_len = len;
 	free(tem);
 }
 
 void Packet::rem_gtpu_hdr(){
+	int len;
 	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);
 	memcpy(&gtpu_hdr, data, GTPU_LEN * sizeof(uint8_t));
 	memcpy(tem, (data + GTPU_LEN), (data_len - GTPU_LEN) * sizeof(uint8_t));
-	data = tem;
-	data_len-= GTPU_LEN;
+	len = data_len - GTPU_LEN;
+	clear_data();
+	memcpy(data, tem, len * sizeof(uint8_t));
+	data_len = len;
 	free(tem);
 }
 
 void Packet::encap(){
+	clear_packet();
 	memcpy(packet, &ip_hdr, IP_LEN * sizeof(uint8_t));
 	memcpy((packet + IP_LEN), &udp_hdr, UDP_LEN * sizeof(uint8_t));
 	memcpy((packet + IP_LEN + UDP_LEN), data, data_len * sizeof(uint8_t));
+	packet_len = IP_LEN + UDP_LEN + data_len;
 }
 
 void Packet::decap(){
-	memcpy(&ip_hdr, packet, IP_LEN * sizeof(uint8_t));
-	memcpy(&udp_hdr, (packet + IP_LEN), UDP_LEN * sizeof(uint8_t));
-	memcpy(data, (packet + IP_LEN + UDP_LEN), data_len * sizeof(uint8_t));
+	// Dummy: No decapsulation needed. Raw sockets help in decapsulting outer IP and UDP headers.
+	clear_packet();
+}
+
+void Packet::clear_data(){
+	int len = IP_MAXPACKET;
+	memset(data, 0, len * sizeof (uint8_t));	
+	data_len = 0;
 }
 
 void Packet::clear_packet(){
 	int len = IP_MAXPACKET;
 	memset(packet, 0, len * sizeof (uint8_t));	
+	packet_len = 0;
+}
+
+void Packet::make_pkt(link addr){
+	fill_ip_hdr(addr.src_ip, addr.dst_ip);
+	fill_udp_hdr(addr.src_port, addr.dst_port);
+	eval_udp_checksum();	
+	encap();
+}
+
+void Packet::make_tun_cpkt(link inner,link outer){
+	make_pkt(inner);
+	add_gtpc_hdr();
+	make_pkt(outer)
+}
+
+void Packet::make_tun_upkt(link inner, link outer){
+	make_pkt(inner);
+	add_gtpu_hdr();
+	make_pkt(outer)
 }
 
 Packet::~Packet(){

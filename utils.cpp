@@ -82,7 +82,7 @@ char* allocate_str_mem(int len){
 	}
 }
 
-uint8_t* allocate_uint8_mem(int){
+uint8_t* allocate_uint8_mem(int len){
 	uint8_t *tem;
 	if(len <= 0){
 		print("ERROR: Given_memory_length<=0");

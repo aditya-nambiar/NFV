@@ -30,8 +30,7 @@ void Client::connect_with_server(int client_num){
 	memcpy(&new_server_port, client_buffer, sizeof(int));
 	memcpy(new_server_address, client_buffer+sizeof(int), sizeof(client_buffer)-sizeof(int));
 	fill_server_details(new_server_port, new_server_address);
-	cout<<"Client side: Client-"<<client_num<<" connected with server"<<endl;
-	
+	cout<<"Client side: Client-"<<client_num<<" connected with server"<<endl;	
 }
 
 void Client::read_data(){
@@ -49,8 +48,3 @@ void Client::write_data(){
 Client::~Client(){
 	close(client_socket);
 }
-	/*long long buf_size;
-	socklen_t s_opt = sizeof(long long);
-	status =  getsockopt(client_socket, SOL_SOCKET, SO_SNDBUF, &buf_size, &s_opt);		
-	report_error(status);
-	cout<<"Size is "<<g_stack_buf<<" "<<buf_size<<endl;*/

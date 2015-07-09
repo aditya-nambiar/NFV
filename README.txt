@@ -13,19 +13,18 @@ Coding Convention followed:
 	-Default indentation and spacing rules are followed in all parts of the source code
  
 Naming: (Followed Google's code convention except in cases of const, functions, enum and class variables)
- 
- 	Files
- 		All files are in lower case and are separated by underscore if they have more than one word
+
 	Variables 
-		All variable names are in lower case and are separated by underscore if they have more than one word
-	Global variables 
-		Only global variables have "g_" prepended with their names
+		All variable names are in lower case and are separated by underscore if they have more than one word (multiple words can be combined into a single word and name shortening is allowed)
+		Global variables: Only global variables have "g_" prepended with their names
+ 	Files
+ 		Follow the naming of Variables
 	Type names(Classes, structs, etc.)
 		All type names start with a capital letter and are capitalized for each new word with no underscores	
 	Macros
-		All macro names are capitalized and are separated by underscore if they have more than one word
+		All macro names follow the naming of variables except that they are capitalized
 	Functions
-		All function names follow the naming of variable names
+		Follow the naming of Variables
 	All other names(if not given above) should follow the naming of variables
 ......................................................................................................................................................................................................................................................
 ......................................................................................................................................................................................................................................................

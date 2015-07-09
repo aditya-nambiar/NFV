@@ -73,12 +73,13 @@ int main ()
   // bind socket descriptor sd to specified interface with setsockopt() since
   // none of the other arguments of sendto() specify which interface to use.
 	memset (&ifr, 0, sizeof (ifr));
-	snprintf (ifr.ifr_name, sizeof (ifr.ifr_name), "%s", interface);
+	strcpy(ifr.ifr_name, interface);
+	//snprintf (ifr.ifr_name, sizeof (ifr.ifr_name), "%s", interface);
 	if (ioctl (sd, SIOCGIFINDEX, &ifr) < 0) {
 		perror ("ioctl() failed to find interface ");
 		return (EXIT_FAILURE);
 	}
-	close (sd);
+	// close (sd);
 	printf ("Index for interface %s is %i\n", interface, ifr.ifr_ifindex);
 
   // Source IPv4 address: you need to fill this out
@@ -219,10 +220,10 @@ int main ()
 
 	cout<<ntohs(sin.sin_port)<<endl;
   // Submit request for a raw socket descriptor.
-	if ((sd = socket (AF_INET, SOCK_RAW, IPPROTO_UDP)) < 0) {
-		perror ("socket() failed ");
-		exit (EXIT_FAILURE);
-	}
+	// if ((sd = socket (AF_INET, SOCK_RAW, IPPROTO_UDP)) < 0) {
+	// 	perror ("socket() failed ");
+	// 	exit (EXIT_FAILURE);
+	// }
 
   // Set flag so socket expects us to provide IPv4 header.
 	if (setsockopt (sd, IPPROTO_IP, IP_HDRINCL, &on, sizeof (on)) < 0) {

@@ -15,15 +15,15 @@ struct ConnDetails{
 };
 
 class MySql{
-	public:
-		static ConnDetails details;
-		MYSQL *conn;
-		MYSQL_RES *result;
+public:
+	static ConnDetails details;
+	MYSQL *conn;
+	MYSQL_RES *result;
 	
-		MySql();
-		void conn_setup();
-		void perform_query(const char*);
-		void fetch_result();
-		void report_error(MYSQL*);
-		~MySql();
+	MySql();
+	void conn_setup();
+	void perform_query(const char*);
+	void fetch_result();
+	void report_error(MYSQL*);
+	~MySql();
 };
