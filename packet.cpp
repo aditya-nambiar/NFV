@@ -1,12 +1,12 @@
 #include "packet.h"
 
-const int Packet::ip_flags = {0, 0, 0, 0};
+const int Packet::ip_flags[4] = {0, 0, 0, 0};
 
 Packet::Packet(){
 	src_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	dst_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	data = allocate_uint8_mem(IP_MAXPACKET);
-	packet = allocate_uint8_rmem(IP_MAXPACKET);	
+	packet = allocate_uint8_mem(IP_MAXPACKET);	
 	data_len = 0;
 	packet_len = 0;
 }
@@ -41,7 +41,7 @@ void Packet::fill_ip_hdr(const char *src_ip, const char *dst_ip){
 		exit (EXIT_FAILURE);
 	}
 	ip_hdr.ip_sum = 0;	
-	ip_hdr.ip_sum = checksum((uint16_t*)&ip_hdr, IP4_HDRLEN);		
+	ip_hdr.ip_sum = ip_checksum((uint16_t*)&ip_hdr, IP_LEN);		
 }
 
 void Packet::fill_udp_hdr(int src_port, int dst_port){
@@ -52,25 +52,25 @@ void Packet::fill_udp_hdr(int src_port, int dst_port){
 	udp_hdr.len = htons(UDP_LEN + data_len);
 }
 
-void fill_data(int pos, int len, int arg){
+void Packet::fill_data(int pos, int len, int arg){
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len+= len;
 }
 
-void fill_data(int pos, int len, const char *message){
+void Packet::fill_data(int pos, int len, const char *message){
 	memcpy(data + pos, message, len * sizeof(uint8_t));
 	data_len+= len;
 }
 
 void Packet::eval_udp_checksum(){
-	udp_hdr.check = udp_checksum(ip_hdr, udp_hdr, data, data_len);
+	udp_hdr.check = udp_checksum();
 }
 
 uint16_t Packet::ip_checksum(uint16_t *addr, int len){
 	int count;
 	register uint32_t sum;
 	uint16_t answer;
-	len = IP4_HDRLEN;
+	len = IP_LEN;
 	count = len;
 	sum = answer = 0;
 	while(count > 1){
@@ -128,7 +128,7 @@ uint16_t Packet::udp_checksum(){
   		ptr++;
   		chk_sum_len++;
   	}
-  	return checksum((uint16_t*)buf, chk_sum_len);
+  	return ip_checksum((uint16_t*)buf, chk_sum_len);
 }
 
 void Packet::add_gtpc_hdr(){
@@ -200,23 +200,23 @@ void Packet::clear_packet(){
 	packet_len = 0;
 }
 
-void Packet::make_pkt(link addr){
+void Packet::make_pkt(path addr){
 	fill_ip_hdr(addr.src_ip, addr.dst_ip);
 	fill_udp_hdr(addr.src_port, addr.dst_port);
 	eval_udp_checksum();	
 	encap();
 }
 
-void Packet::make_tun_cpkt(link inner,link outer){
+void Packet::make_tun_cpkt(path inner, path outer){
 	make_pkt(inner);
 	add_gtpc_hdr();
-	make_pkt(outer)
+	make_pkt(outer);
 }
 
-void Packet::make_tun_upkt(link inner, link outer){
+void Packet::make_tun_upkt(path inner, path outer){
 	make_pkt(inner);
 	add_gtpu_hdr();
-	make_pkt(outer)
+	make_pkt(outer);
 }
 
 Packet::~Packet(){

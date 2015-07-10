@@ -1,12 +1,13 @@
-#include "raw_client.cpp"
+#include "raw_client.h"
 
+const int RawClient::on;
 const char* RawClient::interface;
 struct ifreq RawClient::ifr;
 
-void RawClient::set_interface(const char *interface){
-	this->interface = interface;
+void RawClient::set_interface(const char *interface_inp){
+	interface = interface_inp;
 	memset(&ifr, 0, sizeof(ifr));
-	snprintf (ifr.ifr_name, sizeof (ifr.ifr_name), "%s", this->interface);
+	snprintf (ifr.ifr_name, sizeof (ifr.ifr_name), "%s", interface);
 }
 
 RawClient::RawClient(){
@@ -37,7 +38,7 @@ void RawClient::bind_client(){
 	status = ioctl(client_socket, SIOCGIFINDEX, &ifr);
 	report_error(status, "IOCTL failed to find interface");
 	status = setsockopt(client_socket, SOL_SOCKET, SO_BINDTODEVICE, &ifr, sizeof(ifr));
-	report_error(status, "Binding to interface failed")
+	report_error(status, "Binding to interface failed");
 	status = bind(client_socket, (struct sockaddr*)&client_sock_addr, sizeof(client_sock_addr));
 	report_error(status);			
 }
@@ -57,7 +58,7 @@ void RawClient::fill_server_details(int server_port, const char *server_address)
 
 void RawClient::connect_with_server(Packet &pkt, int client_num){
 	int new_server_port;
-	link addr;
+	path addr;
 	addr.src_ip =  client_address;
 	addr.dst_ip = server_address;
 	addr.src_port = client_port;
@@ -72,15 +73,15 @@ void RawClient::connect_with_server(Packet &pkt, int client_num){
 	cout<<"Client side: Client-"<<client_num<<" connected with server"<<endl;	
 }
 
-void RawClient::read_data(Packet pkt){
+void RawClient::read_data(Packet &pkt){
 	pkt.clear_data();
 	status = recvfrom(client_socket, pkt.data, IP_MAXPACKET, 0, (sockaddr*)&server_sock_addr, &g_addr_len);
 	report_error(status);
-	pkt.data_len = strlen(pkt.data);
+	pkt.data_len = strlen((const char*)pkt.data);
 	//	check_conn(status);
 }
 
-void RawClient::write_data(Packet pkt){
+void RawClient::write_data(Packet &pkt){
 	status = sendto(client_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&server_sock_addr, g_addr_len);
 	report_error(status);
 }

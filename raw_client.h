@@ -21,8 +21,8 @@ public:
 	void fill_client_details(int, const char*);
 	void bind_client();
 	void fill_server_details(int, const char*);
-	void connect_with_server(Packet, int);
-	void read_data(Packet);
-	void write_data(Packet);	
+	void connect_with_server(Packet&, int);
+	void read_data(Packet&);
+	void write_data(Packet&);	
 	~RawClient();		
 };

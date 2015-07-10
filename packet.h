@@ -16,7 +16,7 @@
 #define IP_LEN 20
 #define UDP_LEN 8
 
-struct link{
+struct path{
 	int src_port;
 	int dst_port;
 	const char *src_ip;
@@ -46,7 +46,7 @@ struct Packet{
 	struct ip ip_hdr;
 	struct udphdr udp_hdr;
 
-	uint8_t *data, 
+	uint8_t *data;
 	uint8_t *packet;
 	int data_len;
 	int packet_len;
@@ -60,7 +60,7 @@ struct Packet{
 	void fill_data(int, int, int);
 	void fill_data(int, int, const char*);
 	void eval_udp_checksum();
-	uint16_t ip_checksum(uint16_t, int);
+	uint16_t ip_checksum(uint16_t*, int);
 	uint16_t udp_checksum();	
 
 	void add_gtpc_hdr();
@@ -72,9 +72,9 @@ struct Packet{
 	void clear_data();
 	void clear_packet();
 
-	void make_pkt(link);
-	void make_tun_cpkt(tun_link);
-	void make_tun_upkt(tun_link);	
+	void make_pkt(path);
+	void make_tun_cpkt(path, path);
+	void make_tun_upkt(path, path);	
 
 	~Packet();
 };

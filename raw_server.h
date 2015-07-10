@@ -19,12 +19,12 @@ public:
 	ClientDetails clients[MAX_CONNECTIONS];
 	pthread_t tid[MAX_CONNECTIONS];
 
-	Server();
+	RawServer();
 	void fill_server_details(int, const char*);
 	void bind_server();
-	void listen_accept(void*(*multithreading_func)(void*), Packet);
-	void connect_with_client(Packet);
-	void read_data(Packet);
-	void write_data(Packet);	
-	~Server();
+	void listen_accept(void*(*multithreading_func)(void*), Packet&);
+	void connect_with_client(Packet&);
+	void read_data(Packet&);
+	void write_data(Packet&);	
+	~RawServer();
 };

@@ -2,20 +2,21 @@
 
 int g_reuse = 1;
 
+const int RawServer::on;
 const char* RawServer::interface;
 struct ifreq RawServer::ifr;
 
-void RawServer::set_interface(const char *interface){
-	this->interface = interface;
+void RawServer::set_interface(const char *interface_inp){
+	interface = interface_inp;
 	memset(&ifr, 0, sizeof(ifr));
-	snprintf (ifr.ifr_name, sizeof (ifr.ifr_name), "%s", this->interface);
+	snprintf (ifr.ifr_name, sizeof (ifr.ifr_name), "%s", interface);
 }
 
 RawServer::RawServer(){
 	server_address = allocate_str_mem(INET_ADDRSTRLEN);
 	server_socket = socket (AF_INET, SOCK_RAW, IPPROTO_UDP);
 	report_error(server_socket);
-	setsockopt(server_socket, IPPROTO_IP, IP_HDRINCL, &on, sizeof (on));
+	setsockopt(server_socket, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on));
 	setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));
 	signal(SIGPIPE, SIG_IGN);	  
 }
@@ -37,19 +38,19 @@ void RawServer::bind_server(){
 	status = ioctl(server_socket, SIOCGIFINDEX, &ifr);
 	report_error(status, "IOCTL failed to find interface");
 	status = setsockopt(server_socket, SOL_SOCKET, SO_BINDTODEVICE, &ifr, sizeof(ifr));
-	report_error(status, "Binding to interface failed")
+	report_error(status, "Binding to interface failed");
 	status = bind(server_socket, (struct sockaddr*)&server_sock_addr, sizeof(server_sock_addr));
 	report_error(status);			
 }
 
-void RawServer::listen_accept(void*(*multithreading_func)(void*), Packet pkt){
+void RawServer::listen_accept(void*(*multithreading_func)(void*), Packet &pkt){
 	int i;
 	i=0;
 	while(1){
 		pkt.clear_data();
 		status = recvfrom(server_socket, pkt.data, IP_MAXPACKET, 0, (sockaddr*)&clients[i].client_sock_addr, &g_addr_len);
 		report_error(status);
-		pkt.data_len = strlen(pkt.data);
+		pkt.data_len = strlen((const char*)pkt.data);
 		memcpy(&clients[i].num, pkt.data, sizeof(int)); 		
 		status = pthread_create(&tid[i], NULL, multithreading_func, &clients[i]);
 		report_error(status);
@@ -58,8 +59,8 @@ void RawServer::listen_accept(void*(*multithreading_func)(void*), Packet pkt){
 	}
 }
 
-void RawServer::connect_with_client(Packet pkt){
-	link addr;
+void RawServer::connect_with_client(Packet &pkt){
+	path addr;
 	addr.src_ip = server_address;
 	addr.dst_ip = inet_ntoa(client_sock_addr.sin_addr);
 	addr.src_port = server_port;
@@ -74,11 +75,11 @@ void RawServer::read_data(Packet &pkt){
 	pkt.clear_data();
 	status = recvfrom(server_socket, pkt.data, IP_MAXPACKET, 0, (sockaddr*)&client_sock_addr, &g_addr_len);
 	report_error(status);
-	pkt.data_len = strlen(pkt.data);
+	pkt.data_len = strlen((const char*)pkt.data);
 	//	check_conn(status);
 }
 
-void RawServer::write_data(char *packet, int packet_len){
+void RawServer::write_data(Packet &pkt){
 	status = sendto(server_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&client_sock_addr, g_addr_len);
 	report_error(status);
 }
