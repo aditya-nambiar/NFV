@@ -207,18 +207,6 @@ void Packet::make_pkt(path addr){
 	encap();
 }
 
-void Packet::make_tun_cpkt(path inner, path outer){
-	make_pkt(inner);
-	add_gtpc_hdr();
-	make_pkt(outer);
-}
-
-void Packet::make_tun_upkt(path inner, path outer){
-	make_pkt(inner);
-	add_gtpu_hdr();
-	make_pkt(outer);
-}
-
 Packet::~Packet(){
 	free(src_ip);
 	free(dst_ip);

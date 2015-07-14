@@ -73,8 +73,5 @@ struct Packet{
 	void clear_packet();
 
 	void make_pkt(path);
-	void make_tun_cpkt(path, path);
-	void make_tun_upkt(path, path);	
-
 	~Packet();
 };
