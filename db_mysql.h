@@ -1,7 +1,7 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef DB_MYSQL_H
+#define DB_MYSQL_H
+
 #include "utils.h"
-#endif
 
 //(C) Operations: MySQL_DB functions
 #include <mysql/mysql.h>
@@ -27,3 +27,5 @@ public:
 	void report_error(MYSQL*);
 	~MySql();
 };
+
+#endif //DB_MYSQL_H

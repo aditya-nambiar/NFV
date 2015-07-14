@@ -1,7 +1,8 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef SERVER_H
+#define SERVER_H
+
 #include "utils.h"
-#endif
+#include "packet.h"
 
 extern int g_reuse;
 
@@ -25,3 +26,5 @@ public:
 	void write_data();	
 	~Server();
 };
+
+#endif //SERVER_H

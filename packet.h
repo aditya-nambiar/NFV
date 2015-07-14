@@ -1,7 +1,7 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef PACKET_H
+#define PACKET_H
+
 #include "utils.h"
-#endif
 
 //(C) Operations: Raw socket programming with headers(IP, UDP)
 #include <netinet/ip.h>     
@@ -75,3 +75,5 @@ struct Packet{
 	void make_pkt(path);
 	~Packet();
 };
+
+#endif //PACKET_H

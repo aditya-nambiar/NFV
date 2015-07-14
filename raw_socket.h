@@ -1,7 +1,8 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef RAW_SOCKET_H
+#define RAW_SOCKET_H
+
 #include "utils.h"
-#endif
+#include "packet.h"
 
 class RawSocket{
 public:
@@ -26,3 +27,5 @@ public:
 	void write_data(Packet&);	
 	~RawSocket();		
 };
+
+#endif //RAW_SOCKET_H

@@ -1,3 +1,5 @@
-#include "raw_client.h"
-#include "raw_server.h"
+#ifndef SGW_H
+#define SGW_H
 
+
+#endif //SGW_H

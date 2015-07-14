@@ -1,3 +1,6 @@
+#ifndef UTILS_H
+#define UTILS_H
+
 //(C++) Operations: Input/Output
 #include <iostream>
 
@@ -55,3 +58,5 @@ void print_message(string, unsigned long long);
 const char* to_char_array(unsigned long long);
 char* allocate_str_mem(int);
 uint8_t* allocate_uint8_mem(int);
+
+#endif //UTILS_H

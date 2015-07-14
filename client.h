@@ -1,13 +1,14 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef CLIENT_H
+#define CLIENT_H
+
 #include "utils.h"
-#endif
+#include "packet.h"
 
 class Client{
 public:
 	int status;
 	int client_socket;
-	char client_buffer[BUFFER_SIZE];
+	Packet pkt;
 	
 	int server_port;
 	const char *server_address;
@@ -20,3 +21,5 @@ public:
 	void write_data();	
 	~Client();		
 };
+
+#endif //CLIENT_H

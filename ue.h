@@ -1,3 +1,8 @@
+#ifndef UE_H
+#define UE_H
+
+#include "utils.h"
+#include "packet.h"
 #include "client.h"
 
 class UserEquipment{
@@ -14,3 +19,5 @@ public:
 	unsigned long long get_autn_res(unsigned long long, unsigned long long);
 	~UserEquipment();		
 };
+
+#endif //UE_H
