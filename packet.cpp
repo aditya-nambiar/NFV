@@ -108,7 +108,7 @@ uint16_t Packet::udp_checksum(){
   	memcpy (ptr, &udp_hdr.len, sizeof (udp_hdr.len));
   	ptr += sizeof (udp_hdr.len);
   	chk_sum_len += sizeof (udp_hdr.len);
-  	memcpy (ptr, &udp_hdr.source, sizeof (udp_hdr.source));
+  	memcpy (ptr, &udp#define BUFFER_SIZE 65535_hdr.source, sizeof (udp_hdr.source));
   	ptr += sizeof (udp_hdr.source);
   	chk_sum_len += sizeof (udp_hdr.source);
   	memcpy (ptr, &udp_hdr.dest, sizeof (udp_hdr.dest));

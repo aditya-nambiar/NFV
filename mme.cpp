@@ -5,7 +5,9 @@ void *multithreading_func(void *arg){
 	unsigned long long xres, res;
 	const char *msg;
 	ClientDetails ue = *(ClientDetails*)arg;
-	Server mme(g_mme_port+ue.num, g_mme_address);
+	Server mme();
+	mme.fill_server_details(g_mme_port+ue.num, g_mme_address);
+	mme.bind_server();
 	//setsockopt(mme.server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));	
 	mme.client_sock_addr = ue.client_sock_addr;
 	mme.connect_with_client();

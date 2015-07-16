@@ -31,7 +31,7 @@ using namespace std;
 
 #define MAX_CONNECTIONS 10000
 #define UE_COUNT 10
-#define BUFFER_SIZE 65535
+#define BUFFER_SIZE 1024
 
 extern int g_mme_port;
 extern int g_hss_port;
