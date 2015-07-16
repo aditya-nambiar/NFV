@@ -1,0 +1,23 @@
+Modules created:
+1. UE/eNodeB  ->	Radio Access Network(RAN)
+2. MME        ->	Mobility Management Entity
+3. HSS        ->	Home Subscriber Server		
+4. SGW        ->	Serving Gateway
+5. PGW        ->  PacketDataNetwork(PDN) Gateway
+
+User Equipment Registration Process:
+
+1. Process of Authentication
+
+
+
+2. Setup of Tunnels
+
+
+User Equipment Uplink Data transfer:
+
+
+User Equipment Downlink Data transfer:
+
+
+
