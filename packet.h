@@ -58,11 +58,13 @@ struct Packet{
 	void fill_ip_hdr(const char*, const char*);
 	void fill_udp_hdr(int, int);
 	void fill_data(int, int, int);
-	void fill_data(int, int, const char*);
+	void fill_data(int, int, unsigned long long);
+	void fill_data(int, int, const char*);	
 	void eval_udp_checksum();
 	uint16_t ip_checksum(uint16_t*, int);
 	uint16_t udp_checksum();	
 
+	void add_data();
 	void add_gtpc_hdr();
 	void add_gtpu_hdr();
 	void rem_gtpc_hdr();

@@ -37,24 +37,28 @@ void Server::listen_accept(void*(*multithreading_func)(void*)){
 		report_error(status);
 		status = pthread_create(&tid[i], NULL, multithreading_func, &clients[i]);
 		report_error(status);
-		cout<<"Server side: Connection made with Client"<<clients[i].num<<endl;
+		cout<<"Server side: Connection made with Client "<<clients[i].num<<endl;
 		i++;
 	}
 }
 
 void Server::connect_with_client(){
+	pkt.clear_data();
 	pkt.fill_data(0, sizeof(int), server_port);
-	write_data(pkt.data, pkt.data_len);
+	pkt.add_data();
+	write_data();
 }
 
-void Server::read_data(char *data, int len){
-	status = recvfrom(server_socket, data, len, 0, (sockaddr*)&client_sock_addr, &g_addr_len);
+void Server::read_data(){
+	pkt.clear_data();
+	status = recvfrom(server_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&client_sock_addr, &g_addr_len);
 	report_error(status);
+	pkt.data_len = status;
 	//check_conn(status);
 }
 
-void Server::write_data(const char *data, int len){
-	status = sendto(server_socket, data, len, 0, (sockaddr*)&client_sock_addr, g_addr_len);
+void Server::write_data(){
+	status = sendto(server_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&client_sock_addr, g_addr_len);
 	report_error(status);
 }
 

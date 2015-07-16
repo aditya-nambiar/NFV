@@ -24,24 +24,26 @@ void Client::fill_server_details(int server_port, const char *server_address){
 
 void Client::connect_with_server(int client_num){
 	int new_server_port;
-	char *new_server_address = allocate_str_mem(INET_ADDRSTRLEN);
+	pkt.clear_data();
 	pkt.fill_data(0, sizeof(int), client_num);
-	write_data(pkt.data, pkt.data_len);
-	read_data(pkt.data, BUFFER_SIZE);
+	pkt.add_data();
+	write_data();
+	read_data();
 	memcpy(&new_server_port, pkt.data, sizeof(int));
-	memcpy(new_server_address, pkt.data+sizeof(int), strlen((const char*)pkt.data)-sizeof(int));
-	fill_server_details(new_server_port, new_server_address);
-	cout<<"Client side: Client-"<<client_num<<" connected with server"<<endl;	
+	fill_server_details(new_server_port, server_address);
+	cout<<"Client side: Client-"<<client_num<<" connected with server with port "<<new_server_port<<endl;	
 }
 
-void Client::read_data(char *data, int len){
-	status = recvfrom(client_socket, data, len, 0, (sockaddr*)&server_sock_addr, &g_addr_len);
-	check_conn(status);
+void Client::read_data(){
+	pkt.clear_data();
+	status = recvfrom(client_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&server_sock_addr, &g_addr_len);
 	report_error(status);
+	pkt.data_len = status;
+	//check_conn(status);
 }
 
-void Client::write_data(const char *data, int len){
-	status = sendto(client_socket, data, len, 0, (sockaddr*)&server_sock_addr, g_addr_len);
+void Client::write_data(){
+	status = sendto(client_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&server_sock_addr, g_addr_len);
 	report_error(status);
 }
 

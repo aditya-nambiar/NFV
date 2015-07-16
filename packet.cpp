@@ -57,6 +57,11 @@ void Packet::fill_data(int pos, int len, int arg){
 	data_len+= len;
 }
 
+void Packet::fill_data(int pos, int len, unsigned long long arg){
+	memcpy(data + pos, &arg, len * sizeof(uint8_t));
+	data_len+= len;
+}
+
 void Packet::fill_data(int pos, int len, const char *message){
 	memcpy(data + pos, message, len * sizeof(uint8_t));
 	data_len+= len;
@@ -108,7 +113,7 @@ uint16_t Packet::udp_checksum(){
   	memcpy (ptr, &udp_hdr.len, sizeof (udp_hdr.len));
   	ptr += sizeof (udp_hdr.len);
   	chk_sum_len += sizeof (udp_hdr.len);
-  	memcpy (ptr, &udp#define BUFFER_SIZE 65535_hdr.source, sizeof (udp_hdr.source));
+  	memcpy (ptr, &udp_hdr.source, sizeof (udp_hdr.source));
   	ptr += sizeof (udp_hdr.source);
   	chk_sum_len += sizeof (udp_hdr.source);
   	memcpy (ptr, &udp_hdr.dest, sizeof (udp_hdr.dest));
@@ -130,6 +135,14 @@ uint16_t Packet::udp_checksum(){
   	}
   	return ip_checksum((uint16_t*)buf, chk_sum_len);
 }
+
+
+void Packet::add_data(){
+	clear_packet();
+	memcpy(packet, data, data_len);
+	packet_len = data_len;
+}
+
 
 void Packet::add_gtpc_hdr(){
 	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);

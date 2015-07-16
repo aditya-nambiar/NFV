@@ -8,30 +8,28 @@ UserEquipment::UserEquipment(int ue_num){
 
 void UserEquipment::authenticate(Client &user){
 	unsigned long long autn, rand, res;
+	char *reply = allocate_str_mem(IP_MAXPACKET);
 	type = 1;
-	bzero(user.client_buffer, BUFFER_SIZE);
-	memcpy(user.client_buffer, &type, sizeof(type));
-	memcpy(user.client_buffer+sizeof(type), &imsi, sizeof(imsi));
-	memcpy(user.client_buffer+sizeof(type)+sizeof(imsi), &msisdn, sizeof(msisdn));
-	user.status = sendto(user.client_socket, user.client_buffer, BUFFER_SIZE-1, 0, (sockaddr*)&user.server_sock_addr, g_addr_len);
-	report_error(user.status);
-	//user.write_data();
+	user.pkt.clear_data();
+	user.pkt.fill_data(0, sizeof(int), type);
+	user.pkt.fill_data(sizeof(int), sizeof(imsi), imsi);
+	user.pkt.fill_data(sizeof(int) + sizeof(imsi), sizeof(msisdn), msisdn);
+	user.pkt.add_data();
+	user.write_data();
 	user.read_data();
-	if(user.status==1000){
-		cout<<"Did not receive"<<endl;
-		exit(EXIT_FAILURE);
-	}
-	memcpy(&autn, user.client_buffer, sizeof(autn));
-	memcpy(&rand, user.client_buffer+sizeof(autn), sizeof(rand));
+	memcpy(&autn, user.pkt.data, sizeof(autn));
+	memcpy(&rand, user.pkt.data + sizeof(autn), sizeof(rand));
 	cout<<autn<<"	"<<rand<<endl;
 	res = get_autn_res(autn, rand);
 	cout<<"Result is "<<res<<endl;
-	bzero(user.client_buffer, BUFFER_SIZE);
-	memcpy(user.client_buffer, &res, sizeof(res));
+	user.pkt.clear_data();
+	user.pkt.fill_data(0, sizeof(res), res);
+	user.pkt.add_data();
 	user.write_data();
 	user.read_data();
-	cout<<"This is the message -"<<user.client_buffer<<endl;
-	if(strcmp(user.client_buffer, "OK") == 0)
+	memcpy(reply, user.pkt.data, user.pkt.data_len);
+	cout<<"This is the message -"<<reply<<endl;
+	if(strcmp((const char*)reply, "OK") == 0)
 		print_message("Authentication Successful for UserEquipment - ", key);
 }
 

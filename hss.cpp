@@ -6,24 +6,25 @@ void* multithreading_func(void *arg){
 	int type;
 	unsigned long long imsi, msisdn;
 	ClientDetails mme = *(ClientDetails*)arg;
-	Server hss(g_hss_port+mme.num, g_hss_address);
+	Server hss;
+	hss.fill_server_details(g_hss_port+mme.num, g_hss_address);
+	hss.bind_server();
 	//setsockopt(hss.server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));		
 	hss.client_sock_addr = mme.client_sock_addr;
 	hss.connect_with_client();
 	hss.read_data();
-	memcpy(&type, hss.server_buffer, sizeof(type));
+	memcpy(&type, hss.pkt.data, sizeof(int));
 	if(type == 1){
-		memcpy(&imsi, hss.server_buffer+sizeof(type), sizeof(imsi));
-		memcpy(&msisdn, hss.server_buffer+sizeof(type)+sizeof(imsi), sizeof(msisdn));
-		authenticate_query(imsi, msisdn, hss.server_buffer);
+		memcpy(&imsi, hss.pkt.data + sizeof(type), sizeof(imsi));
+		memcpy(&msisdn, hss.pkt.data + sizeof(type) + sizeof(imsi), sizeof(msisdn));
+		authenticate_query(imsi, msisdn, hss.pkt);
+		hss.pkt.add_data();
 		hss.write_data();
 	}		
-	close(hss.server_socket);	
 	mysql_thread_end();
-
 }
 
-void authenticate_query(unsigned long long imsi, unsigned long long msisdn, char *xres){
+void authenticate_query(unsigned long long imsi, unsigned long long msisdn, Packet &pkt){
 	int num_fields;
 	MYSQL_ROW row;	
 	const char *res_str;
@@ -39,7 +40,7 @@ void authenticate_query(unsigned long long imsi, unsigned long long msisdn, char
 	db.perform_query(g_query);
 	row = mysql_fetch_row(db.result);
 	if(row == 0){
-		cout<<"ERROR"<<endl;
+		cout<<"ERROR: No rows fetched"<<endl;
 		exit(EXIT_FAILURE);
 	}
 	res_str = row[0];	
@@ -65,10 +66,10 @@ void authenticate_query(unsigned long long imsi, unsigned long long msisdn, char
 			rand = strtoull(res_str,NULL,10);
 	}
 	res = autn*key_id + rand*(key_id+1);
-	bzero(xres, BUFFER_SIZE);
-	memcpy(xres, &autn, sizeof(autn));
-	memcpy(xres+sizeof(autn), &rand, sizeof(rand));
-	memcpy(xres+sizeof(autn)+sizeof(rand), &res, sizeof(res));
+	pkt.clear_data();
+	pkt.fill_data(0, sizeof(autn), autn);
+	pkt.fill_data(sizeof(autn), sizeof(rand), rand);
+	pkt.fill_data(sizeof(autn) + sizeof(rand), sizeof(res), res);
 }
 
 void connect_with_db(MySql &db){
@@ -83,7 +84,9 @@ void fetch_db_data(MySql &db, const char *query){
 int main(){
 	if(mysql_library_init(0, NULL, NULL))
 		cout<<"ERROR: mysql library cannot be opened"<<endl;
-	Server hss(g_hss_port, g_hss_address);
+	Server hss;
+	hss.fill_server_details(g_hss_port,g_hss_address);
+	hss.bind_server();
 	hss.listen_accept(multithreading_func);
 	mysql_library_end();
 	return 0;

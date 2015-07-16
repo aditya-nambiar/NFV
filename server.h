@@ -24,8 +24,8 @@ public:
 	void bind_server();
 	void listen_accept(void*(*multithreading_func)(void*));
 	void connect_with_client();
-	void read_data(char*, int);
-	void write_data(const char*, int);	
+	void read_data();
+	void write_data();	
 	~Server();
 };
 
