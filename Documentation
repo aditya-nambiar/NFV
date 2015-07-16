@@ -19,13 +19,18 @@ User Equipment Registration Process:
 Step-1:	
 RAN(UE) sends request to MME with its IMSI, MSISDN and type(1).
 
-Sent by UE to MME
+RAN to MME(Plain)
 type = 1
-IMSI
-MSISDN
+UE IMSI
+UE MSISDN
 
 Step-2:	
 MME checks the type. If it is 1, it will forward the entire message to the HSS.
+
+MME to HSS(Plain)
+UE IMSI
+UE MSISDN
+
 
 Step-3:	
 HSS collects the data(autn, rand) for this UE(IMSI, MSISDN) based on the timestamp the request is received and calculates the RES based on the key value for this UE. 
@@ -33,14 +38,29 @@ HSS collects the data(autn, rand) for this UE(IMSI, MSISDN) based on the timesta
 Step-4:	
 HSS sends the collection of data(autn, rand, res) to MME.
 
+HSS to MME(Plain)
+AUTN
+RAND
+RES
+
 Step-5:	
 MME saves the res value and forwards the data(autn, rand) to RAN.
+
+MME to RAN(Plain)
+AUTN
+RAND
 
 Step-6:	
 RAN calculates the res value based on the same key that HSS has and sends this res value to MME.
 
+RAN to MME(Plain)
+RES
+
 Step-7:	
 MME now verifies this res value with the res value obtained from the HSS. If they match. it sends OK reply. Otherwise, it does not reply anything.
+
+MME to RAN(Plain)
+"OK"
 
 Step-8:	
 If UE gets OK reply, then the authentication of UE is successful, otherwise not.
@@ -50,31 +70,78 @@ If UE gets OK reply, then the authentication of UE is successful, otherwise not.
 Step-1:	
 When the authentication match was successful at the MME, MME sends a CREATE SESSION request to a chosen SGW. In this message, MME includes its own GTP-C TEID(chosen by the MME) and UE details(for creating a bearer). Typically MME should send this message on GTP-C tunnel, but since it does not know about SGW GTP-C TEID, it uses a '0' in GTP-C field.(But for convenience, MME sends this without any GTP headers and just as a plain message).
 
-Step-2:
-On receiving this request, the SGW adds the UE to the bearer table it has. It then chooses one TEID for GTP-C(for control plane data) and one TEID for GTP-U(for data plane data). It then forwards this request to PGW.
+MME to SGW:(Plain)
+MME GTP-C TEID
+UE IMSI
 
+Step-2:
+On receiving this request, the SGW adds the UE to the bearer table it has and saves the GTP-C TEID of MME so that it can use it later for control communication with MME. It then chooses one TEID for GTP-C(for control plane data) and one TEID for GTP-U(for data plane data). It then forwards this request to PGW. In this request, it includes its own GTP-C TEID and GTP-U TEID along with UE details. It sends this message just like MME sent the request to SGW for the first time.
+
+SGW to PGW(Plain)
+SGW GTP-C TEID
+SGW GTP-U TEID
+UE IMSI
 
 Step-3:	
-PGW cho
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
-Step-1:	
+PGW now saves the GTP-C TEID and GTP-U TEID of SGW so that it can use it for further control communication and data communication ans then it adds the UE to the bearer table it has and chooses an IP address(predefined for simplicity) for the UE. It also chooses its own GTP-C TEID and GTP-U TEID. Finally PGW passes these data(UE IP address, PGW GTP-C and GTP-U TEID). But this time, since it has the GTP-C TEID of SGW, it uses encapsulted GTP header for control data communication.
+
+PGW to SGW:(GTP-C)
+PGW GTP-C TEID
+PGW GTP-U TEID
+UE IP address
+
+Step-4:
+On receiving the GTP-C TEID and GTP-U TEID of PGW, SGW saves these data so that it can use later for control and data communication. SGW now replies to the MME with GTP protocol(GTP-C TEID of MME saved earlier). In this reply, it just sends the GTP-C TEID of SGW and indication of successful response of Create Session Request from MME.
+
+SGW to MME(GTP-C)
+Success(for Create Session Request)
+GTP-C TEID of SGW
+
+Step-5:
+MME receives the GTP-C TEID of SGW and saves it so that it can communicate further with SGW through GTP-C protocol. This ends the series of messages in Create Session Request.
+
+Till this point, Control tunnel is created between MME and SGW; SGW and PGW. Data tunnel is also created between SGW and PGW. Now, the only remaining tunnel to be created is data tunnel between eNodeB and SGW.
+
+Step-Intermediate:
+(Happens exactly after MME sends OK reply for authentication to RAN; this might happen while Create Session Request is being processed by GWs)
+eNodeB now creates its own TEID for GTP-U between itself and SGW. It then sends this message to MME through NAS security procedure(encryption and integrity check protection). 
+
+eNodeB to MME(NAS security)
+eNodeB GTP-U TEID
+
+
+Step-6:
+MME after receiving Create Session Response from SGW and GTP-U TEID from eNodeB, it sends the GTP-U TEID of eNodeB to SGW through Modify Session Request message via GTP protocol since it has saved the GTP-C TEID of SGW. 
+
+MME to SGW(GTP-C)
+GTP-U TEID of eNodeB
+
+Step-7:
+SGW receives the GTP-U TEID of eNodeB and saves it. Now, SGW has GTP-C TEID of MME and PGW(for control communication) and GTP-U TEID of eNodeB and PGW(for data communication). Note that these TEIDs are for ONE PARTICULAR UE and this is mobility is handled in LTE EPC, which would be dealt later. 
+
+Step-8:
+SGW sends the Modify Bearer Response to MME including its own GTP-U TEID and UE IP address that it had saved earlier through GTP-C protocol. This also indicates the successful response of Modify Bearer request from MME.
+
+SGW to MME(GTP-C)
+Success(Modify Bearer Request)
+GTP-U TEID of SGW
+IP address of UE
+
+Step-9:
+MME, on receiving the Modify Bearer Response, sends a set of data to eNodeB. This includes IP address of UE, GTP-U TEID of SGW. This go via the NAS security procedure(encryption and integrity protection).
+
+MME to eNodeB(NAS security)
+IP address of UE
+GTP-U TEID of SGW
+
+Step-10
+eNodeB on receiving the IP address of UE and GTP-U TEID of SGW, finishes this whole attach procedure. It assigns the UE the IP address that it has just received. It also saves the GTP-U TEID of SGW for all further data communication with SGW for this PARTICULAR UE.
+
+After this whole process,
+1. Control tunnel is formed between MME and SGW.
+2. Control tunnel is formed between SGW and PGW.
+3. Data tunnel is formed between SGW and PGW.
+4. Data tunnel is formed between eNodeB and SGW.
 
 User Equipment Uplink Data transfer:
 
