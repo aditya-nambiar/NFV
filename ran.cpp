@@ -11,6 +11,7 @@ void* multithreading_func(void *arg){
 
 void attach_with_mme(UserEquipment &ue, Client &user){
 	ue.authenticate(user);
+	ue.setup_tunnel(user);
 }
 
 void start_info_flow(UserEquipment &ue){

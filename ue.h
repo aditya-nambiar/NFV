@@ -14,9 +14,10 @@ public:
 	int type;
 	
 	UserEquipment(int);
-	void authenticate(Client&);
 	unsigned long long key_generation(int);		
-	unsigned long long get_autn_res(unsigned long long, unsigned long long);
+	unsigned long long get_autn_res(unsigned long long, unsigned long long);	
+	void authenticate(Client&);
+	void setup_tunnel(Client&);
 	~UserEquipment();		
 };
 
