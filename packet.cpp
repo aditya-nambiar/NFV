@@ -57,6 +57,11 @@ void Packet::fill_data(int pos, int len, int arg){
 	data_len+= len;
 }
 
+void Packet::fill_data(int pos, int len, uint16_t arg){
+	memcpy(data + pos, &arg, len * sizeof(uint8_t));
+	data_len+= len;
+}
+
 void Packet::fill_data(int pos, int len, unsigned long long arg){
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len+= len;

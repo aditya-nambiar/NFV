@@ -31,7 +31,6 @@ MME to HSS(Plain)
 UE IMSI
 UE MSISDN
 
-
 Step-3:	
 HSS collects the data(autn, rand) for this UE(IMSI, MSISDN) based on the timestamp the request is received and calculates the RES based on the key value for this UE. 
 
@@ -68,22 +67,24 @@ If UE gets OK reply, then the authentication of UE is successful, otherwise not.
 2. Setup of Tunnels
 
 Step-1:	
-When the authentication match was successful at the MME, MME sends a CREATE SESSION request to a chosen SGW. In this message, MME includes its own GTP-C TEID(chosen by the MME) and UE details(for creating a bearer). Typically MME should send this message on GTP-C tunnel, but since it does not know about SGW GTP-C TEID, it uses a '0' in GTP-C field.(But for convenience, MME sends this without any GTP headers and just as a plain message).
+When the authentication match was successful at the MME, the RAN is supposed to send the APN info indicating which PDN(PGW) to contact. But there might be situations where the RAN does not know about the PDN to which it has to get connected to. In such case, MME should acquire the APN info from the HSS for this particular UE and this APN is called the default APN. Once acquiring the APN, the MME should resolve it using DNS to find the IP address of the PGW. Now MME should choose one SGW for the purpose of tunneling data between eNodeB and PDN. MME creates a CREATE SESSION request and chooses a default bearer Identity for the UE Default Bearer and sends it to the SGW. In this request message, MME includes its own GTP-C TEID(chosen by the MME) and UE details(UE IMSI and UE Bearer ID). Typically MME should send this message on GTP-C tunnel, but since it does not know about SGW GTP-C TEID, it uses a '0' in GTP-C field.(But for convenience, MME sends this without any GTP headers and just as a plain message).
 
 MME to SGW:(Plain)
 MME GTP-C TEID
 UE IMSI
+UE Bearer ID
 
 Step-2:
-On receiving this request, the SGW adds the UE to the bearer table it has and saves the GTP-C TEID of MME so that it can use it later for control communication with MME. It then chooses one TEID for GTP-C(for control plane data) and one TEID for GTP-U(for data plane data). It then forwards this request to PGW. In this request, it includes its own GTP-C TEID and GTP-U TEID along with UE details. It sends this message just like MME sent the request to SGW for the first time.
+On receiving this request, the SGW adds the UE related info to the bearer table it has and saves the GTP-C TEID of MME so that it can use it later for control communication with MME. It then chooses one TEID for GTP-C(for control plane data) and one TEID for GTP-U(for data plane data). It then forwards this request to PGW. In this request, it includes its own GTP-C TEID and GTP-U TEID along with UE details. It sends this message just like MME sent the request to SGW for the first time.
 
 SGW to PGW(Plain)
 SGW GTP-C TEID
 SGW GTP-U TEID
 UE IMSI
+UE Bearer ID
 
 Step-3:	
-PGW now saves the GTP-C TEID and GTP-U TEID of SGW so that it can use it for further control communication and data communication ans then it adds the UE to the bearer table it has and chooses an IP address(predefined for simplicity) for the UE. It also chooses its own GTP-C TEID and GTP-U TEID. Finally PGW passes these data(UE IP address, PGW GTP-C and GTP-U TEID). But this time, since it has the GTP-C TEID of SGW, it uses encapsulted GTP header for control data communication.
+PGW now saves the GTP-C TEID and GTP-U TEID of SGW so that it can use it for further control communication and data communication ans then it adds the UE related data to the bearer table it has and chooses an IP address(predefined for simplicity) for the UE. It also chooses its own GTP-C TEID and GTP-U TEID. Finally PGW passes these data(UE IP address, PGW GTP-C and GTP-U TEID). But this time, since it has the GTP-C TEID of SGW, it uses encapsulted GTP header for control data communication.
 
 PGW to SGW:(GTP-C)
 PGW GTP-C TEID
@@ -117,7 +118,7 @@ MME to SGW(GTP-C)
 GTP-U TEID of eNodeB
 
 Step-7:
-SGW receives the GTP-U TEID of eNodeB and saves it. Now, SGW has GTP-C TEID of MME and PGW(for control communication) and GTP-U TEID of eNodeB and PGW(for data communication). Note that these TEIDs are for ONE PARTICULAR UE and this is mobility is handled in LTE EPC, which would be dealt later. 
+SGW receives the GTP-U TEID of eNodeB and saves it. Now, SGW has GTP-C TEID of MME and PGW(for control communication) and GTP-U TEID of eNodeB and PGW(for data communication). Note that these TEIDs are for ONE PARTICULAR UE and this is how mobility is handled in LTE EPC, which would be dealt later. 
 
 Step-8:
 SGW sends the Modify Bearer Response to MME including its own GTP-U TEID and UE IP address that it had saved earlier through GTP-C protocol. This also indicates the successful response of Modify Bearer request from MME.

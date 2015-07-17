@@ -4,9 +4,15 @@ UserEquipment::UserEquipment(int ue_num){
 	key = key_generation(ue_num);
 	imsi = key*1000;
 	msisdn = 9000000000 + key;
+	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	enodeb_uteid = generate_teid();
 }
 
 unsigned long long UserEquipment::key_generation(int ue_num){
+	return ue_num;
+}
+
+uint16_t generate_uteid(){
 	return ue_num;
 }
 
@@ -44,9 +50,15 @@ void UserEquipment::authenticate(Client &user){
 }
 
 void UserEquipment::setup_tunnel(Client &user){
-	
-
-
+	user.pkt.clear_data();
+	user.pkt.fill_data(0, sizeof(uint16_t), enodeb_teid);
+	user.pkt.add_data();
+	user.pkt.write_data();
+	user.pkt.read_data();
+	memcpy(ip_addr, user.pkt.data, INET_ADDRSTRLEN);
+	memcpy(&dst_uteid, user.pkt.data + INET_ADDRSTRLEN, sizeof(uint16_t));
+	user.pkt.fill_gtpu_hdr(dst_uteid);
+	cout<<"Data tunnel is formed from eNodeB to SGW(Uplink direction) for UE - "<<ue_num<<endl;
 }
 
 UserEquipment::~UserEquipment(){
