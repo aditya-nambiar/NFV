@@ -33,15 +33,18 @@ using namespace std;
 #define UE_COUNT 100
 #define BUFFER_SIZE 1024
 
-#define SGW1 "10.14.13.29"
-#define SGW2 "10.14.13.30"
-#define SGW3 "10.14.13.31"
-#define PGW "10.14.13.32"
-
 extern int g_mme_port;
 extern int g_hss_port;
+extern int g_sgw1_port;
+extern int g_sgw2_port;
+extern int g_sgw3_port;
+extern int g_pgw_port;
 extern const char *g_mme_address;
 extern const char *g_hss_address;
+extern const char *g_sgw1_address;
+extern const char *g_sgw2_address;
+extern const char *g_sgw3_address;
+extern const char *g_pgw_address;
 extern socklen_t g_addr_len;
 extern timeval g_timeout;
 extern long long g_stack_buf;

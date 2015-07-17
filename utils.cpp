@@ -2,8 +2,16 @@
 
 int g_mme_port = 5000;
 int g_hss_port = 9000;
+int g_sgw1_port = 6000;
+int g_sgw2_port = 7000;
+int g_sgw3_port = 8000;
+int g_pgw_port = 4000;
 const char *g_mme_address = "127.0.0.1";
 const char *g_hss_address = "127.0.0.1";
+const char *g_sgw1_address = "127.0.0.1";
+const char *g_sgw2_address = "127.0.0.1";
+const char *g_sgw3_address = "127.0.0.1";
+const char *g_pgw_address = "127.0.0.1";
 socklen_t g_addr_len = sizeof(sockaddr_in);
 timeval g_timeout = {2, 0};
 

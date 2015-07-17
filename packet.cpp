@@ -67,6 +67,11 @@ void Packet::fill_data(int pos, int len, unsigned long long arg){
 	data_len+= len;
 }
 
+void Packet::fill_data(int pos, int len, uint16_t *message){
+	memcpy(data + pos, message, len * sizeof(uint8_t));
+	data_len+= len;
+}
+
 void Packet::fill_data(int pos, int len, const char *message){
 	memcpy(data + pos, message, len * sizeof(uint8_t));
 	data_len+= len;
@@ -150,22 +155,24 @@ void Packet::add_data(){
 
 
 void Packet::add_gtpc_hdr(){
+	int len;
 	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);
 	memcpy(tem, &gtpc_hdr, GTPC_LEN * sizeof(uint8_t));
-	memcpy((tem + GTPC_LEN), packet, packet_len * sizeof(uint8_t));
+	memcpy((tem + GTPC_LEN), data, data_len * sizeof(uint8_t));
+	len = GTPC_LEN + data_len;
 	clear_data();
-	memcpy(data, tem, (packet_len + GTPC_LEN) * sizeof(uint8_t));
-	data_len = packet_len + GTPC_LEN;
+	fill_data(0, len, tem);
 	free(tem);
 }
 
 void Packet::add_gtpu_hdr(){
+	int len;
 	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);
 	memcpy(tem, &gtpu_hdr, GTPU_LEN * sizeof(uint8_t));
-	memcpy((tem + GTPU_LEN), packet, packet_len * sizeof(uint8_t));
+	memcpy((tem + GTPU_LEN), data, data_len * sizeof(uint8_t));
+	len = GTPU_LEN + data_len;
 	clear_data();
-	memcpy(data, tem, (packet_len + GTPU_LEN) * sizeof(uint8_t));
-	data_len = packet_len + GTPU_LEN;
+	fill_data(0, len, tem);
 	free(tem);
 }
 
@@ -176,8 +183,7 @@ void Packet::rem_gtpc_hdr(){
 	memcpy(tem, (data + GTPC_LEN), (data_len - GTPC_LEN) * sizeof(uint8_t));
 	len = data_len - GTPC_LEN;
 	clear_data();
-	memcpy(data, tem, len * sizeof(uint8_t));
-	data_len = len;
+	fill_data(0, len, tem);
 	free(tem);
 }
 
@@ -188,8 +194,7 @@ void Packet::rem_gtpu_hdr(){
 	memcpy(tem, (data + GTPU_LEN), (data_len - GTPU_LEN) * sizeof(uint8_t));
 	len = data_len - GTPU_LEN;
 	clear_data();
-	memcpy(data, tem, len * sizeof(uint8_t));
-	data_len = len;
+	fill_data(0, len, tem);
 	free(tem);
 }
 
