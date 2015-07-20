@@ -23,12 +23,12 @@ RawSocket::RawSocket(){
 
 void RawSocket::src_details(int src_port, const char *src_addr){
 	this->src_port = src_port;
-	strcpy(this->src_address, src_address);
+	strcpy(this->src_addr, src_addr);
 }
 
 void RawSocket::dst_details(int dst_port, const char *dst_addr){
 	this->dst_port = dst_port;
-	strcpy(this->dst_address, dst_addr);
+	strcpy(this->dst_addr, dst_addr);
 	bzero((char*)&dst_sock_addr, sizeof(dst_sock_addr));
 	dst_sock_addr.sin_family = AF_INET;
 	dst_sock_addr.sin_port = htons(dst_port);

@@ -5,15 +5,15 @@ UserEquipment::UserEquipment(int ue_num){
 	imsi = key*1000;
 	msisdn = 9000000000 + key;
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
-	enodeb_uteid = generate_teid();
+	set_enodeb_uteid(ue_num);
 }
 
 unsigned long long UserEquipment::key_generation(int ue_num){
 	return ue_num;
 }
 
-uint16_t generate_uteid(){
-	return ue_num;
+void UserEquipment::set_enodeb_uteid(int ue_num){
+	enodeb_uteid = ue_num;
 }
 
 unsigned long long UserEquipment::get_autn_res(unsigned long long autn, unsigned long long rand){
@@ -30,7 +30,7 @@ void UserEquipment::authenticate(Client &user){
 	user.pkt.fill_data(0, sizeof(int), type);
 	user.pkt.fill_data(sizeof(int), sizeof(imsi), imsi);
 	user.pkt.fill_data(sizeof(int) + sizeof(imsi), sizeof(msisdn), msisdn);
-	user.pkt.add_data();
+	user.pkt.make_data_packet();
 	user.write_data();
 	user.read_data();
 	memcpy(&autn, user.pkt.data, sizeof(autn));
@@ -40,7 +40,7 @@ void UserEquipment::authenticate(Client &user){
 	cout<<"Result is "<<res<<endl;
 	user.pkt.clear_data();
 	user.pkt.fill_data(0, sizeof(res), res);
-	user.pkt.add_data();
+	user.pkt.make_data_packet();
 	user.write_data();
 	user.read_data();
 	memcpy(reply, user.pkt.data, user.pkt.data_len);
@@ -51,14 +51,14 @@ void UserEquipment::authenticate(Client &user){
 
 void UserEquipment::setup_tunnel(Client &user){
 	user.pkt.clear_data();
-	user.pkt.fill_data(0, sizeof(uint16_t), enodeb_teid);
-	user.pkt.add_data();
-	user.pkt.write_data();
-	user.pkt.read_data();
+	user.pkt.fill_data(0, sizeof(uint16_t), enodeb_uteid);
+	user.pkt.make_data_packet();
+	user.write_data();
+	user.read_data();
 	memcpy(ip_addr, user.pkt.data, INET_ADDRSTRLEN);
-	memcpy(&dst_uteid, user.pkt.data + INET_ADDRSTRLEN, sizeof(uint16_t));
-	user.pkt.fill_gtpu_hdr(dst_uteid);
-	cout<<"Data tunnel is formed from eNodeB to SGW(Uplink direction) for UE - "<<ue_num<<endl;
+	memcpy(&sgw_uteid, user.pkt.data + INET_ADDRSTRLEN, sizeof(uint16_t));
+	user.pkt.fill_gtpu_hdr(sgw_uteid);
+	cout<<"Data tunnel is formed from eNodeB to SGW(Uplink direction) for UE - "<<key<<endl;
 }
 
 UserEquipment::~UserEquipment(){

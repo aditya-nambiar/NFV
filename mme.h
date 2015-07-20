@@ -15,18 +15,18 @@ struct Gateways{
 	char *pgw_addr;
 
 	Gateways();
-	set_sgw();
-	set_pgw();
+	void set_sgw();
+	void set_pgw();
 	~Gateways();
 };
 
 struct Tunnel{
 	uint16_t mme_cteid;
-	uint16_t dst_cteid;
+	uint16_t sgw_cteid;
 	uint16_t enodeb_uteid;
 	uint16_t sgw_uteid;
 
-	set_mme_cteid(int);
+	void set_mme_cteid(int);
 };
 
 void* multithreading_func(void*);

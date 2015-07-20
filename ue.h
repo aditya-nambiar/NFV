@@ -15,13 +15,13 @@ public:
 
 	//eNodeB data
 	uint16_t enodeb_uteid;
-	uint16_t dst_uteid;
+	uint16_t sgw_uteid;
 
 	int type;
 	
 	UserEquipment(int);
 	unsigned long long key_generation(int);		
-	uint16_t generate_uteid();
+	void set_enodeb_uteid(int);
 	unsigned long long get_autn_res(unsigned long long, unsigned long long);	
 	void authenticate(Client&);
 	void setup_tunnel(Client&);

@@ -11,7 +11,7 @@ public:
 	Packet pkt;
 	
 	int server_port;
-	char *server_address;
+	char *server_addr;
 	struct sockaddr_in server_sock_addr;
 	
 	Client();

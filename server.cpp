@@ -5,18 +5,18 @@ int g_reuse = 1;
 Server::Server(){
 	server_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	report_error(server_socket);
-	server_address = allocate_str_mem(INET_ADDRSTRLEN);
+	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));
 	signal(SIGPIPE, SIG_IGN);	  
 }
 
-void Server::fill_server_details(int server_port, const char *server_address){
+void Server::fill_server_details(int server_port, const char *server_addr){
 	this->server_port = server_port;
-	strcpy(this->server_address, server_address);
+	strcpy(this->server_addr, server_addr);
 	bzero((char *) &server_sock_addr, sizeof(server_sock_addr));
 	server_sock_addr.sin_family = AF_INET;  	
 	server_sock_addr.sin_port = htons(server_port); 
-	status = inet_aton(server_address, &server_sock_addr.sin_addr);	
+	status = inet_aton(server_addr, &server_sock_addr.sin_addr);	
 	if(status == 0){
 		cout<<"ERROR: Invalid IP address"<<endl;
 		exit(EXIT_FAILURE);
@@ -45,7 +45,7 @@ void Server::listen_accept(void*(*multithreading_func)(void*)){
 void Server::connect_with_client(){
 	pkt.clear_data();
 	pkt.fill_data(0, sizeof(int), server_port);
-	pkt.add_data();
+	pkt.make_data_packet();
 	write_data();
 }
 
@@ -63,6 +63,6 @@ void Server::write_data(){
 }
 
 Server::~Server(){
-	free(server_address);
+	free(server_addr);
 	close(server_socket);
 }

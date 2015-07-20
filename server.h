@@ -10,7 +10,7 @@ class Server{
 public:
 	int status;
 	int server_port;
-	char *server_address;
+	char *server_addr;
 	int server_socket;
 	struct sockaddr_in server_sock_addr;
 	Packet pkt;

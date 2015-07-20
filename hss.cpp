@@ -7,7 +7,7 @@ void* multithreading_func(void *arg){
 	unsigned long long imsi, msisdn;
 	ClientDetails mme = *(ClientDetails*)arg;
 	Server hss;
-	hss.fill_server_details(g_hss_port+mme.num, g_hss_address);
+	hss.fill_server_details(g_hss_port+mme.num, g_hss_addr);
 	hss.bind_server();
 	//setsockopt(hss.server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));		
 	hss.client_sock_addr = mme.client_sock_addr;
@@ -18,7 +18,7 @@ void* multithreading_func(void *arg){
 		memcpy(&imsi, hss.pkt.data + sizeof(type), sizeof(imsi));
 		memcpy(&msisdn, hss.pkt.data + sizeof(type) + sizeof(imsi), sizeof(msisdn));
 		authenticate_query(imsi, msisdn, hss.pkt);
-		hss.pkt.add_data();
+		hss.pkt.make_data_packet();
 		hss.write_data();
 	}		
 	mysql_thread_end();
@@ -85,7 +85,7 @@ int main(){
 	if(mysql_library_init(0, NULL, NULL))
 		cout<<"ERROR: mysql library cannot be opened"<<endl;
 	Server hss;
-	hss.fill_server_details(g_hss_port,g_hss_address);
+	hss.fill_server_details(g_hss_port,g_hss_addr);
 	hss.bind_server();
 	hss.listen_accept(multithreading_func);
 	mysql_library_end();

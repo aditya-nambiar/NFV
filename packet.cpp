@@ -11,13 +11,11 @@ Packet::Packet(){
 	packet_len = 0;
 }
 
-void Packet::fill_gtpc_hdr(int teid){
-	gtpc_hdr.user_num = teid;
+void Packet::fill_gtpc_hdr(uint16_t teid){
 	gtpc_hdr.teid = teid;
 }
 
-void Packet::fill_gtpu_hdr(int teid){
-	gtpu_hdr.user_num = teid;
+void Packet::fill_gtpu_hdr(uint16_t teid){
 	gtpu_hdr.teid = teid;
 }
 
@@ -67,7 +65,7 @@ void Packet::fill_data(int pos, int len, unsigned long long arg){
 	data_len+= len;
 }
 
-void Packet::fill_data(int pos, int len, uint16_t *message){
+void Packet::fill_data(int pos, int len, uint8_t *message){
 	memcpy(data + pos, message, len * sizeof(uint8_t));
 	data_len+= len;
 }
@@ -147,7 +145,7 @@ uint16_t Packet::udp_checksum(){
 }
 
 
-void Packet::add_data(){
+void Packet::make_data_packet(){
 	clear_packet();
 	memcpy(packet, data, data_len);
 	packet_len = data_len;

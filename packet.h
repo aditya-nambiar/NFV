@@ -24,12 +24,10 @@ struct path{
 };
 
 struct gtpc{
-	uint16_t user_num;
 	uint16_t teid;
 };
 
 struct gtpu{
-	uint16_t user_num;
 	uint16_t teid;
 };
 
@@ -53,19 +51,20 @@ struct Packet{
 	
 	Packet();
 
-	void fill_gtpc_hdr(int);
-	void fill_gtpu_hdr(int);
+	void fill_gtpc_hdr(uint16_t);
+	void fill_gtpu_hdr(uint16_t);
 	void fill_ip_hdr(const char*, const char*);
 	void fill_udp_hdr(int, int);
 	void fill_data(int, int, int);
 	void fill_data(int, int, uint16_t);
 	void fill_data(int, int, unsigned long long);
+	void fill_data(int, int, uint8_t*);	
 	void fill_data(int, int, const char*);	
 	void eval_udp_checksum();
 	uint16_t ip_checksum(uint16_t*, int);
 	uint16_t udp_checksum();	
 
-	void add_data();
+	void make_data_packet();
 	void add_gtpc_hdr();
 	void add_gtpu_hdr();
 	void rem_gtpc_hdr();

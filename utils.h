@@ -4,10 +4,11 @@
 //(C++) Operations: Input/Output
 #include <iostream>
 
-//(C++) STL Operations: String, Vector, String stream
+//(C++) STL Operations: String, Vector, String stream, Unordered map
 #include <string>
 #include <vector>
 #include <sstream>
+#include <unordered_map>
 
 //(C) Operations: Input/Output, String, Standard libraries(like atoi, malloc)
 #include <stdio.h>
@@ -29,22 +30,24 @@
 
 using namespace std;
 
-#define MAX_CONNECTIONS 10000
-#define UE_COUNT 100
+#define MAX_CONNECTIONS 1000
+#define UE_COUNT 1
 #define BUFFER_SIZE 1024
+#define UE_IP_ADDR "127.0.0.1"
 
+extern int g_freeport;
 extern int g_mme_port;
 extern int g_hss_port;
 extern int g_sgw1_port;
 extern int g_sgw2_port;
 extern int g_sgw3_port;
 extern int g_pgw_port;
-extern const char *g_mme_address;
-extern const char *g_hss_address;
-extern const char *g_sgw1_address;
-extern const char *g_sgw2_address;
-extern const char *g_sgw3_address;
-extern const char *g_pgw_address;
+extern const char *g_mme_addr;
+extern const char *g_hss_addr;
+extern const char *g_sgw1_addr;
+extern const char *g_sgw2_addr;
+extern const char *g_sgw3_addr;
+extern const char *g_pgw_addr;
 extern socklen_t g_addr_len;
 extern timeval g_timeout;
 extern long long g_stack_buf;
