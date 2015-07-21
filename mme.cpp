@@ -97,7 +97,7 @@ void setup_tunnel(Server &mme, Client &to_hss, int ue_num){
 
 void create_session(Client &to_sgw, int ue_num, Tunnel &tun){
 	int type = 1;
-	char *reply = allocate_str_mem(IP_MAXPACKET);
+	char *reply = allocate_str_mem(BUFFER_SIZE);
 	set_bearer_id(ue_num);
 	to_sgw.pkt.clear_data();
 	to_sgw.pkt.fill_data(0, sizeof(int), type);
@@ -107,9 +107,10 @@ void create_session(Client &to_sgw, int ue_num, Tunnel &tun){
 	to_sgw.pkt.make_data_packet();
 	to_sgw.write_data();
 	to_sgw.read_data();
+	to_sgw.pkt.rem_gtpu_hdr();
 	memcpy(&tun.sgw_cteid, to_sgw.pkt.data, sizeof(uint16_t));
 	memcpy(reply, to_sgw.pkt.data + sizeof(uint16_t), to_sgw.pkt.data_len - sizeof(uint16_t));
-	if(strcmp((const char*)reply, "OK")){
+	if(strcmp((const char*)reply, "OK") == 0){
 		cout<<"Create Session Request is successful for this client - "<<ue_num<<endl;
 	}
 	free(reply);
@@ -117,7 +118,7 @@ void create_session(Client &to_sgw, int ue_num, Tunnel &tun){
 
 void modify_session(Client &to_sgw, int ue_num, Tunnel &tun){
 	char *reply;
-	reply = allocate_str_mem(INET_ADDRSTRLEN);
+	reply = allocate_str_mem(BUFFER_SIZE);
 	to_sgw.pkt.clear_data();
 	to_sgw.pkt.fill_gtpc_hdr(tun.sgw_cteid);
 	to_sgw.pkt.fill_data(0, sizeof(uint16_t), tun.enodeb_uteid);
@@ -127,7 +128,7 @@ void modify_session(Client &to_sgw, int ue_num, Tunnel &tun){
 	to_sgw.read_data();
 	to_sgw.pkt.rem_gtpu_hdr();
 	memcpy(reply, to_sgw.pkt.data + sizeof(uint16_t) + INET_ADDRSTRLEN, to_sgw.pkt.data_len - sizeof(uint16_t) - INET_ADDRSTRLEN);
-	if(strcmp((const char*)reply, "OK")){
+	if(strcmp((const char*)reply, "OK") == 0){
 		cout<<"Modify Session Request is successful for this client - "<<ue_num<<endl;
 	}
 	free(reply);

@@ -1,12 +1,12 @@
 #include "utils.h"
 
 int g_freeport = 0;
-int g_mme_port = 5000;
-int g_hss_port = 9000;
+int g_mme_port = 4000;
+int g_hss_port = 5000;
 int g_sgw1_port = 6000;
 int g_sgw2_port = 7000;
 int g_sgw3_port = 8000;
-int g_pgw_port = 4000;
+int g_pgw_port = 9000;
 const char *g_mme_addr = "127.0.0.1";
 const char *g_hss_addr = "127.0.0.1";
 const char *g_sgw1_addr = "127.0.0.1";

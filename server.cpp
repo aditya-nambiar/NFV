@@ -11,11 +11,10 @@ Server::Server(){
 }
 
 void Server::fill_server_details(int server_port, const char *server_addr){
-	this->server_port = server_port;
 	strcpy(this->server_addr, server_addr);
 	bzero((char *) &server_sock_addr, sizeof(server_sock_addr));
 	server_sock_addr.sin_family = AF_INET;  	
-	server_sock_addr.sin_port = htons(server_port); 
+	server_sock_addr.sin_port = (server_port)?htons(server_port):server_port;
 	status = inet_aton(server_addr, &server_sock_addr.sin_addr);	
 	if(status == 0){
 		cout<<"ERROR: Invalid IP address"<<endl;
@@ -24,8 +23,12 @@ void Server::fill_server_details(int server_port, const char *server_addr){
 }
 
 void Server::bind_server(){
+	socklen_t len = sizeof(sockaddr_in);
 	status = bind(server_socket, (struct sockaddr*)&server_sock_addr, sizeof(server_sock_addr));
 	report_error(status);	
+	getsockname(server_socket, (struct sockaddr*)&server_sock_addr, &len);
+	server_port = ntohs(server_sock_addr.sin_port);	
+	//cout<<"Server binded with port "<<server_port<<endl;
 }
 
 void Server::listen_accept(void*(*multithreading_func)(void*)){

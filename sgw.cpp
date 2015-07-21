@@ -51,7 +51,7 @@ void handle_cdata(Server &sgw, Tunnel &tun, int &ue_num){
 	memcpy(&tun.pgw_cteid, to_pgw.pkt.data, sizeof(uint16_t));
 	memcpy(&tun.pgw_uteid, to_pgw.pkt.data + sizeof(uint16_t), sizeof(uint16_t));
 	memcpy(ue_ip_addr, to_pgw.pkt.data + 2*sizeof(uint16_t), INET_ADDRSTRLEN);
-	strcmp(reply, "OK");
+	strcpy(reply, "OK");
 	sgw.pkt.clear_data();
 	sgw.pkt.fill_data(0, sizeof(uint16_t), tun.sgw_cteid);
 	sgw.pkt.fill_data(sizeof(uint16_t), strlen(reply), reply);
@@ -64,7 +64,8 @@ void handle_cdata(Server &sgw, Tunnel &tun, int &ue_num){
 	memcpy(&tun.enodeb_uteid, sgw.pkt.data, sizeof(uint16_t));
 	sgw.pkt.clear_data();
 	sgw.pkt.fill_data(0, sizeof(uint16_t), tun.sgw_uteid);
-	sgw.pkt.fill_data(sizeof(uint16_t), sizeof(INET_ADDRSTRLEN), ue_ip_addr);
+	sgw.pkt.fill_data(sizeof(uint16_t), INET_ADDRSTRLEN, ue_ip_addr);
+	sgw.pkt.fill_data(sizeof(uint16_t) + INET_ADDRSTRLEN, strlen(reply), reply);
 	sgw.pkt.add_gtpc_hdr();
 	sgw.pkt.make_data_packet();
 	sgw.write_data();
