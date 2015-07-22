@@ -58,7 +58,13 @@ void UserEquipment::setup_tunnel(Client &user){
 	memcpy(ip_addr, user.pkt.data, INET_ADDRSTRLEN);
 	memcpy(&sgw_uteid, user.pkt.data + INET_ADDRSTRLEN, sizeof(uint16_t));
 	user.pkt.fill_gtpu_hdr(sgw_uteid);
-	cout<<"Data tunnel is formed from eNodeB to SGW(Uplink direction) for UE - "<<key<<endl;
+	cout<<"Data tunnel is formed from eNodeB to SGW(Both uplink & downlink direction) for UE - "<<key<<endl;
+}
+
+void UserEquipment::send_traffic(Client &user){	
+	generate_data(user);
+	user.pkt.fill_gtpu_hdr(enodeb_uteid);
+	user.pkt.add_gtpc_hdr();
 }
 
 UserEquipment::~UserEquipment(){

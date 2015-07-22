@@ -25,6 +25,7 @@ public:
 	unsigned long long get_autn_res(unsigned long long, unsigned long long);	
 	void authenticate(Client&);
 	void setup_tunnel(Client&);
+	void send_traffic(Client&);
 	~UserEquipment();		
 };
 
