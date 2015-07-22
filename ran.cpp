@@ -3,6 +3,7 @@
 void* multithreading_func(void *arg){
 	int ue_num = *(int*)arg;
 	Client user;
+	user.bind_client();
 	user.fill_server_details(g_mme_port, g_mme_addr);
 	user.connect_with_server(ue_num);	
 	UserEquipment ue(ue_num);

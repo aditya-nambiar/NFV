@@ -7,7 +7,7 @@ void* multithreading_func(void *arg){
 	unsigned long long imsi, msisdn;
 	ClientDetails mme = *(ClientDetails*)arg;
 	Server hss;
-	hss.fill_server_details(g_hss_port+mme.num, g_hss_addr);
+	hss.fill_server_details(g_freeport, g_hss_addr);
 	hss.bind_server();
 	//setsockopt(hss.server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));		
 	hss.client_sock_addr = mme.client_sock_addr;
@@ -40,7 +40,8 @@ void authenticate_query(unsigned long long imsi, unsigned long long msisdn, Pack
 	db.perform_query(g_query);
 	row = mysql_fetch_row(db.result);
 	if(row == 0){
-		cout<<"ERROR: No rows fetched"<<endl;
+		cout<<"ERROR: No rows fetched for this query "<<endl;
+		cout<<g_query<<endl;
 		exit(EXIT_FAILURE);
 	}
 	res_str = row[0];	
@@ -85,7 +86,7 @@ int main(){
 	if(mysql_library_init(0, NULL, NULL))
 		cout<<"ERROR: mysql library cannot be opened"<<endl;
 	Server hss;
-	hss.fill_server_details(g_hss_port,g_hss_addr);
+	hss.fill_server_details(g_hss_port, g_hss_addr);
 	hss.bind_server();
 	hss.listen_accept(multithreading_func);
 	mysql_library_end();

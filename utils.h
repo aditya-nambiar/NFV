@@ -31,7 +31,7 @@
 using namespace std;
 
 #define MAX_CONNECTIONS 1000
-#define UE_COUNT 100
+#define UE_COUNT 50
 #define BUFFER_SIZE 1024
 #define UE_IP_ADDR "127.0.0.1"
 

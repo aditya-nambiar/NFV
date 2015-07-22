@@ -34,6 +34,7 @@ void handle_cdata(Server &sgw, Tunnel &tun, int &ue_num){
 	char *ue_ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	char *reply = allocate_str_mem(BUFFER_SIZE);
 	Client to_pgw;
+	to_pgw.bind_client();
 	to_pgw.fill_server_details(g_pgw_port, g_pgw_addr);
 	to_pgw.connect_with_server(ue_num);
 	memcpy(&user_num, sgw.pkt.data + sizeof(int), sizeof(int));

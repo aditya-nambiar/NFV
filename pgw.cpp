@@ -29,8 +29,6 @@ void* multithreading_func(void *arg){
 	pgw.connect_with_client();
 	pgw.read_data();
 	memcpy(&type, pgw.pkt.data, sizeof(int));
-	cout<<"Type for UE - "<<entity.num<<" is "<<type<<endl;
-	cout<<"Reaches here for UE - "<<entity.num<<endl;
 	if(type == 1)
 		handle_cdata(pgw, tun, entity.num);
 	else if(type == 2)

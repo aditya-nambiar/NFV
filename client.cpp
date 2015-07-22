@@ -3,10 +3,25 @@
 Client::Client(){
 	client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	report_error(client_socket);
+	client_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	signal(SIGPIPE, SIG_IGN);			
 	//status = 0;
 	//setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));
+}
+
+void Client::bind_client(){
+	socklen_t len = sizeof(sockaddr_in);
+	bzero((char *) &client_sock_addr, sizeof(client_sock_addr));
+	client_sock_addr.sin_family = AF_INET;  
+	client_sock_addr.sin_addr.s_addr = INADDR_ANY;	
+	client_sock_addr.sin_port = 0;
+	status = bind(client_socket, (struct sockaddr*)&client_sock_addr, sizeof(client_sock_addr));
+	report_error(status);	
+	getsockname(client_socket, (struct sockaddr*)&client_sock_addr, &len);
+	client_port = ntohs(client_sock_addr.sin_port);	
+	strcpy(client_addr, inet_ntoa(client_sock_addr.sin_addr));
+	//cout<<"client binded with port "<<client_port<<endl;
 }
 
 void Client::fill_server_details(int server_port, const char *server_addr){
@@ -48,6 +63,7 @@ void Client::write_data(){
 }
 
 Client::~Client(){
+	free(client_addr);
 	free(server_addr);
 	close(client_socket);
 }
