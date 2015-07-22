@@ -30,6 +30,7 @@ void* multithreading_func(void *arg){
 void handle_cdata(Server &sgw, Tunnel &tun, int &ue_num){
 	int user_num;
 	int bearer_id;
+	int type = 1;
 	char *ue_ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	char *reply = allocate_str_mem(BUFFER_SIZE);
 	Client to_pgw;
@@ -40,10 +41,11 @@ void handle_cdata(Server &sgw, Tunnel &tun, int &ue_num){
 	memcpy(&tun.mme_cteid, sgw.pkt.data + 3*sizeof(int), sizeof(uint16_t));
 	set_bearer_id(user_num, bearer_id);
 	to_pgw.pkt.clear_data();
-	to_pgw.pkt.fill_data(0, sizeof(int), user_num);
-	to_pgw.pkt.fill_data(sizeof(int), sizeof(int), bearer_id);
-	to_pgw.pkt.fill_data(2*sizeof(int), sizeof(uint16_t), tun.sgw_cteid);
-	to_pgw.pkt.fill_data(2*sizeof(int) + sizeof(uint16_t), sizeof(uint16_t), tun.sgw_uteid);
+	to_pgw.pkt.fill_data(0, sizeof(int), type);
+	to_pgw.pkt.fill_data(sizeof(int), sizeof(int), user_num);
+	to_pgw.pkt.fill_data(2*sizeof(int), sizeof(int), bearer_id);
+	to_pgw.pkt.fill_data(3*sizeof(int), sizeof(uint16_t), tun.sgw_cteid);
+	to_pgw.pkt.fill_data(3*sizeof(int) + sizeof(uint16_t), sizeof(uint16_t), tun.sgw_uteid);
 	to_pgw.pkt.make_data_packet();
 	to_pgw.write_data();
 	to_pgw.read_data();

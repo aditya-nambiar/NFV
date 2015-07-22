@@ -29,6 +29,8 @@ void* multithreading_func(void *arg){
 	pgw.connect_with_client();
 	pgw.read_data();
 	memcpy(&type, pgw.pkt.data, sizeof(int));
+	cout<<"Type for UE - "<<entity.num<<" is "<<type<<endl;
+	cout<<"Reaches here for UE - "<<entity.num<<endl;
 	if(type == 1)
 		handle_cdata(pgw, tun, entity.num);
 	else if(type == 2)
@@ -38,10 +40,10 @@ void* multithreading_func(void *arg){
 void handle_cdata(Server &pgw, Tunnel &tun, int &ue_num){
 	int user_num;
 	int bearer_id;
-	memcpy(&user_num, pgw.pkt.data, sizeof(int));
-	memcpy(&bearer_id, pgw.pkt.data + sizeof(int), sizeof(int));
-	memcpy(&tun.sgw_cteid, pgw.pkt.data + 2*sizeof(int), sizeof(uint16_t));
-	memcpy(&tun.sgw_uteid, pgw.pkt.data + 2*sizeof(int) + sizeof(uint16_t), sizeof(uint16_t));
+	memcpy(&user_num, pgw.pkt.data + sizeof(int), sizeof(int));
+	memcpy(&bearer_id, pgw.pkt.data + 2*sizeof(int), sizeof(int));
+	memcpy(&tun.sgw_cteid, pgw.pkt.data + 3*sizeof(int), sizeof(uint16_t));
+	memcpy(&tun.sgw_uteid, pgw.pkt.data + 3*sizeof(int) + sizeof(uint16_t), sizeof(uint16_t));
 	pgw.pkt.clear_data();
 	set_bearer_id(ue_num, bearer_id);
 	pgw.pkt.fill_data(0, sizeof(uint16_t), tun.pgw_cteid);
