@@ -1,4 +1,4 @@
-all:	ran mme hss sgw pgw
+all:	ran mme hss sgw pgw sink
 
 G++ = g++ -std=c++0x -std=gnu++0x
 
@@ -12,6 +12,8 @@ SGW_P = sgw.cpp sgw.h client.cpp client.h server.cpp server.h packet.cpp packet.
 
 PGW_P = pgw.cpp pgw.h raw_socket.cpp raw_socket.h server.cpp server.h packet.cpp packet.h utils.cpp utils.h
 
+SINK_P = sink.cpp sink.h server.cpp server.h packet.cpp packet.h utils.cpp utils.h
+
 RAN_R = $(G++) ran.cpp -w -o ran ue.cpp client.cpp packet.cpp utils.cpp -lpthread 
 
 MME_R = $(G++) mme.cpp -w -o mme client.cpp server.cpp packet.cpp utils.cpp -lpthread 
@@ -21,6 +23,8 @@ HSS_R = $(G++) hss.cpp -w -o hss db_mysql.cpp server.cpp packet.cpp utils.cpp `m
 SGW_R = $(G++) sgw.cpp -w -o sgw client.cpp server.cpp packet.cpp utils.cpp -lpthread 
 
 PGW_R = $(G++) pgw.cpp -w -o pgw raw_socket.cpp server.cpp packet.cpp utils.cpp -lpthread 
+
+SINK_R = $(G++) sink.cpp -w -o sink server.cpp packet.cpp utils.cpp -lpthread
 
 ran:	$(RAN_P)
 	$(RAN_R)
@@ -36,6 +40,9 @@ sgw:	$(SGW_P)
 
 pgw:	$(PGW_P)
 	$(PGW_R)
+
+sink:	$(SINK_P)
+	$(SINK_R)
 
 clean:
 	rm -f ran mme hss sgw pgw *~

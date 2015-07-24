@@ -15,16 +15,18 @@ public:
 	int raw_socket;
 	int src_port;
 	char *src_addr;
+	Packet pkt;
 
 	int dst_port;
 	char *dst_addr;
 	struct sockaddr_in dst_sock_addr;
 
 	RawSocket();
-	void src_details(int, const char*);
-	void dst_details(int, const char*);
-	void bind_client();
-	void write_data(Packet&);	
+	void bind_client();	
+	void fill_traffic_details(Packet&);
+	void fill_src_details();
+	void fill_dst_details();
+	void write_data();	
 	~RawSocket();		
 };
 

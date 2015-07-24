@@ -78,7 +78,24 @@ void handle_cdata(Server &sgw, Tunnel &tun, int &ue_num){
 }
 
 void handle_udata(Server &sgw, Tunnel &tun, int &ue_num){
-
+	Client to_pgw;
+	int type = 2;
+	sgw.read_data();
+	to_pgw.bind_client();
+	to_pgw.fill_server_details(g_pgw_port, g_pgw_addr);
+	to_pgw.connect_with_server(ue_num);
+	to_pgw.pkt.clear_data();
+	to_pgw.pkt.fill_data(0, sizeof(int), type);
+	to_pgw.pkt.make_data_packet();
+	to_pgw.write_data();
+	sgw.pkt.rem_gtpu_hdr();
+	sgw.pkt.fill_gtpu_hdr(tun.pgw_uteid);
+	sgw.pkt.add_gtpu_hdr();
+	sgw.pkt.make_data_packet();
+	to_pgw.pkt.clear_data();
+	to_pgw.pkt.fill_data(0, sizeof(sgw.pkt.data_len), sgw.pkt.data);
+	to_pgw.pkt.make_data_packet();	
+	to_pgw.write_data();
 }
 
 void set_bearer_id(int ue_num, int bearer_id){

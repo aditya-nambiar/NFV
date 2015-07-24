@@ -29,6 +29,7 @@ void* multithreading_func(void *arg){
 	pgw.connect_with_client();
 	pgw.read_data();
 	memcpy(&type, pgw.pkt.data, sizeof(int));
+	cout<<"Type is "<<type<<endl;
 	if(type == 1)
 		handle_cdata(pgw, tun, entity.num);
 	else if(type == 2)
@@ -54,8 +55,20 @@ void handle_cdata(Server &pgw, Tunnel &tun, int &ue_num){
 	cout<<"Tunnel created from PGW to SGW for UE - "<<ue_num<<endl;
 }
 
-void handle_udata(Server &sgw, Tunnel &tun, int &ue_num){
-
+void handle_udata(Server &pgw, Tunnel &tun, int &ue_num){
+	cout<<"Coming here 1"<<endl;
+	RawSocket raw_client;
+	cout<<"Coming here 2"<<endl;
+	pgw.read_data();
+	cout<<"Coming here 3"<<endl;
+	pgw.pkt.rem_gtpu_hdr();
+	RawSocket::set_interface("lo");
+	raw_client.bind_client();
+	raw_client.fill_traffic_details(pgw.pkt);
+	cout<<"Coming here 4"<<endl;
+	raw_client.write_data();
+	cout<<"Coming here 5"<<endl;
+	cout<<"Data sent successfully"<<endl;
 }
 
 void set_bearer_id(int ue_num, int bearer_id){

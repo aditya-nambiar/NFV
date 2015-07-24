@@ -5,6 +5,18 @@
 #include "packet.h"
 #include "client.h"
 
+struct TrafficGenerator{
+	char *data;
+	char *src_ip;
+	char *dst_ip;
+	int src_port;
+	int dst_port;
+
+	TrafficGenerator();
+	void fill_traffic();
+	~TrafficGenerator();
+};
+
 class UserEquipment{
 public:
 	//UE data

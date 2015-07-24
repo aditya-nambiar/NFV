@@ -1,5 +1,25 @@
 #include "ue.h"
 
+TrafficGenerator::TrafficGenerator(){
+	data = allocate_str_mem(BUFFER_SIZE);
+	src_ip = allocate_str_mem(INET_ADDRSTRLEN);
+	dst_ip = allocate_str_mem(INET_ADDRSTRLEN);
+}
+
+void TrafficGenerator::fill_traffic(){
+	strcpy(data, "This is my traffic");
+	strcpy(src_ip, "127.0.0.1");
+	strcpy(dst_ip, "127.0.0.1");
+	src_port = 60000;
+	dst_port = 60001;
+}
+
+TrafficGenerator::~TrafficGenerator(){
+	free(data);
+	free(src_ip);
+	free(dst_ip);
+}
+
 UserEquipment::UserEquipment(int ue_num){
 	key = key_generation(ue_num);
 	imsi = key*1000;
@@ -61,10 +81,27 @@ void UserEquipment::setup_tunnel(Client &user){
 	cout<<"Data tunnel is formed from eNodeB to SGW(Both uplink & downlink direction) for UE - "<<key<<endl;
 }
 
-void UserEquipment::send_traffic(Client &user){	
-	generate_data(user);
-	user.pkt.fill_gtpu_hdr(enodeb_uteid);
-	user.pkt.add_gtpc_hdr();
+void UserEquipment::send_traffic(Client &to_sgw){	
+	TrafficGenerator tg;
+	int type = 2;
+	tg.fill_traffic();
+	to_sgw.pkt.fill_ip_hdr(tg.src_ip, tg.dst_ip);
+	to_sgw.pkt.fill_udp_hdr(tg.src_port, tg.dst_port);
+	to_sgw.pkt.fill_gtpu_hdr(sgw_uteid);	
+	to_sgw.pkt.clear_data();
+	to_sgw.pkt.fill_data(0, sizeof(int), type);
+	to_sgw.pkt.make_data_packet();
+	to_sgw.write_data();
+	to_sgw.pkt.clear_data();
+	to_sgw.pkt.fill_data(0, strlen(tg.data), tg.data);
+	to_sgw.pkt.eval_udp_checksum();
+	to_sgw.pkt.encap();
+	to_sgw.pkt.clear_data();
+	to_sgw.pkt.fill_data(0, to_sgw.pkt.packet_len, to_sgw.pkt.packet);
+	to_sgw.pkt.add_gtpu_hdr();
+	to_sgw.pkt.make_data_packet();
+	to_sgw.write_data();
+	cout<<"Data sent successfullly"<<endl;
 }
 
 UserEquipment::~UserEquipment(){

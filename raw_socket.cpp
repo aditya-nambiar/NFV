@@ -8,6 +8,7 @@ void RawSocket::set_interface(const char *interface_inp){
 	interface = interface_inp;
 	memset(&ifr, 0, sizeof(ifr));
 	snprintf (ifr.ifr_name, sizeof (ifr.ifr_name), "%s", interface);
+	cout<<"hey its here 1"<<endl;
 }
 
 RawSocket::RawSocket(){
@@ -17,18 +18,48 @@ RawSocket::RawSocket(){
 	report_error(raw_socket);
 	setsockopt(raw_socket, IPPROTO_IP, IP_HDRINCL, &on, sizeof (on));	
 	signal(SIGPIPE, SIG_IGN);					
+	cout<<"hey its here 2"<<endl;
 	//status = 0;
 	//setsockopt(raw_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));
 }
 
-void RawSocket::src_details(int src_port, const char *src_addr){
-	this->src_port = src_port;
-	strcpy(this->src_addr, src_addr);
+void RawSocket::bind_client(){
+	status = ioctl(raw_socket, SIOCGIFINDEX, &ifr);
+	report_error(status, "IOCTL failed to find interface");
+	status = setsockopt(raw_socket, SOL_SOCKET, SO_BINDTODEVICE, &ifr, sizeof(ifr));
+	report_error(status, "Binding to interface failed");
+	cout<<"hey its here 3"<<endl;
 }
 
-void RawSocket::dst_details(int dst_port, const char *dst_addr){
-	this->dst_port = dst_port;
-	strcpy(this->dst_addr, dst_addr);
+void RawSocket::fill_traffic_details(Packet &arg_pkt){
+	cout<<"This is the end 1"<<endl;
+	memcpy(&pkt.ip_hdr, arg_pkt.data, IP_LEN * sizeof(uint8_t));
+	cout<<"This is the end 2"<<endl;
+	memcpy(&pkt.udp_hdr, arg_pkt.data + IP_LEN * sizeof(uint8_t), UDP_LEN * sizeof(uint8_t));
+	cout<<"This is the end 3"<<endl;
+	pkt.data_len = arg_pkt.data_len - IP_LEN * sizeof(uint8_t) - UDP_LEN * sizeof(uint8_t);
+	cout<<"This is the end 4"<<endl;
+	memcpy(pkt.data, arg_pkt.data + IP_LEN * sizeof(uint8_t) + UDP_LEN * sizeof(uint8_t), pkt.data_len);
+	cout<<"This is the end 5"<<endl;
+	pkt.packet_len = arg_pkt.data_len;
+	memcpy(pkt.packet, arg_pkt.data, pkt.packet_len);
+	cout<<"This is the end 6"<<endl;
+	fill_src_details();
+	fill_dst_details();
+	cout<<"hey its here 4"<<endl;
+}
+
+void RawSocket::fill_src_details(){
+	src_port = ntohs(pkt.udp_hdr.source);
+		
+	if(!inet_ntop(AF_INET, &(pkt.ip_hdr.ip_src), src_addr, INET_ADDRSTRLEN))
+		report_error(status, "this is the error");	
+	
+}
+
+void RawSocket::fill_dst_details(){
+	dst_port = ntohs(pkt.udp_hdr.dest);
+	inet_ntop(AF_INET, &(pkt.ip_hdr.ip_dst), dst_addr, INET_ADDRSTRLEN);
 	bzero((char*)&dst_sock_addr, sizeof(dst_sock_addr));
 	dst_sock_addr.sin_family = AF_INET;
 	dst_sock_addr.sin_port = htons(dst_port);
@@ -39,19 +70,8 @@ void RawSocket::dst_details(int dst_port, const char *dst_addr){
 	}
 }
 
-void RawSocket::bind_client(){
-	status = ioctl(raw_socket, SIOCGIFINDEX, &ifr);
-	report_error(status, "IOCTL failed to find interface");
-	status = setsockopt(raw_socket, SOL_SOCKET, SO_BINDTODEVICE, &ifr, sizeof(ifr));
-	report_error(status, "Binding to interface failed");
-	// status = bind(client_raw_socket, (struct sockaddr*)&client_sock_addr, sizeof(client_sock_addr));
-	// report_error(status);			
-}
-
-void RawSocket::write_data(Packet &pkt){
-	pkt.fill_udp_hdr(src_port, dst_port);
-	pkt.fill_ip_hdr(src_addr, dst_addr);
-	pkt.encap();
+void RawSocket::write_data(){
+	cout<<"hey its here 5"<<endl;
 	status = sendto(raw_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&dst_sock_addr, g_addr_len);
 	report_error(status);
 }
