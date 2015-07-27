@@ -89,11 +89,22 @@ void handle_udata(Server &sgw, Tunnel &tun, int &ue_num){
 	to_pgw.pkt.make_data_packet();
 	to_pgw.write_data();
 	sgw.pkt.rem_gtpu_hdr();
+
+	char *addr = allocate_str_mem(INET_ADDRSTRLEN); 
+	int port;
+	memcpy(&sgw.pkt.ip_hdr, sgw.pkt.data, IP_LEN * sizeof(uint8_t));
+	memcpy(&sgw.pkt.udp_hdr, sgw.pkt.data + IP_LEN * sizeof(uint8_t), UDP_LEN * sizeof(uint8_t));
+	port = ntohs(sgw.pkt.udp_hdr.source);
+	inet_ntop(AF_INET, &(sgw.pkt.ip_hdr.ip_src), addr, INET_ADDRSTRLEN);
+	cout<<"Port is "<<port<<endl;
+	cout<<"Address is "<<addr<<endl;
+
+
 	sgw.pkt.fill_gtpu_hdr(tun.pgw_uteid);
 	sgw.pkt.add_gtpu_hdr();
 	sgw.pkt.make_data_packet();
 	to_pgw.pkt.clear_data();
-	to_pgw.pkt.fill_data(0, sizeof(sgw.pkt.data_len), sgw.pkt.data);
+	to_pgw.pkt.fill_data(0, sgw.pkt.packet_len, sgw.pkt.packet);
 	to_pgw.pkt.make_data_packet();	
 	to_pgw.write_data();
 }

@@ -56,18 +56,24 @@ void handle_cdata(Server &pgw, Tunnel &tun, int &ue_num){
 }
 
 void handle_udata(Server &pgw, Tunnel &tun, int &ue_num){
-	cout<<"Coming here 1"<<endl;
 	RawSocket raw_client;
-	cout<<"Coming here 2"<<endl;
 	pgw.read_data();
-	cout<<"Coming here 3"<<endl;
 	pgw.pkt.rem_gtpu_hdr();
+
+
+	char *addr = allocate_str_mem(INET_ADDRSTRLEN); 
+	int port;
+	memcpy(&pgw.pkt.ip_hdr, pgw.pkt.data, IP_LEN * sizeof(uint8_t));
+	memcpy(&pgw.pkt.udp_hdr, pgw.pkt.data + IP_LEN * sizeof(uint8_t), UDP_LEN * sizeof(uint8_t));
+	port = ntohs(pgw.pkt.udp_hdr.source);
+	inet_ntop(AF_INET, &(pgw.pkt.ip_hdr.ip_src), addr, INET_ADDRSTRLEN);
+	cout<<"Port is "<<port<<endl;
+	cout<<"Address is "<<addr<<endl;
+
 	RawSocket::set_interface("lo");
 	raw_client.bind_client();
 	raw_client.fill_traffic_details(pgw.pkt);
-	cout<<"Coming here 4"<<endl;
 	raw_client.write_data();
-	cout<<"Coming here 5"<<endl;
 	cout<<"Data sent successfully"<<endl;
 }
 
