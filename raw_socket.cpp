@@ -50,8 +50,7 @@ void RawSocket::fill_traffic_details(Packet &arg_pkt){
 }
 
 void RawSocket::fill_src_details(){
-	src_port = ntohs(pkt.udp_hdr.source);
-		
+	src_port = ntohs(pkt.udp_hdr.source);		
 	if(!inet_ntop(AF_INET, &(pkt.ip_hdr.ip_src), src_addr, INET_ADDRSTRLEN))
 		report_error(status, "this is the error");	
 	
