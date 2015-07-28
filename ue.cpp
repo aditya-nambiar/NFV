@@ -85,15 +85,15 @@ void UserEquipment::send_traffic(Client &to_sgw){
 	TrafficGenerator tg;
 	int type = 2;
 	tg.fill_traffic();
-	to_sgw.pkt.fill_ip_hdr(tg.src_ip, tg.dst_ip);
-	to_sgw.pkt.fill_udp_hdr(tg.src_port, tg.dst_port);
-	to_sgw.pkt.fill_gtpu_hdr(sgw_uteid);	
 	to_sgw.pkt.clear_data();
 	to_sgw.pkt.fill_data(0, sizeof(int), type);
 	to_sgw.pkt.make_data_packet();
 	to_sgw.write_data();
 	to_sgw.pkt.clear_data();
 	to_sgw.pkt.fill_data(0, strlen(tg.data), tg.data);
+	to_sgw.pkt.fill_ip_hdr(tg.src_ip, tg.dst_ip);
+	to_sgw.pkt.fill_udp_hdr(tg.src_port, tg.dst_port);
+	to_sgw.pkt.fill_gtpu_hdr(sgw_uteid);	
 	to_sgw.pkt.eval_udp_checksum();
 	to_sgw.pkt.encap();
 	to_sgw.pkt.clear_data();
