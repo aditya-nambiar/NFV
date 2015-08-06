@@ -33,7 +33,7 @@ using namespace std;
 #define MAX_CONNECTIONS 1000
 #define UE_COUNT 1
 #define BUFFER_SIZE 1024
-#define UE_IP_ADDR "127.0.0.1"
+#define UE_IP_ADDR "192.168.100.2"
 
 extern int g_freeport;
 extern int g_mme_port;

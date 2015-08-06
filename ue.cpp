@@ -21,6 +21,7 @@ TrafficGenerator::~TrafficGenerator(){
 }
 
 UserEquipment::UserEquipment(int ue_num){
+	this->ue_num = ue_num;
 	key = key_generation(ue_num);
 	imsi = key*1000;
 	msisdn = 9000000000 + key;
@@ -78,30 +79,57 @@ void UserEquipment::setup_tunnel(Client &user){
 	memcpy(ip_addr, user.pkt.data, INET_ADDRSTRLEN);
 	memcpy(&sgw_uteid, user.pkt.data + INET_ADDRSTRLEN, sizeof(uint16_t));
 	user.pkt.fill_gtpu_hdr(sgw_uteid);
+	setup_ue_interface();
 	cout<<"Data tunnel is formed from eNodeB to SGW(Both uplink & downlink direction) for UE - "<<key<<endl;
 }
 
+void setup_interface(){
+	string arg;
+	arg = "sudo ifconfig eth0:";
+	arg.append(ue_num);
+	arg.append(" ");
+	arg.append(ip_addr);
+	system(arg);
+	cout<<"Interface successfullly created for UE - "<<ue_num<<endl;
+}
+
 void UserEquipment::send_traffic(Client &to_sgw){	
-	TrafficGenerator tg;
-	int type = 2;
-	tg.fill_traffic();
-	to_sgw.pkt.clear_data();
-	to_sgw.pkt.fill_data(0, sizeof(int), type);
-	to_sgw.pkt.make_data_packet();
-	to_sgw.write_data();
-	to_sgw.pkt.clear_data();
-	to_sgw.pkt.fill_data(0, strlen(tg.data), tg.data);
-	to_sgw.pkt.fill_ip_hdr(tg.src_ip, tg.dst_ip);
-	to_sgw.pkt.fill_udp_hdr(tg.src_port, tg.dst_port);
-	to_sgw.pkt.fill_gtpu_hdr(sgw_uteid);	
-	to_sgw.pkt.eval_udp_checksum();
-	to_sgw.pkt.encap();
-	to_sgw.pkt.clear_data();
-	to_sgw.pkt.fill_data(0, to_sgw.pkt.packet_len, to_sgw.pkt.packet);
-	to_sgw.pkt.add_gtpu_hdr();
-	to_sgw.pkt.make_data_packet();
-	to_sgw.write_data();
-	cout<<"Data sent successfullly"<<endl;
+	monitor_traffic();
+	send_ue_traffic();
+
+
+
+	// TrafficGenerator tg;
+	// int type = 2;
+	// tg.fill_traffic();
+	// to_sgw.pkt.clear_data();
+	// to_sgw.pkt.fill_data(0, sizeof(int), type);
+	// to_sgw.pkt.make_data_packet();
+	// to_sgw.write_data();
+	// to_sgw.pkt.clear_data();
+	// to_sgw.pkt.fill_data(0, strlen(tg.data), tg.data);
+	// to_sgw.pkt.fill_ip_hdr(tg.src_ip, tg.dst_ip);
+	// to_sgw.pkt.fill_udp_hdr(tg.src_port, tg.dst_port);
+	// to_sgw.pkt.fill_gtpu_hdr(sgw_uteid);	
+	// to_sgw.pkt.eval_udp_checksum();
+	// to_sgw.pkt.encap();
+	// to_sgw.pkt.clear_data();
+	// to_sgw.pkt.fill_data(0, to_sgw.pkt.packet_len, to_sgw.pkt.packet);
+	// to_sgw.pkt.add_gtpu_hdr();
+	// to_sgw.pkt.make_data_packet();
+	// to_sgw.write_data();
+	// cout<<"Data sent successfullly"<<endl;
+}
+
+void UserEquipment::send_ue_traffic(){
+	TCPClient to_sink;
+	to_sink.fill_client_details(ip_addr);
+	to_sink.bind_client();
+	to_sink.fill_server_details();
+	to_sink.connect_with_server();
+	to_sink.pkt.clear_data();
+	to_sink.pkt.fill_data(0, 19, "This is my traffic");
+	to_sink.write_data();
 }
 
 UserEquipment::~UserEquipment(){
