@@ -11,6 +11,7 @@ void* multithreading_func(void *arg){
 	hss.bind_server();
 	//setsockopt(hss.server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));		
 	hss.client_sock_addr = mme.client_sock_addr;
+	hss.client_num = mme.num;
 	hss.connect_with_client();
 	hss.read_data();
 	memcpy(&type, hss.pkt.data, sizeof(int));

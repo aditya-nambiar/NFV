@@ -32,6 +32,7 @@ void *multithreading_func(void *arg){
 	mme.bind_server();
 	//setsockopt(mme.server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));	
 	mme.client_sock_addr = ue.client_sock_addr;
+	mme.client_num = ue.num;
 	mme.connect_with_client();
 	mme.read_data();
 	Client to_hss;
@@ -41,7 +42,7 @@ void *multithreading_func(void *arg){
 	memcpy(&type, mme.pkt.data, sizeof(type));
 	if(type == 1){
 		authenticate(mme, to_hss);
-		setup_tunnel(mme, to_hss, ue.num);
+		setup_tunnel(mme, to_hss, mme.client_num);
 	}
 }
 

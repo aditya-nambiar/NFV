@@ -18,7 +18,7 @@ Naming: (Followed Google's code convention except in cases of const, functions, 
  	Files
  		Follow the naming of Variables
 	Type names(Classes, structs, etc.)
-		All type names start with a capital letter and are capitalized for each new word with no underscores. Special cases like acronyms and abbreviations are all written in full caps. Eg: TCP.
+		All type names start with a capital letter and are capitalized for each new word with no underscores. Special cases like acronyms and abbreviations are all written in full caps. Eg: TCP. 
 	Macro
 		All macro names follow the naming of variables except that they are capitalized
 	Functions

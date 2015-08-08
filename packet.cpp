@@ -20,8 +20,8 @@ void Packet::fill_gtpu_hdr(uint16_t teid){
 }
 
 void Packet::fill_ip_hdr(const char *src_ip, const char *dst_ip){
-	strcpy (this->src_ip, src_ip);
-	strcpy (this->dst_ip, dst_ip);
+	strcpy(this->src_ip, src_ip);
+	strcpy(this->dst_ip, dst_ip);
 	ip_hdr.ip_hl = IP_LEN / sizeof(uint32_t);
 	ip_hdr.ip_v = 4;
 	ip_hdr.ip_tos = 0;
@@ -224,7 +224,7 @@ void Packet::clear_packet(){
 	packet_len = 0;
 }
 
-void Packet::make_pkt(path addr){
+void Packet::make_pkt(Path addr){
 	fill_ip_hdr(addr.src_ip, addr.dst_ip);
 	fill_udp_hdr(addr.src_port, addr.dst_port);
 	eval_udp_checksum();	

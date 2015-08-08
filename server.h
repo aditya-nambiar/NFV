@@ -15,6 +15,7 @@ public:
 	struct sockaddr_in server_sock_addr;
 	Packet pkt;
 	
+	int client_num;
 	struct sockaddr_in client_sock_addr;
 	ClientDetails clients[MAX_CONNECTIONS];
 	pthread_t tid[MAX_CONNECTIONS];

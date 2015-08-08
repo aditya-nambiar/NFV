@@ -16,18 +16,18 @@
 #define IP_LEN 20
 #define UDP_LEN 8
 
-struct path{
+struct Path{
 	int src_port;
 	int dst_port;
 	const char *src_ip;
 	const char *dst_ip;
 };
 
-struct gtpc{
+struct GTPc{
 	uint16_t teid;
 };
 
-struct gtpu{
+struct GTPu{
 	uint16_t teid;
 };
 
@@ -39,8 +39,8 @@ struct Packet{
 	int src_port;
 	int dst_port;
 	
-	struct gtpc gtpc_hdr;
-	struct gtpu gtpu_hdr;
+	struct GTPc gtpc_hdr;
+	struct GTPu gtpu_hdr;
 	struct ip ip_hdr;
 	struct udphdr udp_hdr;
 
@@ -74,7 +74,7 @@ struct Packet{
 	void clear_data();
 	void clear_packet();
 
-	void make_pkt(path);
+	void make_pkt(Path);
 	~Packet();
 };
 
