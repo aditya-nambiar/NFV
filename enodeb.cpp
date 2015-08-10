@@ -1,15 +1,25 @@
 #include "enodeb.h"
 
 TunData::TunData(){
+
 	sgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
 TunData::~TunData(){
+
 	free(sgw_addr);
 }
 
 EnodeB::EnodeB(){
+	
+	socket_table.clear();
+	to_sgw.resize(UDP_LINKS);
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
+}
+
+void EnodeB::set_uteid(){
+	
+	uteid = 1; //Dummy uteid
 }
 
 void EnodeB::attach_to_tun(){	
@@ -36,6 +46,7 @@ void EnodeB::attach_to_tun(){
 }
 
 void EnodeB::read_tun(){
+
 	pkt.clear_data();
 	count = read(tun_fd, pkt.data, BUFFER_SIZE);
 	report_error(count);
@@ -43,17 +54,20 @@ void EnodeB::read_tun(){
 }
 
 void EnodeB::write_tun(){
+
 	count = write(tun_fd, pkt.data, pkt.data_len);
 	report_error(count);
 }
 
 void EnodeB::set_ue_ip(){
 	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
+
 	memcpy(iphdr, pkt.data, 20 * sizeof(uint8_t));
 	inet_ntop(AF_INET, &(iphdr->ip_src), ue_ip, INET_ADDRSTRLEN);
 }
 
 void EnodeB::set_sgw_num(){
+
 	if(socket_table.find(tun_data.sgw_addr) != dic.end())
 		num = socket_table[tun_data.sgw_addr];
 	else{	
@@ -63,14 +77,26 @@ void EnodeB::set_sgw_num(){
 }
 
 void EnodeB::connect_with_sgw(){
+
 	to_sgw[pos].bind_client();
 	to_sgw[pos].fill_server_details(tun_data.sgw_port, tun_data.sgw_addr);
 	to_sgw[pos].connect_with_server(pos);
+	handshake_with_sgw();
 	socket_table[tun_data.sgw_addr] = pos;
 	pos++;
 }
 
+void EnodeB::handshake_with_sgw(){
+	int type = 2;
+
+	to_sgw[pos].pkt.clear_data();
+	to_sgw[pos].pkt.fill_data(0, sizeof(int), type);
+	to_sgw[pos].pkt.make_data_packet();
+	to_sgw[pos].write_data();	
+}
+
 void EnodeB::send_data(){
+
 	to_sgw[num].pkt.clear_data();
 	to_sgw[num].pkt.add_data(0, pkt.data_len, pkt.data);
 	to_sgw[num].pkt.make_data_packet();
@@ -78,6 +104,7 @@ void EnodeB::send_data(){
 }
 
 void EnodeB::recv_data(){
+
 	to_sgw[num].pkt.read_data();
 	pkt.clear_data();	
 	pkt.add_data(0, to_sgw[num].pkt.data_len, to_sgw[num].data);
@@ -85,5 +112,6 @@ void EnodeB::recv_data(){
 }
 
 EnodeB::~EnodeB(){
+
 	free(ue_ip);
 }

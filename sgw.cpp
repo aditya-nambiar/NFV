@@ -1,28 +1,57 @@
 #include "sgw.h"
 
-void Tunnel::set_sgw_cteid(int ue_num){
+void TunData::TunData(){
+	
+	mme_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	pgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	enodeb_addr = allocate_str_mem(INET_ADDRSTRLEN);
+}
+
+void TunData::~TunData(){
+	
+	free(mme_addr);
+	free(pgw_addr);
+	free(enodeb_addr);
+}
+
+void SGW::SGW(){
+	
+	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
+}
+
+void SGW::~SGW(){
+
+	free(ip_addr);
+}
+
+void SGW::set_sgw_cteid(int ue_num){
+	
 	sgw_cteid =  ue_num;
 }
 
-void Tunnel::set_sgw_uteid(int ue_num){
+void SGW::set_sgw_uteid(int ue_num){
+	
 	sgw_uteid =  ue_num;
 }
 
-void* multithreading_func(void *arg){
+void* process_traffic(void *arg){
 	int type;
 	ClientDetails entity = *(ClientDetails*)arg;
 	Server sgw;
 	Tunnel tun;
+
 	tun.set_sgw_cteid(entity.num);
 	tun.set_sgw_uteid(entity.num);
 	sgw.fill_server_details(g_freeport, g_sgw1_addr);
 	sgw.bind_server();
 	sgw.client_sock_addr = entity.client_sock_addr;
+	sgw.client_num = entity.num;
 	sgw.connect_with_client();
 	sgw.read_data();
 	memcpy(&type, sgw.pkt.data, sizeof(int));
-	if(type == 1)
+	if(type == 1){
 		handle_cdata(sgw, tun, entity.num);
+	}
 	else if(type == 2)
 		handle_udata(sgw, tun, entity.num);
 }
@@ -34,6 +63,7 @@ void handle_cdata(Server &sgw, Tunnel &tun, int &ue_num){
 	char *ue_ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	char *reply = allocate_str_mem(BUFFER_SIZE);
 	Client to_pgw;
+	
 	to_pgw.bind_client();
 	to_pgw.fill_server_details(g_pgw_port, g_pgw_addr);
 	to_pgw.connect_with_server(ue_num);
@@ -80,6 +110,7 @@ void handle_cdata(Server &sgw, Tunnel &tun, int &ue_num){
 void handle_udata(Server &sgw, Tunnel &tun, int &ue_num){
 	Client to_pgw;
 	int type = 2;
+	
 	sgw.read_data();
 	to_pgw.bind_client();
 	to_pgw.fill_server_details(g_pgw_port, g_pgw_addr);
@@ -110,13 +141,15 @@ void handle_udata(Server &sgw, Tunnel &tun, int &ue_num){
 }
 
 void set_bearer_id(int ue_num, int bearer_id){
+	
 	g_bearer_table[ue_num] = bearer_id;
 }
 
 int main(){
 	Server sgw;
+	
 	sgw.fill_server_details(g_sgw1_port, g_sgw1_addr);
 	sgw.bind_server();
-	sgw.listen_accept(multithreading_func);
+	sgw.listen_accept(process_traffic);
 	return 0;
 }

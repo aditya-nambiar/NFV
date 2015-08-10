@@ -1,6 +1,7 @@
 #include "ran.h"
 
 void setup_tun(){
+
 	system("sudo openvpn --rmtun --dev tun1")	;
 	system("sudo openvpn --mktun --dev tun1");
 	system("sudo ip link set tun1 up");
@@ -11,6 +12,8 @@ void* monitor_traffic(void *arg){
 	EnodeB enodeb;
 
 	enodeb.pos = 0;
+	enodeb.set_uteid();
+	g_enodeb_uteid = enode.uteid;
 	enodeb.attach_to_tun();
 	while(g_tun_table.empty());
 	while(1){
@@ -23,7 +26,6 @@ void* monitor_traffic(void *arg){
 		enodeb.send_data();
 		enodeb.recv_data();
 		enodeb.write_tun();
-		// Dont know after this
 	}
 	return NULL;
 }
@@ -41,12 +43,16 @@ void* generate_traffic(void *arg){
 }
 
 void attach_with_mme(UserEquipment &ue, Client &user){
+	TunData tun_data;
+
 	ue.authenticate(user);
-	ue.setup_tunnel(user);
+	ue.setup_tunnel(user, g_enodeb_uteid, tun_data.sgw_uteid, tun_data.sgw_port, tun_data.sgw_addr);
+	g_tun_table[ue.ip_addr] = tun_data;
 }
 
 void send_traffic(UserEquipment &ue){
 
+	ue.send_traffic();
 }
 
 int main(){

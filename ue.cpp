@@ -1,51 +1,23 @@
 #include "ue.h"
 
-TrafficGenerator::TrafficGenerator(){
-	data = allocate_str_mem(BUFFER_SIZE);
-	src_ip = allocate_str_mem(INET_ADDRSTRLEN);
-	dst_ip = allocate_str_mem(INET_ADDRSTRLEN);
-}
-
-void TrafficGenerator::fill_traffic(){
-	strcpy(data, "This is my traffic");
-	strcpy(src_ip, "127.0.0.1");
-	strcpy(dst_ip, "127.0.0.1");
-	src_port = 60000;
-	dst_port = 60001;
-}
-
-TrafficGenerator::~TrafficGenerator(){
-	free(data);
-	free(src_ip);
-	free(dst_ip);
-}
-
 UserEquipment::UserEquipment(int ue_num){
-	this->ue_num = ue_num;
-	key = key_generation(ue_num);
+
+	num = ue_num;
+	key = generate_key(num);
 	imsi = key*1000;
 	msisdn = 9000000000 + key;
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
-	set_enodeb_uteid(ue_num);
 }
 
-unsigned long long UserEquipment::key_generation(int ue_num){
+unsigned long long UserEquipment::generate_key(int ue_num){
+
 	return ue_num;
-}
-
-void UserEquipment::set_enodeb_uteid(int ue_num){
-	enodeb_uteid = ue_num;
-}
-
-unsigned long long UserEquipment::get_autn_res(unsigned long long autn, unsigned long long rand){
-	unsigned long long res;
-	res = autn*key + rand*(key+1);
-	return res;
 }
 
 void UserEquipment::authenticate(Client &user){
 	unsigned long long autn, rand, res;
 	char *reply = allocate_str_mem(IP_MAXPACKET);
+
 	type = 1;
 	user.pkt.clear_data();
 	user.pkt.fill_data(0, sizeof(int), type);
@@ -70,7 +42,15 @@ void UserEquipment::authenticate(Client &user){
 		print_message("Authentication Successful for UserEquipment - ", key);
 }
 
-void UserEquipment::setup_tunnel(Client &user){
+unsigned long long UserEquipment::get_autn_res(unsigned long long autn, unsigned long long rand){
+	unsigned long long res;
+
+	res = autn*key + rand*(key+1);
+	return res;
+}
+
+void UserEquipment::setup_tunnel(Client &user, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, char *sgw_addr){
+
 	user.pkt.clear_data();
 	user.pkt.fill_data(0, sizeof(uint16_t), enodeb_uteid);
 	user.pkt.make_data_packet();
@@ -78,60 +58,52 @@ void UserEquipment::setup_tunnel(Client &user){
 	user.read_data();
 	memcpy(ip_addr, user.pkt.data, INET_ADDRSTRLEN);
 	memcpy(&sgw_uteid, user.pkt.data + INET_ADDRSTRLEN, sizeof(uint16_t));
-	user.pkt.fill_gtpu_hdr(sgw_uteid);
-	setup_ue_interface();
+	sgw_port = g_sgw1_port;
+	strcpy(sgw_addr , g_sgw1_addr);
 	cout<<"Data tunnel is formed from eNodeB to SGW(Both uplink & downlink direction) for UE - "<<key<<endl;
 }
 
-void setup_interface(){
+void UserEquipment::send_traffic(){	
+	TCPClient to_sink;
+
+	setup_interface();
+	set_sink();
+	generate_data();
+	to_sink.fill_client_details(ip_addr);
+	to_sink.bind_client();
+	to_sink.fill_server_details(sink_port, sink_addr);
+	to_sink.connect_with_server();
+	to_sink.pkt.clear_data();
+	to_sink.pkt.fill_data(0, pkt.data_len, pkt.data);
+	to_sink.pkt.make_data_packet();
+	to_sink.write_data();	
+	cout<<"Data sent successfully"<<num<<endl;
+}
+
+void UserEquipment::setup_interface(){
 	string arg;
+
 	arg = "sudo ifconfig eth0:";
-	arg.append(ue_num);
+	arg.append(num);
 	arg.append(" ");
 	arg.append(ip_addr);
 	system(arg);
-	cout<<"Interface successfullly created for UE - "<<ue_num<<endl;
+	cout<<"Interface successfullly created for UE - "<<num<<endl;
 }
 
-void UserEquipment::send_traffic(Client &to_sgw){	
-	monitor_traffic();
-	send_ue_traffic();
+void UserEquipment::set_sink(){
 
-
-
-	// TrafficGenerator tg;
-	// int type = 2;
-	// tg.fill_traffic();
-	// to_sgw.pkt.clear_data();
-	// to_sgw.pkt.fill_data(0, sizeof(int), type);
-	// to_sgw.pkt.make_data_packet();
-	// to_sgw.write_data();
-	// to_sgw.pkt.clear_data();
-	// to_sgw.pkt.fill_data(0, strlen(tg.data), tg.data);
-	// to_sgw.pkt.fill_ip_hdr(tg.src_ip, tg.dst_ip);
-	// to_sgw.pkt.fill_udp_hdr(tg.src_port, tg.dst_port);
-	// to_sgw.pkt.fill_gtpu_hdr(sgw_uteid);	
-	// to_sgw.pkt.eval_udp_checksum();
-	// to_sgw.pkt.encap();
-	// to_sgw.pkt.clear_data();
-	// to_sgw.pkt.fill_data(0, to_sgw.pkt.packet_len, to_sgw.pkt.packet);
-	// to_sgw.pkt.add_gtpu_hdr();
-	// to_sgw.pkt.make_data_packet();
-	// to_sgw.write_data();
-	// cout<<"Data sent successfullly"<<endl;
+	sink_port = g_sink_port;
+	strcpy(sink_addr, g_sink_addr);
 }
 
-void UserEquipment::send_ue_traffic(){
-	TCPClient to_sink;
-	to_sink.fill_client_details(ip_addr);
-	to_sink.bind_client();
-	to_sink.fill_server_details();
-	to_sink.connect_with_server();
-	to_sink.pkt.clear_data();
-	to_sink.pkt.fill_data(0, 19, "This is my traffic");
-	to_sink.write_data();
+void UserEquipment::generate_data(){
+
+	pkt.clear_data();
+	pkt.fill_data(0, 19, "This is my traffic");
 }
 
 UserEquipment::~UserEquipment(){
-	// Dummy destructor
+
+	free(ip_addr);
 }

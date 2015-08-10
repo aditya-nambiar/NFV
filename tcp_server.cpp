@@ -50,7 +50,7 @@ void TCPServer::read_data(){
 }
 
 void TCPServer::write_data(){
-	status = write(server_socket, pkt.data, pkt.data_len);
+	status = write(server_socket, pkt.packet, pkt.packet_len);
 	report_error(status);
 }
 
