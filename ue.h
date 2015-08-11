@@ -21,11 +21,6 @@ public:
 	// Sink data
 	int sink_port;
 	char *sink;
-
-	// SGW data
-	uint16_t sgw_uteid;
-	int sgw_port;
-	char *sgw_addr;
 	
 	UserEquipment(int);
 	unsigned long long generate_key(int);		

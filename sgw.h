@@ -31,6 +31,9 @@ struct SGW{
 	int port;
 	char *ip_addr;
 	Packet pkt;
+	uint16_t mme_cteid;           
+	int mme_port;
+	char *mme_addr;
 
 	SGW();
 	void set_cteid(int);

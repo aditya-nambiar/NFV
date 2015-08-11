@@ -17,9 +17,9 @@ EnodeB::EnodeB(){
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
-void EnodeB::set_uteid(){
+uint16_t EnodeB::get_uteid(int num){
 	
-	uteid = 1; //Dummy uteid
+	return ue_num; //Dummy uteid
 }
 
 void EnodeB::attach_to_tun(){	

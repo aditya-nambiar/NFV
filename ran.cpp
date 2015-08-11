@@ -44,9 +44,11 @@ void* generate_traffic(void *arg){
 
 void attach_with_mme(UserEquipment &ue, Client &user){
 	TunData tun_data;
+	EnodeB enodeb;
 
 	ue.authenticate(user);
-	ue.setup_tunnel(user, g_enodeb_uteid, tun_data.sgw_uteid, tun_data.sgw_port, tun_data.sgw_addr);
+	tun_data.enodeb_uteid = enodeb.get_uteid(ue.num)
+	ue.setup_tunnel(user, tun_data.enodeb_uteid, tun_data.sgw_uteid, tun_data.sgw_port, tun_data.sgw_addr);
 	g_tun_table[ue.ip_addr] = tun_data;
 }
 
@@ -57,6 +59,7 @@ void send_traffic(UserEquipment &ue){
 
 int main(){
 	int status;
+	int i;
 	vector<int> ue_num(UE_COUNT);
 	pthread_t mon_tid;
 	pthread_t tid[UE_COUNT];
@@ -64,7 +67,7 @@ int main(){
 	setup_tun();
 	status = pthread_create(&mon_id, NULL, monitor_traffic, NULL);
 	report_error(status);
-	for(int i=0;i<UE_COUNT;i++){
+	for(i=0;i<UE_COUNT;i++){
 		ue_num[i] = i+1;
 		status = pthread_create(&tid[i], NULL, generate_traffic, &ue_num[i]);
 		report_error(status);
