@@ -224,13 +224,6 @@ void Packet::clear_packet(){
 	packet_len = 0;
 }
 
-void Packet::make_pkt(Path addr){
-	fill_ip_hdr(addr.src_ip, addr.dst_ip);
-	fill_udp_hdr(addr.src_port, addr.dst_port);
-	eval_udp_checksum();	
-	encap();
-}
-
 Packet::~Packet(){
 	free(src_ip);
 	free(dst_ip);

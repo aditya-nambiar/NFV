@@ -14,6 +14,7 @@ EnodeB::EnodeB(){
 	
 	socket_table.clear();
 	to_sgw.resize(UDP_LINKS);
+	pos = 0;
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
@@ -66,6 +67,11 @@ void EnodeB::set_ue_ip(){
 	inet_ntop(AF_INET, &(iphdr->ip_src), ue_ip, INET_ADDRSTRLEN);
 }
 
+void EnodeB::set_tun_data(){
+
+	tun_data = g_tun_table[ue_ip];
+}
+
 void EnodeB::set_sgw_num(){
 
 	if(socket_table.find(tun_data.sgw_addr) != dic.end())
@@ -93,6 +99,12 @@ void EnodeB::handshake_with_sgw(){
 	to_sgw[pos].pkt.fill_data(0, sizeof(int), type);
 	to_sgw[pos].pkt.make_data_packet();
 	to_sgw[pos].write_data();	
+}
+
+void EnodeB::make_data(){
+
+	pkt.fill_gtpu_hdr(tun_data.sgw_uteid);
+	pkt.add_gtpu_hdr();
 }
 
 void EnodeB::send_data(){

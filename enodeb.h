@@ -8,7 +8,6 @@
 #define UDP_LINKS 10
 
 struct TunData{
-	uint16_t enodeb_uteid;
 	uint16_t sgw_uteid;
 	int sgw_port;
 	char *sgw_addr;
@@ -35,12 +34,16 @@ struct EnodeB{
 	void read_tun();
 	void write_tun();
 	void set_ue_ip();
-	int set_sgw_num();
+	void set_tun_data();
+	void set_sgw_num();
 	void connect_with_sgw();
 	void handshake_with_sgw();
+	void make_data();
 	void send_data();
 	void recv_data();
 	~EnodeB();
 };
+
+unordered_map<char*, TunData> g_tun_table;
 
 #endif //ENODEB_H

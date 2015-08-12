@@ -7,8 +7,6 @@
 #include "ue.h"
 #include "enodeb.h"
 
-unordered_map<char*, TunData> g_tun_table;
-
 void setup_tun();
 void* monitor_traffic(void*);
 void* generate_traffic(void*);

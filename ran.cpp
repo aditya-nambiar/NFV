@@ -11,23 +11,18 @@ void setup_tun(){
 void* monitor_traffic(void *arg){
 	EnodeB enodeb;
 
-	enodeb.pos = 0;
-	enodeb.set_uteid();
-	g_enodeb_uteid = enode.uteid;
 	enodeb.attach_to_tun();
 	while(g_tun_table.empty());
 	while(1){
 		enodeb.read_tun();
 		enodeb.set_ue_ip();
-		enodeb.tun_data = g_tun_table[enodeb.ue_ip];
-		enodeb.pkt.fill_gtpu_hdr(tun_data.sgw_uteid);
-		enodeb.pkt.add_gtpu_hdr();
+		enodeb.set_tun_table();
 		enodeb.set_sgw_num();
+		enodeb.make_data();
 		enodeb.send_data();
 		enodeb.recv_data();
 		enodeb.write_tun();
 	}
-	return NULL;
 }
 
 void* generate_traffic(void *arg){
