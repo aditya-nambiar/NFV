@@ -12,11 +12,11 @@ Packet::Packet(){
 }
 
 void Packet::fill_gtpc_hdr(uint16_t teid){
-	gtpc_hdr.teid = teid;
+	gtpc_hdr.cteid = teid;
 }
 
 void Packet::fill_gtpu_hdr(uint16_t teid){
-	gtpu_hdr.teid = teid;
+	gtpu_hdr.uteid = teid;
 }
 
 void Packet::fill_ip_hdr(const char *src_ip, const char *dst_ip){

@@ -17,11 +17,11 @@
 #define UDP_LEN 8
 
 struct GTPc{
-	uint16_t teid;
+	uint16_t cteid;
 };
 
 struct GTPu{
-	uint16_t teid;
+	uint16_t uteid;
 };
 
 struct Packet{

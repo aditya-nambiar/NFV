@@ -1,5 +1,5 @@
-#ifndef SGW_H
-#define SGW_H
+#ifndef SGWU_H
+#define SGWU_H
 
 #include "utils.h"
 #include "packet.h"
@@ -8,28 +8,27 @@
 
 #define UDP_LINKS 10
 
-struct TunData{
+struct TunUdata{
 	uint16_t enodeb_uteid;
 	uint16_t pgw_uteid;
 	int pgw_port;
 	char *pgw_addr;
 
-	TunData();
-	~TunData();
+	TunUdata();
+	~TunUdata();
 };
 
-struct SGW{
+struct SGWu{
 	unordered_map<uint16_t, int> socket_table;
 	vector<Client> to_pgw;
 	Packet pkt;
 	uint16_t uteid;
 	int pos;
 	int num;
-	TunData tun_data;
+	TunUdata tun_udata;
 
-	SGW();
-	void get_cteid(int);
-	void get_uteid(int);
+	SGWu();
+	uint16_t get_uteid(int);
 	void set_uteid(uint16_t);
 	void set_pgw_num();
 	void connect_with_pgw();
@@ -40,9 +39,9 @@ struct SGW{
 	void recv_enodeb(Server);
 	void send_pgw();
 	void recv_pgw();
-	~SGW();
+	~SGWu();
 };
 
-unordered_map<uint16_t, TunData> g_tun_table;
+unordered_map<uint16_t, TunUdata> g_tun_utable;
 
-#endif //SGW_H
+#endif //SGWU_H

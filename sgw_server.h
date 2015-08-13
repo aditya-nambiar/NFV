@@ -5,9 +5,8 @@
 #include "packet.h"
 #include "server.h"
 #include "client.h"
-#include "sgw.h"
-
-unordered_map<int, int> g_bearer_table;
+#include "sgwc.h"
+#include "sgwu.h"
 
 void* process_traffic(void*);
 void handle_cdata(Server&, Tunnel&, int&);
