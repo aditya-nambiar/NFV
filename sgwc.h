@@ -42,7 +42,9 @@ struct SGWc{
 	void set_ue_ip();
 	void create_session_response_to_mme(Server&);
 	void modify_session_request_from_mme(uint16_t&);
-	void modify_session_response_to_mme(Server, uint16_t);
+	void modify_session_response_to_mme(Server&, uint16_t&);
+	void fill_pgw_addr(int&, char*);
+	void fill_tunc_table();
 	~SGWc();
 };
 

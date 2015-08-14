@@ -81,7 +81,7 @@ void SGWc::create_session_request_to_pgw(uint16_t &uteid){
 	to_pgw.write_data();
 }
 
-void create_session_response_from_pgw(uint16_t &pgw_uteid){
+void SGWc::create_session_response_from_pgw(uint16_t &pgw_uteid){
 
 	to_pgw.read_data();
 	to_pgw.pkt.rem_gtpc_hdr();
@@ -115,7 +115,7 @@ void SGWc::create_session_response_to_mme(Server &sgw_server){
 	sgw_server.write_data();
 }
 
-void modify_session_request_from_mme(uint16_t &enodeb_uteid){
+void SGWc::modify_session_request_from_mme(uint16_t &enodeb_uteid){
 
 	sgw_server.read_data();
 	sgw_server.pkt.rem_gtpc_hdr();
@@ -123,7 +123,7 @@ void modify_session_request_from_mme(uint16_t &enodeb_uteid){
 	memcpy(&enodeb_uteid, pkt.data, sizeof(uint16_t));
 }
 
-void modify_session_response_to_mme(Server &sgw_server, uint16_t &sgw_uteid){
+void SGWc::modify_session_response_to_mme(Server &sgw_server, uint16_t &sgw_uteid){
 
 	strcpy(reply, "OK");
 	sgw_server.pkt.clear_data();
@@ -134,6 +134,17 @@ void modify_session_response_to_mme(Server &sgw_server, uint16_t &sgw_uteid){
 	sgw_server.pkt.add_gtpc_hdr();
 	sgw_server.pkt.make_data_packet();
 	sgw_server.write_data();
+}
+
+void SGWc::fill_pgw_addr(int &pgw_port, char *pgw_addr){
+
+	pgw_port = tun_cdata.pgw_port;
+	strcpy(pgw_addr, tun_cdata.pgw_addr);
+}
+
+void SGWc::fill_tunc_table(){
+
+	g_tun_ctable[cteid] = tun_cdata;
 }
 
 SGWc::~SGWc(){

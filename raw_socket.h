@@ -13,19 +13,19 @@ public:
 
 	int status;
 	int raw_socket;
-	int src_port;
-	char *src_addr;
+	// int src_port;
+	// char *src_addr;
 	Packet pkt;
 
-	int dst_port;
-	char *dst_addr;
-	struct sockaddr_in dst_sock_addr;
+	// int dst_port;
+	// char *dst_addr;
+	// struct sockaddr_in dst_sock_addr;
 
 	RawSocket();
 	void bind_client();	
-	void fill_traffic_details(Packet&);
-	void fill_src_details();
-	void fill_dst_details();
+	// void fill_traffic_details(Packet&);
+	// void fill_src_details();
+	// void fill_dst_details();
 	void write_data();	
 	~RawSocket();		
 };

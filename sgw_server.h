@@ -9,7 +9,7 @@
 #include "sgwu.h"
 
 void* process_traffic(void*);
-void handle_cdata(Server&, Tunnel&, int&);
+void handle_cdata(Server&);
 void handle_udata(Server&);
 
 #endif //SGW_SERVER_H

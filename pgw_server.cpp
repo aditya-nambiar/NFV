@@ -55,7 +55,18 @@ void handle_cdata(Server &pgw_server, Tunnel &tun, int &ue_num){
 	cout<<"Tunnel created from PGW to SGW for UE - "<<ue_num<<endl;
 }
 
-void handle_udata(Server &pgw_server, Tunnel &tun, int &ue_num){
+void handle_udata(Server &pgw_server){
+	PGWu pgwu;
+
+	
+
+
+
+
+
+
+
+
 	RawSocket raw_client;
 	pgw.read_data();
 	pgw.pkt.rem_gtpu_hdr();
@@ -70,7 +81,7 @@ void handle_udata(Server &pgw_server, Tunnel &tun, int &ue_num){
 	cout<<"Port is "<<port<<endl;
 	cout<<"Address is "<<addr<<endl;
 
-	RawSocket::set_interface("lo");
+	// RawSocket::set_interface("lo");
 	raw_client.bind_client();
 	raw_client.fill_traffic_details(pgw.pkt);
 	raw_client.write_data();

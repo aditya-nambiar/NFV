@@ -18,7 +18,7 @@ void SGWu::SGWu(){
 	type = 2;
 }
 
-uint16_t SGWu::get_uteid(int ue_num){
+uint16_t SGWu::get_uteid(int &ue_num){
 	
 	return ue_num;
 }
@@ -107,6 +107,11 @@ void SGWu::recv_pgw(){
 	to_pgw[num].read_data();
 	copy_data(to_pgw[num].pkt);
 	pkt.rem_gtpu_hdr();
+}
+
+void fill_tunu_table(uint16_t &uteid, TunUdata &tun_udata){
+
+	g_tun_utable[uteid] = tun_udata;
 }
 
 void SGWu::~SGWu(){
