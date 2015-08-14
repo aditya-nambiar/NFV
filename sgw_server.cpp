@@ -23,18 +23,18 @@ void* process_traffic(void *arg){
 void handle_cdata(Server &sgw_server){
 	SGWc sgwc;
 	SGWu sgwu;
-	TunCdata tun_cdata;
 	TunUdata tun_udata;
-	uint16_t sgw_cteid;
-	uint16_t sgw_uteid;
-	int type = 1;
+	uint16_t uteid;
 
-	sgw_cteid = sgwc.get_cteid(sgw_server);
-	sgw_uteid = sgwu.get_uteid();
-
+	uteid = sgwu.get_uteid();
 	sgwc.copy_data(sgw_server.pkt);
+	
+
+	
 	sgwc.set_ue_num();
 	sgwc.set_bearer_id();
+	sgwc.set_cteid();
+	sgwc.set_mme_cteid();
 	sgwc.connect_with_sgw();
 
 
@@ -45,19 +45,22 @@ void handle_cdata(Server &sgw_server){
 	// memcpy(&bearer_id, sgw_server.pkt.data + 2*sizeof(int), sizeof(int));
 	memcpy(&tun_data.mme_cteid, sgw_server.pkt.data + 3*sizeof(int), sizeof(uint16_t));
 	// set_bearer_id(ue_num, bearer_id);
-	to_pgw.pkt.clear_data();
-	to_pgw.pkt.fill_data(0, sizeof(int), type);
-	to_pgw.pkt.fill_data(sizeof(int), sizeof(int), ue_num);
-	to_pgw.pkt.fill_data(2*sizeof(int), sizeof(int), bearer_id);
-	to_pgw.pkt.fill_data(3*sizeof(int), sizeof(uint16_t), sgw_cteid);
-	to_pgw.pkt.fill_data(3*sizeof(int) + sizeof(uint16_t), sizeof(uint16_t), sgw_uteid);
-	to_pgw.pkt.make_data_packet();
-	to_pgw.write_data();
-	to_pgw.read_data();
-	to_pgw.pkt.rem_gtpc_hdr();
-	memcpy(&tun_data.pgw_cteid, to_pgw.pkt.data, sizeof(uint16_t));
-	memcpy(&tun_data.pgw_uteid, to_pgw.pkt.data + sizeof(uint16_t), sizeof(uint16_t));
-	memcpy(ue_ip_addr, to_pgw.pkt.data + 2*sizeof(uint16_t), INET_ADDRSTRLEN);
+	// to_pgw.pkt.clear_data();
+	// to_pgw.pkt.fill_data(0, sizeof(int), type);
+
+
+
+	// to_pgw.pkt.fill_data(sizeof(int), sizeof(int), ue_num);
+	// to_pgw.pkt.fill_data(2*sizeof(int), sizeof(int), bearer_id);
+	// to_pgw.pkt.fill_data(3*sizeof(int), sizeof(uint16_t), sgw_cteid);
+	// to_pgw.pkt.fill_data(3*sizeof(int) + sizeof(uint16_t), sizeof(uint16_t), sgw_uteid);
+	// to_pgw.pkt.make_data_packet();
+	// to_pgw.write_data();
+	// to_pgw.read_data();
+	// to_pgw.pkt.rem_gtpc_hdr();
+	// memcpy(&tun_data.pgw_cteid, to_pgw.pkt.data, sizeof(uint16_t));
+	// memcpy(&tun_data.pgw_uteid, to_pgw.pkt.data + sizeof(uint16_t), sizeof(uint16_t));
+	// memcpy(ue_ip_addr, to_pgw.pkt.data + 2*sizeof(uint16_t), INET_ADDRSTRLEN);
 	strcpy(reply, "OK");
 	sgw_server.pkt.clear_data();
 	sgw_server.pkt.fill_data(0, sizeof(uint16_t), sgw_cteid);
@@ -104,11 +107,6 @@ void handle_udata(Server &sgw_server){
 		sgwu.make_data_enodeb();
 		sgwu.send_enodeb(sgw_server);
 	}
-}
-
-void set_bearer_id(int ue_num, int bearer_id){
-	
-	g_bearer_table[ue_num] = bearer_id;
 }
 
 int main(){

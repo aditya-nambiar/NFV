@@ -20,17 +20,24 @@ struct SGWc{
 	Client to_pgw;
 	Packet pkt;
 	int ue_num;
+	uint16_t cteid;
 	int bearer_id;
+	int type;
 	char *ue_ip;
 	char *reply;
+	TunCdata tun_cdata;
 
 	SGWc();
-	uint16_t get_cteid(int);
 	void set_ue_num();
 	void set_bearer_id();
 	void add_bearer_id();
+	uint16_t set_cteid();
 	void copy_data(Packet&);
 	void connect_with_pgw();
+	void handshake_with_pgw();
+	void create_session_request_from_mme();
+	void create_session_request_to_pgw();
+	void 
 	~SGWc();
 
 

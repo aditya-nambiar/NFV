@@ -15,6 +15,7 @@ void SGWu::SGWu(){
 	socket_table.clear();
 	to_pgw.resize(UDP_LINKS);
 	pos = 0;
+	type = 2;
 }
 
 uint16_t SGWu::get_uteid(int ue_num){
@@ -53,7 +54,6 @@ void SGWu::connect_with_pgw(){
 }
 
 void SGWu::handshake_with_sgw(){
-	int type = 2;
 
 	to_pgw[pos].pkt.clear_data();
 	to_pgw[pos].pkt.fill_data(0, sizeof(int), type);

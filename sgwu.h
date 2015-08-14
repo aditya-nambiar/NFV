@@ -25,16 +25,19 @@ struct SGWu{
 	uint16_t uteid;
 	int pos;
 	int num;
+	int type;
 	TunUdata tun_udata;
 
 	SGWu();
 	uint16_t get_uteid(int);
 	void set_uteid(uint16_t);
+	void set_tun_udata();
 	void set_pgw_num();
 	void connect_with_pgw();
 	void handshake_with_pgw();
 	void copy_data(Packet&);
-	void make_data();
+	void make_data_enodeb();
+	void make_data_pgw();
 	void send_enodeb(Server);
 	void recv_enodeb(Server);
 	void send_pgw();
