@@ -28,45 +28,21 @@ struct SGWc{
 	TunCdata tun_cdata;
 
 	SGWc();
+	void create_session_request_from_mme(Server&);
+	void copy_data(Packet&);
 	void set_ue_num();
 	void set_bearer_id();
 	void add_bearer_id();
-	uint16_t set_cteid();
-	void copy_data(Packet&);
+	void set_cteid();
 	void connect_with_pgw();
 	void handshake_with_pgw();
-	void create_session_request_from_mme();
-	void create_session_request_to_pgw();
-	void 
-	~SGWc();
-
-
-
-
-
-
-
-	unordered_map<uint16_t, int> socket_table;
-	vector<Client> to_pgw;
-	Packet pkt;
-	uint16_t uteid;
-	int pos;
-	int num;
-	TunCdata tun_udata;
-
-	SGWc();
-	uint16_t get_cteid(int);
-	uint16_t get_uteid(int);
-	void set_uteid(uint16_t);
-	void set_pgw_num();
-	void connect_with_pgw();
-	void handshake_with_pgw();
-	void copy_data(Packet&);
-	void make_data();
-	void send_enodeb(Server);
-	void recv_enodeb(Server);
-	void send_pgw();
-	void recv_pgw();
+	void create_session_request_to_pgw(uint16_t&);
+	void create_session_response_from_pgw(uint16_t&);
+	void set_tun_cdata();
+	void set_ue_ip();
+	void create_session_response_to_mme(Server&);
+	void modify_session_request_from_mme(uint16_t&);
+	void modify_session_response_to_mme(Server, uint16_t);
 	~SGWc();
 };
 
