@@ -35,7 +35,7 @@ void handle_cdata(Server &sgw_server){
 	sgwc.modify_session_response_to_mme(sgw_server, uteid);
 	sgwc.fill_pgw_addr(tun_udata.pgw_port, tun_udata.pgw_addr);
 	sgwc.fill_tun_ctable();
-	sgwu.fill_tun_utable(uteid, sgwu.teid);
+	sgwu.fill_tun_utable(uteid, tun_udata);
 	cout<<"Tunnel is formed from eNodeB to PGW via SGW for UE - "<<sgwc.ue_num<<endl;
 }
 
