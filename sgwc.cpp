@@ -51,7 +51,12 @@ void SGWc::add_bearer_id(){
 
 void SGWc::set_cteid(){
 
-	cteid = ue_num;
+	cteid = generate_cteid(ue_num);
+}
+
+uint16_t SGWc::generate_cteid(int &ue_num){
+
+	return ue_num;
 }
 
 void SGWc::connect_with_pgw(){
@@ -142,7 +147,7 @@ void SGWc::fill_pgw_addr(int &pgw_port, char *pgw_addr){
 	strcpy(pgw_addr, tun_cdata.pgw_addr);
 }
 
-void SGWc::fill_tunc_table(){
+void SGWc::fill_tun_ctable(){
 
 	g_tun_ctable[cteid] = tun_cdata;
 }

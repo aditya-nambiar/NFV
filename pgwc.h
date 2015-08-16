@@ -6,49 +6,43 @@
 #include "server.h"
 #include "client.h"
 
-// struct TunCdata{
-// 	uint16_t mme_cteid;
-// 	uint16_t pgw_cteid;
-// 	int pgw_port;
-// 	char *pgw_addr;
+#define MAX_IPS 200
 
-// 	TunCdata();
-// 	~TunCdata();
-// };
+struct TunCdata{
+	uint16_t sgw_cteid;
 
-// struct SGWc{
-// 	Client to_pgw;
-// 	Packet pkt;
-// 	int ue_num;
-// 	uint16_t cteid;
-// 	int bearer_id;
-// 	int type;
-// 	char *ue_ip;
-// 	char *reply;
-// 	TunCdata tun_cdata;
+	TunCdata();
+	~TunCdata();
+};
 
-// 	SGWc();
-// 	void create_session_request_from_mme(Server&);
-// 	void copy_data(Packet&);
-// 	void set_ue_num();
-// 	void set_bearer_id();
-// 	void add_bearer_id();
-// 	void set_cteid();
-// 	void connect_with_pgw();
-// 	void handshake_with_pgw();
-// 	void create_session_request_to_pgw(uint16_t&);
-// 	void create_session_response_from_pgw(uint16_t&);
-// 	void set_tun_cdata();
-// 	void set_ue_ip();
-// 	void create_session_response_to_mme(Server&);
-// 	void modify_session_request_from_mme(uint16_t&);
-// 	void modify_session_response_to_mme(Server, uint16_t);
-// 	void fill_pgw_addr(int&, char*);
-// 	void fill_tunc_table();
-// 	~SGWc();
-// };
+struct PGWc{
+	Packet pkt;
+	int ue_num;
+	int bearer_id;
+	uint16_t cteid;
+	TunCdata tun_cdata;
 
-// unordered_map<int, int> g_bearer_table;
-// unordered_map<uint16_t, TunCdata> g_tun_ctable;
+	PGWc();
+	void create_session_request_from_sgw(Server&);
+	void copy_to_pkt(Packet&);
+	void set_ue_num();
+	void set_bearer_id();
+	void add_bearer_id();	
+	void set_tun_cdata();
+	void set_cteid();
+	uint16_t generate_cteid(int&);	
+	void create_session_response_to_sgw(Server&);
+	void fill_tun_ctable();	
+	~PGWc();
+};
+
+vector<char*> g_ip_table;
+unordered_map<int, int> g_bearer_table;
+unordered_map<uint16_t, TunCdata> g_tun_ctable;
+
+void set_ip_table();
+void set_ip_table_size();
+void fill_ip_table();
+void free_ip_table();
 
 #endif //PGWC_H

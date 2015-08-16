@@ -34,6 +34,7 @@ struct SGWc{
 	void set_bearer_id();
 	void add_bearer_id();
 	void set_cteid();
+	uint16_t generate_cteid(int&);
 	void connect_with_pgw();
 	void handshake_with_pgw();
 	void create_session_request_to_pgw(uint16_t&);
@@ -44,7 +45,7 @@ struct SGWc{
 	void modify_session_request_from_mme(uint16_t&);
 	void modify_session_response_to_mme(Server&, uint16_t&);
 	void fill_pgw_addr(int&, char*);
-	void fill_tunc_table();
+	void fill_tun_ctable();
 	~SGWc();
 };
 

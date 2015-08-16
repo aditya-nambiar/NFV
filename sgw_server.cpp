@@ -27,15 +27,15 @@ void handle_cdata(Server &sgw_server){
 	uint16_t uteid;
 
 	sgwc.create_session_request_from_mme(sgw_server);
-	uteid = sgwu.get_uteid(sgwc.ue_num);
+	uteid = sgwu.generate_uteid(sgwc.ue_num);
 	sgwc.create_session_request_to_pgw(uteid);
 	sgwc.create_session_response_from_pgw(tun_udata.pgw_uteid);
 	sgwc.create_session_response_to_mme(sgw_server);
 	sgwc.modify_session_request_from_mme(tun_udata.enodeb_uteid);
 	sgwc.modify_session_response_to_mme(sgw_server, uteid);
 	sgwc.fill_pgw_addr(tun_udata.pgw_port, tun_udata.pgw_addr);
-	sgwc.fill_tunc_table();
-	sgwu.fill_tunu_table(uteid, sgwu.teid);
+	sgwc.fill_tun_ctable();
+	sgwu.fill_tun_utable(uteid, sgwu.teid);
 	cout<<"Tunnel is formed from eNodeB to PGW via SGW for UE - "<<sgwc.ue_num<<endl;
 }
 

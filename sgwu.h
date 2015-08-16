@@ -29,7 +29,7 @@ struct SGWu{
 	TunUdata tun_udata;
 
 	SGWu();
-	uint16_t get_uteid(int&);
+	uint16_t generate_uteid(int&);
 	void set_uteid();
 	void set_tun_udata();
 	void set_pgw_num();
@@ -38,11 +38,11 @@ struct SGWu{
 	void copy_data(Packet&);
 	void make_data_enodeb();
 	void make_data_pgw();
-	void send_enodeb(Server&);
 	void recv_enodeb(Server&);
-	void send_pgw();
+	void send_enodeb(Server&);
 	void recv_pgw();
-	void fill_tunu_table(uint16_t&, TunUdata&);
+	void send_pgw();
+	void fill_tun_utable(uint16_t&, TunUdata&);
 	~SGWu();
 };
 

@@ -14,11 +14,14 @@ struct TunUdata{
 };
 
 struct PGWu{
-	Packet pkt;
-	RawSocket raw_socket;
+	RawSocket raw_client;
 
 	PGWu();
+	uint16_t generate_uteid(int&);
 	void recv_sgw(Server&);
+	void copy_to_rawpkt(Packet&);
+	void send_raw_socket();
+	void fill_tun_utable(char*, TunUdata&)
 	~PGWu();
 };
 
