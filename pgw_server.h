@@ -8,6 +8,8 @@
 #include "pgwc.h"
 #include "pgwu.h"
 
+void setup_tun();
+void* monitor_traffic(void*);
 void* process_traffic(void*);
 void handle_cdata(Server&);
 void handle_udata(Server&);

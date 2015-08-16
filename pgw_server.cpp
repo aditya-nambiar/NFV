@@ -1,5 +1,19 @@
 #include "pgw_server.h"
 
+void setup_tun(){
+
+	system("sudo openvpn --rmtun --dev tun1")	;
+	system("sudo openvpn --mktun --dev tun1");
+	system("sudo ip link set tun1 up");
+	system("sudo ip addr add 192.168.100.1/24 dev tun1");
+}
+
+void* monitor_traffic(void *arg){
+
+	
+
+}
+
 void* process_traffic(void *arg){
 	int type;
 	ClientDetails entity = *(ClientDetails*)arg;
@@ -12,10 +26,12 @@ void* process_traffic(void *arg){
 	pgw_server.connect_with_client();
 	pgw_server.read_data();
 	memcpy(&type, pgw_server.pkt.data, sizeof(int));
-	if(type == 1)
+	if(type == 1){
 		handle_cdata(pgw_server);
-	if(type == 2)
+	}
+	if(type == 2){
 		handle_udata(pgw_server);
+	}
 }
 
 void handle_cdata(Server &pgw_server){
@@ -41,8 +57,13 @@ void handle_udata(Server &pgw_server){
 
 int main(){
 	Server pgw_server;
-	
+	pthread_t mon_tid;
+	int status;
+
+	setup_tun();
 	setup_ip_table();
+	status = pthread_create(&mon_id, NULL, monitor_traffic, NULL);
+	report_error(status);	
 	pgw_server.fill_server_details(g_pgw_port, g_pgw_addr);
 	pgw_server.bind_server();
 	pgw_server.listen_accept(process_traffic);
