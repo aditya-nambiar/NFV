@@ -33,7 +33,6 @@ using namespace std;
 #define MAX_CONNECTIONS 1000
 #define UE_COUNT 1
 #define BUFFER_SIZE 1024
-#define UE_IP_ADDR "192.168.100.2"
 
 extern int g_freeport;
 extern int g_mme_port;
@@ -42,14 +41,18 @@ extern int g_sgw1_port;
 extern int g_sgw2_port;
 extern int g_sgw3_port;
 extern int g_pgw_port;
-extern int g_sink_port;
+extern int g_public_sink_port;
+extern int g_private_sink_port;
+extern int g_pgw_server_for_sink_port;
 extern const char *g_mme_addr;
 extern const char *g_hss_addr;
 extern const char *g_sgw1_addr;
 extern const char *g_sgw2_addr;
 extern const char *g_sgw3_addr;
 extern const char *g_pgw_addr;
-extern const char *g_sink_addr;
+extern const char *g_public_sink_addr;
+extern const char *g_private_sink_addr;
+extern const char *g_pgw_server_for_sink_addr;
 extern socklen_t g_addr_len;
 extern timeval g_timeout;
 extern long long g_stack_buf;

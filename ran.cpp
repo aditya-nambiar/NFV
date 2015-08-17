@@ -2,7 +2,7 @@
 
 void setup_tun(){
 
-	system("sudo openvpn --rmtun --dev tun1")	;
+	system("sudo openvpn --rmtun --dev tun1");
 	system("sudo openvpn --mktun --dev tun1");
 	system("sudo ip link set tun1 up");
 	system("sudo ip addr add 192.168.100.1/24 dev tun1");
@@ -42,7 +42,7 @@ void attach_with_mme(UserEquipment &ue, Client &user){
 	EnodeB enodeb;
 
 	ue.authenticate(user);
-	tun_data.enodeb_uteid = enodeb.get_uteid(ue.num)
+	tun_data.enodeb_uteid = enodeb.generate_uteid(ue.num)
 	ue.setup_tunnel(user, tun_data.enodeb_uteid, tun_data.sgw_uteid, tun_data.sgw_port, tun_data.sgw_addr);
 	g_tun_table[ue.ip_addr] = tun_data;
 }

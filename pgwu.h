@@ -15,12 +15,22 @@ struct TunUdata{
 
 struct PGWu{
 	RawSocket raw_client;
+	Server for_sink;
+	char *ue_ip;
+	TunUdata tun_udata();
 
 	PGWu();
 	uint16_t generate_uteid(int&);
+	void configure_raw_client();
+	void configure_server_for_sink();
+	void set_ue_ip();
+	void set_tun_udata();
 	void recv_sgw(Server&);
 	void copy_to_rawpkt(Packet&);
+	void send_sgw(Server&);
+	void copy_sinkpkt_to_pgwpkt(Packet&);
 	void send_raw_socket();
+	void recv_sink();
 	void fill_tun_utable(char*, TunUdata&)
 	~PGWu();
 };

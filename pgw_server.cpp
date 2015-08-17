@@ -2,16 +2,21 @@
 
 void setup_tun(){
 
-	system("sudo openvpn --rmtun --dev tun1")	;
+	system("sudo openvpn --rmtun --dev tun1");
 	system("sudo openvpn --mktun --dev tun1");
 	system("sudo ip link set tun1 up");
 	system("sudo ip addr add 192.168.100.1/24 dev tun1");
 }
 
 void* monitor_traffic(void *arg){
+	PWGcMonitor pgwc_monitor;
 
-	
-
+	pgwc_monitor.attach_to_tun();
+	pgwc_monitor.attach_to_sink();
+	while(1){
+		pgwc_monitor.read_tun();
+		pgwc_monitor.write_sink();		
+	}
 }
 
 void* process_traffic(void *arg){
@@ -51,8 +56,14 @@ void handle_cdata(Server &pgw_server){
 void handle_udata(Server &pgw_server){
 	PGWu pgwu;
 
+	pgwu.configure_raw_client();
+	pgwu.configure_server_for_sink();
 	pgwu.recv_sgw(pgw_server);
 	pgwu.send_raw_socket();	
+	pgwu.recv_sink();
+	pgwu.set_ue_ip();
+	pgwu.set_tun_udata();
+	pgwu.send_sgw(pgw_server);
 }
 
 int main(){

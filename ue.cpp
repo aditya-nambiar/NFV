@@ -93,8 +93,8 @@ void UserEquipment::setup_interface(){
 
 void UserEquipment::set_sink(){
 
-	sink_port = g_sink_port;
-	strcpy(sink_addr, g_sink_addr);
+	sink_port = g_private_sink_port;
+	strcpy(sink_addr, g_private_sink_addr);
 }
 
 void UserEquipment::generate_data(){

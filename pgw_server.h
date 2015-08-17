@@ -7,6 +7,7 @@
 #include "raw_socket.h"
 #include "pgwc.h"
 #include "pgwu.h"
+#include "pgwc_monitor.h"
 
 void setup_tun();
 void* monitor_traffic(void*);

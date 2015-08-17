@@ -20,7 +20,6 @@ struct EnodeB{
 	unordered_map<char*, int> socket_table;
 	vector<Client> to_sgw;
 	Packet pkt;
-	int status;
 	int tun_fd;
 	int pos;
 	int num;
@@ -29,7 +28,7 @@ struct EnodeB{
 	TunData tun_data;
 
 	EnodeB();
-	uint16_t get_uteid(int);
+	uint16_t generate_uteid(int);
 	void attach_to_tun();
 	void read_tun();
 	void write_tun();

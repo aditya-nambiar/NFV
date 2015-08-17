@@ -18,7 +18,7 @@ EnodeB::EnodeB(){
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
-uint16_t EnodeB::get_uteid(int num){
+uint16_t EnodeB::generate_uteid(int num){
 	
 	return ue_num; //Dummy uteid
 }
@@ -28,6 +28,7 @@ void EnodeB::attach_to_tun(){
 	const char *dev = "tun1";
 	const char *clonedev = "/dev/net/tun";
 	int flags;
+	int status;
 
 	flags = (IFF_TUN | IFF_NO_PI);
 	tun_fd = open(clonedev , O_RDWR);
@@ -37,7 +38,7 @@ void EnodeB::attach_to_tun(){
 	if(*dev) {
 		strncpy(ifr.ifr_name, dev, IFNAMSIZ);
 	}
-	status = ioctl(tun_fd, TUNSETIFF, (void *)&ifr);
+	status = ioctl(tun_fd, TUNSETIFF, (void*)&ifr);
 	if(status<0){
 		cout<<"ioctl(TUNSETIFF)"<<" "<<errno<<endl;
 		close(tun_fd);
