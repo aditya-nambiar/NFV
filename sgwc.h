@@ -35,9 +35,9 @@ struct SGWc{
 	void add_bearer_id();
 	void set_cteid();
 	uint16_t generate_cteid(int&);
+	void create_session_request_to_pgw(uint16_t&);
 	void connect_with_pgw();
 	void handshake_with_pgw();
-	void create_session_request_to_pgw(uint16_t&);
 	void create_session_response_from_pgw(uint16_t&);
 	void set_tun_cdata();
 	void set_ue_ip();

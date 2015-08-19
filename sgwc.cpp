@@ -26,7 +26,6 @@ void SGWc::create_session_request_from_mme(Server &sgw_server){
 	set_ue_num();
 	set_bearer_id();
 	set_cteid();
-	connect_with_pgw();
 }
 
 void SGWc::copy_data(Packet &arg){
@@ -61,6 +60,18 @@ uint16_t SGWc::generate_cteid(int &ue_num){
 	return ue_num;
 }
 
+void SGWc::create_session_request_to_pgw(uint16_t &uteid){
+
+	connect_with_pgw();
+	to_pgw.pkt.clear_data();
+	to_pgw.pkt.fill_data(0, sizeof(int), ue_num);
+	to_pgw.pkt.fill_data(sizeof(int), sizeof(int), bearer_id);
+	to_pgw.pkt.fill_data(2*sizeof(int), sizeof(uint16_t), cteid);
+	to_pgw.pkt.fill_data(2*sizeof(int) + sizeof(uint16_t), sizeof(uint16_t), uteid);
+	to_pgw.pkt.make_data_packet();
+	to_pgw.write_data();
+}
+
 void SGWc::connect_with_pgw(){
 
 	to_pgw.bind_client();
@@ -73,17 +84,6 @@ void SGWc::handshake_with_pgw(){
 
 	to_pgw.pkt.clear_data();
 	to_pgw.pkt.fill_data(0, sizeof(int), type);
-	to_pgw.pkt.make_data_packet();
-	to_pgw.write_data();
-}
-
-void SGWc::create_session_request_to_pgw(uint16_t &uteid){
-
-	to_pgw.pkt.clear_data();
-	to_pgw.pkt.fill_data(0, sizeof(int), ue_num);
-	to_pgw.pkt.fill_data(sizeof(int), sizeof(int), bearer_id);
-	to_pgw.pkt.fill_data(2*sizeof(int), sizeof(uint16_t), cteid);
-	to_pgw.pkt.fill_data(2*sizeof(int) + sizeof(uint16_t), sizeof(uint16_t), uteid);
 	to_pgw.pkt.make_data_packet();
 	to_pgw.write_data();
 }

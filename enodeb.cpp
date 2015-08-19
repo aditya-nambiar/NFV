@@ -19,7 +19,6 @@ EnodeB::EnodeB(){
 	pos = 0;
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	tun_name = allocate_str_mem(BUFFER_SIZE);
-
 }
 
 uint16_t EnodeB::generate_uteid(int ue_num){
@@ -53,10 +52,12 @@ void EnodeB::attach_to_tun(){
 
 void EnodeB::read_tun(){
 
+	cout<<"Tun device created - "<<tun_name<<endl;
 	pkt.clear_data();
 	count = read(tun_fd, pkt.data, BUFFER_SIZE);
 	report_error(count);
 	pkt.data_len = count;
+	cout<<"Coming here 2	"<<endl;
 }
 
 void EnodeB::write_tun(){
@@ -70,6 +71,7 @@ void EnodeB::set_ue_ip(){
 
 	memcpy(iphdr, pkt.data, 20 * sizeof(uint8_t));
 	inet_ntop(AF_INET, &(iphdr->ip_src), ue_ip, INET_ADDRSTRLEN);
+	cout<<"Through tunnel: UE IP is "<<ue_ip<<endl;
 }
 
 void EnodeB::set_tun_data(){
