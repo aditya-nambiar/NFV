@@ -18,7 +18,7 @@ const char *g_sgw3_addr = "127.0.0.1";
 const char *g_pgw_addr = "127.0.0.1";
 const char *g_public_sink_addr = "127.0.0.1";
 const char *g_private_sink_addr = "192.168.100.2";
-const char *g_pgw_server_for_sink_addr = " ";
+const char *g_pgw_server_for_sink_addr = "127.0.0.1";
 socklen_t g_addr_len = sizeof(sockaddr_in);
 timeval g_timeout = {2, 0};
 
