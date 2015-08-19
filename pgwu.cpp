@@ -24,7 +24,7 @@ uint16_t PGWu::generate_uteid(int &ue_num){
 
 void PGWu::configure_raw_client(){
 
-	RawSocket::set_interface("lo");
+	RawSocket::set_interface("eth0");
 	raw_client.bind_client();	
 	raw_client.fill_dst_details();
 }

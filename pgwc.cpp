@@ -21,6 +21,7 @@ PGWc::PGWc(){
 
 void PGWc::create_session_request_from_sgw(Server &pgw_server, uint16_t &sgw_uteid){
 
+	pgw_server.read_data();
 	copy_to_pkt(pgw_server.pkt);
 	set_ue_num();
 	set_bearer_id();
