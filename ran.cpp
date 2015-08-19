@@ -29,6 +29,7 @@ void* generate_traffic(void *arg){
 	int ue_num = *(int*)arg;
 	Client to_mme;
 
+	cout<<"here"<<endl;
 	to_mme.bind_client();
 	to_mme.fill_server_details(g_mme_port, g_mme_addr);
 	to_mme.connect_with_server(ue_num);	
@@ -68,7 +69,8 @@ int main(){
 		status = pthread_create(&tid[i], NULL, generate_traffic, &ue_num[i]);
 		report_error(status);
 	}
-	for(int i=0;i<UE_COUNT;i++)
-		pthread_join(tid[i],NULL);
+	// for(int i=0;i<UE_COUNT;i++)
+	// 	pthread_join(tid[i],NULL);
+	pthread_join(mon_tid, NULL);
 	return 0;
 }

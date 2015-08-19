@@ -8,7 +8,7 @@ TCPClient::TCPClient(){
 	signal(SIGPIPE, SIG_IGN);			
 }
 
-void TCPClient::fill_client_details(const char*){
+void TCPClient::fill_client_details(const char* client_addr){
 	strcpy(this->client_addr, client_addr);
 	bzero((char *) &client_sock_addr, sizeof(client_sock_addr));
 	client_sock_addr.sin_family = AF_INET;  	
@@ -44,6 +44,7 @@ void TCPClient::fill_server_details(int server_port, const char *server_addr){
 void TCPClient::connect_with_server(){
 	status = connect(client_socket, (struct sockaddr*)&server_sock_addr, sizeof(server_sock_addr));
 	report_error(status);
+	cout<<"Successfully connected with server "<<endl;
 }
 
 void TCPClient::read_data(){
