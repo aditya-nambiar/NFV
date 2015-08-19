@@ -42,6 +42,22 @@ void TCPServer::listen_accept(void*(*multithreading_func)(void*)){
 	}
 }
 
+// void TCPServer::listen_accept_for_class(void*(*multithreading_func)(void*)){
+// void f2(boost::function<void(uint32_t)>);
+// void TCPServer::listen_accept_for_class(boost::function<void*(void*)> multithreading_func){
+// 	int i;
+// 	i=0;
+// 	status = listen(server_socket, 100);
+// 	report_error(status);
+// 	while(1){
+// 		client_socket[i] = accept(server_socket, (struct sockaddr *)&client_sock_addr, &client_addr_len);
+// 		report_error(client_socket[i]);
+// 		status = pthread_create(&tid[i], NULL, multithreading_func, &client_socket[i]);
+// 		report_error(status);
+// 		i++;
+// 	}
+// }
+
 void TCPServer::read_data(){
 	pkt.clear_data();
 	status = read(server_socket, pkt.data, BUFFER_SIZE);

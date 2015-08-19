@@ -1,3 +1,16 @@
+Things to do:
+
+1. Encryption
+2. Integrity check
+3. Threaded pool
+4. Detach procedure
+5. Sending data at a fixed rate
+
+Doubts in the implementation:
+
+1. GTP-C headers usage
+
+
 Modules created:
 1. UE/eNodeB  ->	Radio Access Network(RAN)
 2. MME        ->	Mobility Management Entity

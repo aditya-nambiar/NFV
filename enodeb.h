@@ -24,7 +24,8 @@ struct EnodeB{
 	int pos;
 	int num;
 	int count;
-	char* ue_ip;
+	char *ue_ip;
+	char *tun_name;
 	TunData tun_data;
 
 	EnodeB();
@@ -43,6 +44,6 @@ struct EnodeB{
 	~EnodeB();
 };
 
-unordered_map<char*, TunData> g_tun_table;
+extern unordered_map<char*, TunData> g_tun_table;
 
 #endif //ENODEB_H

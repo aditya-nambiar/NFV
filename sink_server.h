@@ -3,8 +3,8 @@
 
 #include "utils.h"
 #include "packet.h"
+#include "client.h"
 #include "tcp_server.h"
-#include "tcp_client.h"
 #include "sink_monitor.h"
 
 void setup_interface();

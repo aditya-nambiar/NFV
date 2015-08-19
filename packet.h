@@ -3,14 +3,6 @@
 
 #include "utils.h"
 
-//(C) Operations: Raw socket programming with headers(IP, UDP)
-#include <netinet/ip.h>     
-#include <netinet/udp.h>    
-#include <sys/ioctl.h>      
-#include <bits/ioctls.h>    
-#include <net/if.h>         
-
-#define DATA_SIZE 100
 #define GTPC_LEN 4
 #define GTPU_LEN 4
 #define IP_LEN 20

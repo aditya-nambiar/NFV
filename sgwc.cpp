@@ -1,5 +1,8 @@
 #include "sgwc.h"
 
+unordered_map<int, int> g_bearer_table;
+unordered_map<uint16_t, TunCdata> g_tun_ctable;
+
 TunCdata::TunCdata(){
 
 	pgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
@@ -13,18 +16,17 @@ TunCdata::~TunCdata(){
 SGWc::SGWc(){
 
 	type = 1;
-	ue_ip = allocate_str_mem(INET_ADDRSTRLEN)
+	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	reply = allocate_str_mem(BUFFER_SIZE);
 }
 
-void create_session_request_from_mme(Server &sgw_server){
+void SGWc::create_session_request_from_mme(Server &sgw_server){
 
 	copy_data(sgw_server.pkt);
 	set_ue_num();
 	set_bearer_id();
 	set_cteid();
-	set_mme_cteid();
-	connect_with_sgw();
+	connect_with_pgw();
 }
 
 void SGWc::copy_data(Packet &arg){
@@ -99,8 +101,8 @@ void SGWc::set_tun_cdata(){
 
 	memcpy(&tun_cdata.mme_cteid, pkt.data + 3*sizeof(int), sizeof(uint16_t));
 	memcpy(&tun_cdata.pgw_cteid, to_pgw.pkt.data, sizeof(uint16_t));
-	tun_cdata.sgw_port = g_pgw_port;
-	strcpy(tun_cdata.sgw_addr, g_pgw_addr);
+	tun_cdata.pgw_port = g_pgw_port;
+	strcpy(tun_cdata.pgw_addr, g_pgw_addr);
 }
 
 void SGWc::set_ue_ip(){
@@ -120,7 +122,7 @@ void SGWc::create_session_response_to_mme(Server &sgw_server){
 	sgw_server.write_data();
 }
 
-void SGWc::modify_session_request_from_mme(uint16_t &enodeb_uteid){
+void SGWc::modify_session_request_from_mme(Server &sgw_server, uint16_t &enodeb_uteid){
 
 	sgw_server.read_data();
 	sgw_server.pkt.rem_gtpc_hdr();

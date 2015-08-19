@@ -19,13 +19,13 @@ public:
 
 	// int dst_port;
 	// char *dst_addr;
-	// struct sockaddr_in dst_sock_addr;
+	struct sockaddr_in dst_sock_addr;
 
 	RawSocket();
 	void bind_client();	
 	// void fill_traffic_details(Packet&);
 	// void fill_src_details();
-	// void fill_dst_details();
+	void fill_dst_details();
 	void write_data();	
 	~RawSocket();		
 };

@@ -1,24 +1,24 @@
-#include "pgw_monitor.h"
+#include "pgwc_monitor.h"
 
 PGWcMonitor::PGWcMonitor(){
 
-	// Dummy
+	tun_name = allocate_str_mem(BUFFER_SIZE);
 }
 
 void PGWcMonitor::attach_to_tun(){	
 	struct ifreq ifr;
-	const char *dev = "tun1";
-	const char *clonedev = "/dev/net/tun";
+	const char *dev = "/dev/net/tun";
 	int flags;
 	int status;
 
+	strcpy(tun_name, "tun1");
 	flags = (IFF_TUN | IFF_NO_PI);
-	tun_fd = open(clonedev , O_RDWR);
+	tun_fd = open(dev , O_RDWR);
 	report_error(tun_fd, "Opening /dev/net/tun");
 	memset(&ifr, 0, sizeof(ifr));
 	ifr.ifr_flags = flags;
-	if(*dev) {
-		strncpy(ifr.ifr_name, dev, IFNAMSIZ);
+	if(*tun_name) {
+		strncpy(ifr.ifr_name, tun_name, IFNAMSIZ);
 	}
 	status = ioctl(tun_fd, TUNSETIFF, (void*)&ifr);
 	if(status<0){
@@ -26,7 +26,7 @@ void PGWcMonitor::attach_to_tun(){
 		close(tun_fd);
 		exit(-1);
 	}
-	strcpy(dev, ifr.ifr_name);
+	strcpy(tun_name, ifr.ifr_name);
 }
 
 void PGWcMonitor::read_tun(){
@@ -66,5 +66,5 @@ void PGWcMonitor::copy_to_sinkpkt(){
 
 PGWcMonitor::~PGWcMonitor(){
 
-	// Dummy
+	free(tun_name);
 }

@@ -42,14 +42,14 @@ struct SGWc{
 	void set_tun_cdata();
 	void set_ue_ip();
 	void create_session_response_to_mme(Server&);
-	void modify_session_request_from_mme(uint16_t&);
+	void modify_session_request_from_mme(Server&, uint16_t&);
 	void modify_session_response_to_mme(Server&, uint16_t&);
 	void fill_pgw_addr(int&, char*);
 	void fill_tun_ctable();
 	~SGWc();
 };
 
-unordered_map<int, int> g_bearer_table;
-unordered_map<uint16_t, TunCdata> g_tun_ctable;
+extern unordered_map<int, int> g_bearer_table;
+extern unordered_map<uint16_t, TunCdata> g_tun_ctable;
 
 #endif //SGWC_H

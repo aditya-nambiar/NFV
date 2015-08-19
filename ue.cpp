@@ -7,6 +7,8 @@ UserEquipment::UserEquipment(int ue_num){
 	imsi = key*1000;
 	msisdn = 9000000000 + key;
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
+
 }
 
 unsigned long long UserEquipment::generate_key(int ue_num){
@@ -14,29 +16,29 @@ unsigned long long UserEquipment::generate_key(int ue_num){
 	return ue_num;
 }
 
-void UserEquipment::authenticate(Client &user){
+void UserEquipment::authenticate(Client &to_mme){
 	unsigned long long autn, rand, res;
 	char *reply = allocate_str_mem(IP_MAXPACKET);
 
 	type = 1;
-	user.pkt.clear_data();
-	user.pkt.fill_data(0, sizeof(int), type);
-	user.pkt.fill_data(sizeof(int), sizeof(imsi), imsi);
-	user.pkt.fill_data(sizeof(int) + sizeof(imsi), sizeof(msisdn), msisdn);
-	user.pkt.make_data_packet();
-	user.write_data();
-	user.read_data();
-	memcpy(&autn, user.pkt.data, sizeof(autn));
-	memcpy(&rand, user.pkt.data + sizeof(autn), sizeof(rand));
+	to_mme.pkt.clear_data();
+	to_mme.pkt.fill_data(0, sizeof(int), type);
+	to_mme.pkt.fill_data(sizeof(int), sizeof(imsi), imsi);
+	to_mme.pkt.fill_data(sizeof(int) + sizeof(imsi), sizeof(msisdn), msisdn);
+	to_mme.pkt.make_data_packet();
+	to_mme.write_data();
+	to_mme.read_data();
+	memcpy(&autn, to_mme.pkt.data, sizeof(autn));
+	memcpy(&rand, to_mme.pkt.data + sizeof(autn), sizeof(rand));
 	cout<<autn<<"	"<<rand<<endl;
 	res = get_autn_res(autn, rand);
 	cout<<"Result is "<<res<<endl;
-	user.pkt.clear_data();
-	user.pkt.fill_data(0, sizeof(res), res);
-	user.pkt.make_data_packet();
-	user.write_data();
-	user.read_data();
-	memcpy(reply, user.pkt.data, user.pkt.data_len);
+	to_mme.pkt.clear_data();
+	to_mme.pkt.fill_data(0, sizeof(res), res);
+	to_mme.pkt.make_data_packet();
+	to_mme.write_data();
+	to_mme.read_data();
+	memcpy(reply, to_mme.pkt.data, to_mme.pkt.data_len);
 	cout<<"This is the message -"<<reply<<endl;
 	if(strcmp((const char*)reply, "OK") == 0)
 		print_message("Authentication Successful for UserEquipment - ", key);
@@ -49,15 +51,15 @@ unsigned long long UserEquipment::get_autn_res(unsigned long long autn, unsigned
 	return res;
 }
 
-void UserEquipment::setup_tunnel(Client &user, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, char *sgw_addr){
+void UserEquipment::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, char *sgw_addr){
 
-	user.pkt.clear_data();
-	user.pkt.fill_data(0, sizeof(uint16_t), enodeb_uteid);
-	user.pkt.make_data_packet();
-	user.write_data();
-	user.read_data();
-	memcpy(ip_addr, user.pkt.data, INET_ADDRSTRLEN);
-	memcpy(&sgw_uteid, user.pkt.data + INET_ADDRSTRLEN, sizeof(uint16_t));
+	to_mme.pkt.clear_data();
+	to_mme.pkt.fill_data(0, sizeof(uint16_t), enodeb_uteid);
+	to_mme.pkt.make_data_packet();
+	to_mme.write_data();
+	to_mme.read_data();
+	memcpy(ip_addr, to_mme.pkt.data, INET_ADDRSTRLEN);
+	memcpy(&sgw_uteid, to_mme.pkt.data + INET_ADDRSTRLEN, sizeof(uint16_t));
 	sgw_port = g_sgw1_port;
 	strcpy(sgw_addr , g_sgw1_addr);
 	cout<<"Data tunnel is formed from eNodeB to SGW(Both uplink & downlink direction) for UE - "<<key<<endl;
@@ -84,10 +86,10 @@ void UserEquipment::setup_interface(){
 	string arg;
 
 	arg = "sudo ifconfig eth0:";
-	arg.append(num);
+	arg.append(to_string(num));
 	arg.append(" ");
 	arg.append(ip_addr);
-	system(arg);
+	system(arg.c_str());
 	cout<<"Interface successfullly created for UE - "<<num<<endl;
 }
 
@@ -106,4 +108,5 @@ void UserEquipment::generate_data(){
 UserEquipment::~UserEquipment(){
 
 	free(ip_addr);
+	free(sink_addr);
 }

@@ -9,7 +9,7 @@ void setup_tun(){
 }
 
 void* monitor_traffic(void *arg){
-	PWGcMonitor pgwc_monitor;
+	PGWcMonitor pgwc_monitor;
 
 	pgwc_monitor.attach_to_tun();
 	pgwc_monitor.attach_to_sink();
@@ -46,7 +46,7 @@ void handle_cdata(Server &pgw_server){
 	TunUdata tun_udata;
 
 	pgwc.create_session_request_from_sgw(pgw_server, tun_udata.sgw_uteid);
-	uteid = pgwu.generate(pgwc.ue_num);
+	uteid = pgwu.generate_uteid(pgwc.ue_num);
 	pgwc.create_session_response_to_sgw(pgw_server, uteid);
 	pgwc.fill_tun_ctable();
 	pgwu.fill_tun_utable(g_ip_table[pgwc.ue_num], tun_udata);
@@ -58,12 +58,14 @@ void handle_udata(Server &pgw_server){
 
 	pgwu.configure_raw_client();
 	pgwu.configure_server_for_sink();
-	pgwu.recv_sgw(pgw_server);
-	pgwu.send_raw_socket();	
-	pgwu.recv_sink();
-	pgwu.set_ue_ip();
-	pgwu.set_tun_udata();
-	pgwu.send_sgw(pgw_server);
+	while(1){
+		pgwu.recv_sgw(pgw_server);
+		pgwu.send_raw_socket();	
+		pgwu.recv_sink();
+		pgwu.set_ue_ip();
+		pgwu.set_tun_udata();
+		pgwu.send_sgw(pgw_server);
+	}
 }
 
 int main(){
@@ -73,7 +75,7 @@ int main(){
 
 	setup_tun();
 	setup_ip_table();
-	status = pthread_create(&mon_id, NULL, monitor_traffic, NULL);
+	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);
 	report_error(status);	
 	pgw_server.fill_server_details(g_pgw_port, g_pgw_addr);
 	pgw_server.bind_server();

@@ -22,6 +22,7 @@ public:
 	void fill_server_details(int, const char*);
 	void bind_server();
 	void listen_accept(void*(*multithreading_func)(void*));
+	// void listen_accept_for_class(boost::function<void*(void*)>);
 	void read_data();
 	void write_data();	
 	~TCPServer();

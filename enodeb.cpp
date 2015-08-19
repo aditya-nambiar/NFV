@@ -1,5 +1,7 @@
 #include "enodeb.h"
 
+unordered_map<char*, TunData> g_tun_table;
+
 TunData::TunData(){
 
 	sgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
@@ -16,27 +18,29 @@ EnodeB::EnodeB(){
 	to_sgw.resize(UDP_LINKS);
 	pos = 0;
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
+	tun_name = allocate_str_mem(BUFFER_SIZE);
+
 }
 
-uint16_t EnodeB::generate_uteid(int num){
+uint16_t EnodeB::generate_uteid(int ue_num){
 	
 	return ue_num; //Dummy uteid
 }
 
 void EnodeB::attach_to_tun(){	
 	struct ifreq ifr;
-	const char *dev = "tun1";
-	const char *clonedev = "/dev/net/tun";
+	const char *dev = "/dev/net/tun";
 	int flags;
 	int status;
 
+	strcpy(tun_name, "tun1");
 	flags = (IFF_TUN | IFF_NO_PI);
-	tun_fd = open(clonedev , O_RDWR);
+	tun_fd = open(dev , O_RDWR);
 	report_error(tun_fd, "Opening /dev/net/tun");
 	memset(&ifr, 0, sizeof(ifr));
 	ifr.ifr_flags = flags;
-	if(*dev) {
-		strncpy(ifr.ifr_name, dev, IFNAMSIZ);
+	if(*tun_name) {
+		strncpy(ifr.ifr_name, tun_name, IFNAMSIZ);
 	}
 	status = ioctl(tun_fd, TUNSETIFF, (void*)&ifr);
 	if(status<0){
@@ -44,7 +48,7 @@ void EnodeB::attach_to_tun(){
 		close(tun_fd);
 		exit(-1);
 	}
-	strcpy(dev, ifr.ifr_name);
+	strcpy(tun_name, ifr.ifr_name);
 }
 
 void EnodeB::read_tun(){
@@ -75,7 +79,7 @@ void EnodeB::set_tun_data(){
 
 void EnodeB::set_sgw_num(){
 
-	if(socket_table.find(tun_data.sgw_addr) != dic.end())
+	if(socket_table.find(tun_data.sgw_addr) != socket_table.end())
 		num = socket_table[tun_data.sgw_addr];
 	else{	
 		connect_with_sgw();
@@ -111,20 +115,21 @@ void EnodeB::make_data(){
 void EnodeB::send_data(){
 
 	to_sgw[num].pkt.clear_data();
-	to_sgw[num].pkt.add_data(0, pkt.data_len, pkt.data);
+	to_sgw[num].pkt.fill_data(0, pkt.data_len, pkt.data);
 	to_sgw[num].pkt.make_data_packet();
-	to_sgw[num].pkt.write_data();
+	to_sgw[num].write_data();
 }
 
 void EnodeB::recv_data(){
 
-	to_sgw[num].pkt.read_data();
+	to_sgw[num].read_data();
 	pkt.clear_data();	
-	pkt.add_data(0, to_sgw[num].pkt.data_len, to_sgw[num].data);
+	pkt.fill_data(0, to_sgw[num].pkt.data_len, to_sgw[num].pkt.data);
 	pkt.rem_gtpu_hdr();
 }
 
 EnodeB::~EnodeB(){
 
 	free(ue_ip);
+	free(tun_name);
 }

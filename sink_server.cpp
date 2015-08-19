@@ -4,7 +4,7 @@ void setup_interface(){
 	string arg;
 
 	arg = "sudo ifconfig eth0:192.168.100.2";
-	system(arg);
+	system(arg.c_str());
 	cout<<"Interface successfullly created for Sink"<<endl;
 }
 
@@ -19,8 +19,8 @@ void setup_tun(){
 void* monitor_traffic(void *arg){
 	SinkMonitor sink_monitor;
 
-	sink_monitor.attach_to_tun();
-	sink_monitor.begin_topgw();
+	SinkMonitor::attach_to_tun();
+	SinkMonitor::configure_topgw();
 	sink_monitor.listen_accept_pgw();
 }
 
@@ -39,7 +39,7 @@ int main(){
 
 	setup_interface();
 	setup_tun();
-	status = pthread_create(&mon_id, NULL, monitor_traffic, NULL);
+	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);
 	report_error(status);	
 	sink_server.fill_server_details(g_private_sink_port, g_private_sink_addr);
 	sink_server.bind_server();

@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "packet.h"
 #include "server.h"
-#include "client.h"
+#include "raw_socket.h"
 
 struct TunUdata{
 	uint16_t sgw_uteid;
@@ -17,7 +17,7 @@ struct PGWu{
 	RawSocket raw_client;
 	Server for_sink;
 	char *ue_ip;
-	TunUdata tun_udata();
+	TunUdata tun_udata;
 
 	PGWu();
 	uint16_t generate_uteid(int&);
@@ -31,10 +31,10 @@ struct PGWu{
 	void copy_sinkpkt_to_pgwpkt(Packet&);
 	void send_raw_socket();
 	void recv_sink();
-	void fill_tun_utable(char*, TunUdata&)
+	void fill_tun_utable(char*, TunUdata&);
 	~PGWu();
 };
 
-unordered_map<char*, TunUdata> g_tun_utable;
+extern unordered_map<char*, TunUdata> g_tun_utable;
 
 #endif //PGWU_H

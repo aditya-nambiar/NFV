@@ -60,6 +60,18 @@ void RawSocket::bind_client(){
 // 	cout<<"Destination address is "<<dst_addr<<endl;	
 // }
 
+void RawSocket::fill_dst_details(){
+
+	bzero((char*)&dst_sock_addr, sizeof(dst_sock_addr));
+	dst_sock_addr.sin_family = AF_INET;
+	dst_sock_addr.sin_port = htons(5000);
+	status = inet_aton(g_private_sink_addr, &dst_sock_addr.sin_addr);
+	if(status == 0){
+		cout<<"ERROR: Invalid IP address"<<endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
 void RawSocket::write_data(){
 	status = sendto(raw_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&dst_sock_addr, g_addr_len);
 	report_error(status);

@@ -16,7 +16,7 @@ void* monitor_traffic(void *arg){
 	while(1){
 		enodeb.read_tun();
 		enodeb.set_ue_ip();
-		enodeb.set_tun_table();
+		enodeb.set_tun_data();
 		enodeb.set_sgw_num();
 		enodeb.make_data();
 		enodeb.send_data();
@@ -27,23 +27,24 @@ void* monitor_traffic(void *arg){
 
 void* generate_traffic(void *arg){
 	int ue_num = *(int*)arg;
-	Client user;
+	Client to_mme;
 
-	user.bind_client();
-	user.fill_server_details(g_mme_port, g_mme_addr);
-	user.connect_with_server(ue_num);	
+	to_mme.bind_client();
+	to_mme.fill_server_details(g_mme_port, g_mme_addr);
+	to_mme.connect_with_server(ue_num);	
 	UserEquipment ue(ue_num);
-	attach_with_mme(ue, user);
+	attach_with_mme(ue, to_mme);
 	send_traffic(ue);
 }
 
-void attach_with_mme(UserEquipment &ue, Client &user){
-	TunData tun_data;
+void attach_with_mme(UserEquipment &ue, Client &to_mme){
 	EnodeB enodeb;
+	TunData tun_data;
+	uint16_t enodeb_uteid;
 
-	ue.authenticate(user);
-	tun_data.enodeb_uteid = enodeb.generate_uteid(ue.num)
-	ue.setup_tunnel(user, tun_data.enodeb_uteid, tun_data.sgw_uteid, tun_data.sgw_port, tun_data.sgw_addr);
+	ue.authenticate(to_mme);
+	enodeb_uteid = enodeb.generate_uteid(ue.num);
+	ue.setup_tunnel(to_mme, enodeb_uteid, tun_data.sgw_uteid, tun_data.sgw_port, tun_data.sgw_addr);
 	g_tun_table[ue.ip_addr] = tun_data;
 }
 
@@ -60,10 +61,10 @@ int main(){
 	pthread_t tid[UE_COUNT];
 
 	setup_tun();
-	status = pthread_create(&mon_id, NULL, monitor_traffic, NULL);
+	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);
 	report_error(status);
 	for(i=0;i<UE_COUNT;i++){
-		ue_num[i] = i+1;
+		ue_num[i] = i;
 		status = pthread_create(&tid[i], NULL, generate_traffic, &ue_num[i]);
 		report_error(status);
 	}

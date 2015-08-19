@@ -1,16 +1,18 @@
 #include "sgwu.h"
 
-void TunUdata::TunUdata(){
+unordered_map<uint16_t, TunUdata> g_tun_utable;
+
+TunUdata::TunUdata(){
 	
 	pgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
-void TunUdata::~TunUdata(){
+TunUdata::~TunUdata(){
 	
 	free(pgw_addr);
 }
 
-void SGWu::SGWu(){
+SGWu::SGWu(){
 	
 	socket_table.clear();
 	to_pgw.resize(UDP_LINKS);
@@ -48,12 +50,12 @@ void SGWu::connect_with_pgw(){
 	to_pgw[pos].bind_client();
 	to_pgw[pos].fill_server_details(tun_udata.pgw_port, tun_udata.pgw_addr);
 	to_pgw[pos].connect_with_server(pos);
-	handshake_with_sgw();
+	handshake_with_pgw();
 	socket_table[uteid] = pos;
 	pos++;	
 }
 
-void SGWu::handshake_with_sgw(){
+void SGWu::handshake_with_pgw(){
 
 	to_pgw[pos].pkt.clear_data();
 	to_pgw[pos].pkt.fill_data(0, sizeof(int), type);
@@ -69,7 +71,7 @@ void SGWu::copy_data(Packet &arg){
 
 void SGWu::make_data_enodeb(){
 
-	pkt.fill_gtpu_hdr(tun_udata.enodeb.uteid);
+	pkt.fill_gtpu_hdr(tun_udata.enodeb_uteid);
 	pkt.add_gtpu_hdr();
 }
 
@@ -89,7 +91,7 @@ void SGWu::recv_enodeb(Server &sgw_server){
 void SGWu::send_enodeb(Server &sgw_server){
 
 	sgw_server.pkt.clear_data();
-	sgw_server.pkt.fill_data(0, pkt.data_len. pkt.data);
+	sgw_server.pkt.fill_data(0, pkt.data_len, pkt.data);
 	sgw_server.pkt.make_data_packet();
 	sgw_server.write_data();
 }
@@ -106,15 +108,15 @@ void SGWu::send_pgw(){
 	to_pgw[num].pkt.clear_data();
 	to_pgw[num].pkt.fill_data(0, pkt.data_len, pkt.data);
 	to_pgw[num].pkt.make_data_packet();
-	to_pgw[num].pkt.write_data();
+	to_pgw[num].write_data();
 }
 
-void fill_tun_utable(uint16_t &uteid, TunUdata &tun_udata){
+void SGWu::fill_tun_utable(uint16_t &uteid, TunUdata &tun_udata){
 
 	g_tun_utable[uteid] = tun_udata;
 }
 
-void SGWu::~SGWu(){
+SGWu::~SGWu(){
 
 	// Dummy
 }

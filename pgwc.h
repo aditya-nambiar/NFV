@@ -23,7 +23,7 @@ struct PGWc{
 	TunCdata tun_cdata;
 
 	PGWc();
-	void create_session_request_from_sgw(Server&);
+	void create_session_request_from_sgw(Server&, uint16_t&);
 	void copy_to_pkt(Packet&);
 	void set_ue_num();
 	void set_bearer_id();
@@ -31,16 +31,16 @@ struct PGWc{
 	void set_tun_cdata();
 	void set_cteid();
 	uint16_t generate_cteid(int&);	
-	void create_session_response_to_sgw(Server&);
+	void create_session_response_to_sgw(Server&, uint16_t&);
 	void fill_tun_ctable();	
 	~PGWc();
 };
 
-vector<char*> g_ip_table;
-unordered_map<int, int> g_bearer_table;
-unordered_map<uint16_t, TunCdata> g_tun_ctable;
+extern vector<char*> g_ip_table;
+extern unordered_map<int, int> g_bearer_table;
+extern unordered_map<char*, TunCdata> g_tun_ctable;
 
-void set_ip_table();
+void setup_ip_table();
 void set_ip_table_size();
 void fill_ip_table();
 void free_ip_table();

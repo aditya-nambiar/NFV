@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "packet.h"
 #include "client.h"
+#include "tcp_client.h"
 
 class UserEquipment{
 public:
@@ -20,7 +21,7 @@ public:
 
 	// Sink data
 	int sink_port;
-	char *sink;
+	char *sink_addr;
 	
 	UserEquipment(int);
 	unsigned long long generate_key(int);		

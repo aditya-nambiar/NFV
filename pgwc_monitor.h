@@ -9,6 +9,7 @@ struct PGWcMonitor{
 	TCPClient to_sink; 
 	int tun_fd;
 	int count;
+	char *tun_name;
 	Packet pkt;
 
 	PGWcMonitor();

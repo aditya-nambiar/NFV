@@ -1,5 +1,7 @@
 #include "pgwu.h"
 
+unordered_map<char*, TunUdata> g_tun_utable;
+
 TunUdata::TunUdata(){
 
 	// Dummy
@@ -24,6 +26,7 @@ void PGWu::configure_raw_client(){
 
 	RawSocket::set_interface("lo");
 	raw_client.bind_client();	
+	raw_client.fill_dst_details();
 }
 
 void PGWu::configure_server_for_sink(){
@@ -48,9 +51,9 @@ void PGWu::copy_to_rawpkt(Packet &arg){
 void PGWu::send_sgw(Server &pgw_server){
 
 	copy_sinkpkt_to_pgwpkt(pgw_server.pkt);
-	pgw_server.pkt.fill_gtpu_hdr(tun_udata.sgw_uteid());
+	pgw_server.pkt.fill_gtpu_hdr(tun_udata.sgw_uteid);
 	pgw_server.pkt.add_gtpu_hdr();
-	pgw_server.ptk.make_data_packet();
+	pgw_server.pkt.make_data_packet();
 	pgw_server.write_data();
 }
 

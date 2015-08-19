@@ -7,22 +7,29 @@
 #include "client.h"
 
 struct SinkMonitor{
+	static Client to_pgw;
+	static int tun_fd;
+	static const char *tun_name;
 	TCPServer for_pgw;
-	Client to_pgw;
-	int tun_fd;
 	int count;
 	Packet pkt;
 
 	SinkMonitor();
-	void attach_to_tun();
+	static void attach_to_tun();
 	void read_tun();
 	void write_tun();
-	void begin_topgw();
+	static void configure_topgw();
 	void listen_accept_pgw();
-	void* start_monitor(void*);
+	void set_global_variables();
+	// void* start_monitor(void*);
 	void copy_to_topgwpkt();
 	void copy_to_pkt(Packet&);
 	~SinkMonitor();
 };
+
+extern Client to_pgw;
+extern int tun_fd;
+
+void* start_monitor(void*);
 
 #endif //SINK_MONITOR_H

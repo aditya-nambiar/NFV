@@ -46,6 +46,6 @@ struct SGWu{
 	~SGWu();
 };
 
-unordered_map<uint16_t, TunUdata> g_tun_utable;
+extern unordered_map<uint16_t, TunUdata> g_tun_utable;
 
 #endif //SGWU_H

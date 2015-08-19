@@ -1,5 +1,9 @@
 #include "pgwc.h"
 
+vector<char*> g_ip_table;
+unordered_map<int, int> g_bearer_table;
+unordered_map<char*, TunCdata> g_tun_ctable;
+
 TunCdata::TunCdata(){
 
 	// Dummy
@@ -101,7 +105,7 @@ void fill_ip_table(){
 	int size;
 	int i;
 	
-	prefix =  = "192.168.100.";
+	prefix = "192.168.100.";
 	size = g_ip_table.size();
 	for(i=0;i<size;i++){
 		ip = prefix + to_string(i+3);

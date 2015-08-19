@@ -24,13 +24,29 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <sys/select.h>
 
 //(C) Operations: Multithreading
 #include <pthread.h>
 
+//(C) Operations: Raw socket programming with headers(IP, TCP, UDP)
+#include <netinet/ip.h>
+#include <netinet/tcp.h>     
+#include <netinet/udp.h>    
+#include <sys/ioctl.h>      
+#include <bits/ioctls.h>    
+#include <net/if.h>         
+
+//(C) Operations: TUN interface Programming
+#include <linux/if_tun.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <errno.h>
+#include <stdarg.h>
+
 using namespace std;
 
-#define MAX_CONNECTIONS 1000
+#define MAX_CONNECTIONS 100
 #define UE_COUNT 1
 #define BUFFER_SIZE 1024
 

@@ -1,30 +1,64 @@
+#---------------Final Target----------------#
+
 all:	ran mme hss sgw pgw sink
+
+#-------------------------------------------#
+
+
+#-----------------Variables-----------------#
 
 G++ = g++ -std=c++0x -std=gnu++0x
 
-RAN_P = ran.cpp ran.h ue.cpp ue.h client.cpp client.h packet.cpp packet.h utils.cpp utils.h
+RAN_H	= utils.h packet.h client.h tcp_client.h ue.h enodeb.h
+RAN_CPP = utils.cpp packet.cpp client.cpp tcp_client.cpp ue.cpp enodeb.cpp
 
-MME_P = mme.cpp mme.h client.cpp client.h server.cpp server.h packet.cpp packet.h utils.cpp utils.h
+MME_H = utils.h packet.h server.h client.h
+MME_CPP = utils.cpp packet.cpp server.cpp client.cpp
 
-HSS_P = hss.cpp hss.h db_mysql.cpp db_mysql.h server.cpp server.h packet.cpp packet.h utils.cpp utils.h
+HSS_H = utils.h packet.h server.h db_mysql.h
+HSS_CPP = utils.cpp packet.cpp server.cpp db_mysql.cpp
 
-SGW_P = sgw.cpp sgw.h client.cpp client.h server.cpp server.h packet.cpp packet.h utils.cpp utils.h
+SGW_H = utils.h packet.h server.h client.h sgwc.h sgwu.h
+SGW_CPP = utils.cpp packet.cpp server.cpp client.cpp sgwc.cpp sgwu.cpp
 
-PGW_P = pgw.cpp pgw.h raw_socket.cpp raw_socket.h server.cpp server.h packet.cpp packet.h utils.cpp utils.h
+PGW_H = utils.h packet.h server.h tcp_client.h raw_socket.h pgwc.h pgwc_monitor.h pgwu.h
+PGW_CPP = utils.cpp packet.cpp server.cpp tcp_client.cpp raw_socket.cpp pgwc.cpp pgwc_monitor.cpp pgwu.cpp
 
-SINK_P = sink.cpp sink.h server.cpp server.h packet.cpp packet.h utils.cpp utils.h
+SINK_H = utils.h packet.h client.h tcp_server.h sink_monitor.h
+SINK_CPP = utils.cpp packet.cpp client.cpp tcp_server.cpp sink_monitor.cpp
 
-RAN_R = $(G++) ran.cpp -w -o ran ue.cpp client.cpp packet.cpp utils.cpp -lpthread 
+#-------------------------------------------#
 
-MME_R = $(G++) mme.cpp -w -o mme client.cpp server.cpp packet.cpp utils.cpp -lpthread 
 
-HSS_R = $(G++) hss.cpp -w -o hss db_mysql.cpp server.cpp packet.cpp utils.cpp `mysql_config --cflags --libs`
+#---------Prerequisites and Recipes---------#
 
-SGW_R = $(G++) sgw.cpp -w -o sgw client.cpp server.cpp packet.cpp utils.cpp -lpthread 
+RAN_P = ran.cpp ran.h $(RAN_H) $(RAN_CPP)
+RAN_R = $(G++) ran.cpp -w -o ran $(RAN_CPP) -lpthread 
 
-PGW_R = $(G++) pgw.cpp -w -o pgw raw_socket.cpp server.cpp packet.cpp utils.cpp -lpthread 
 
-SINK_R = $(G++) sink.cpp -w -o sink server.cpp packet.cpp utils.cpp -lpthread
+MME_P = mme.cpp mme.h $(MME_H) $(MME_CPP)
+MME_R = $(G++) mme.cpp -w -o mme $(MME_CPP) -lpthread 
+
+
+HSS_P = hss.cpp hss.h $(HSS_H) $(HSS_CPP)
+HSS_R = $(G++) hss.cpp -w -o hss $(HSS_CPP) `mysql_config --cflags --libs`
+
+
+SGW_P = sgw_server.cpp sgw_server.h $(SGW_H) $(SGW_CPP)
+SGW_R = $(G++) sgw_server.cpp -w -o sgw $(SGW_CPP) -lpthread 
+
+
+PGW_P = pgw_server.cpp pgw_server.h $(PGW_H) $(PGW_CPP)
+PGW_R = $(G++) pgw_server.cpp -w -o pgw $(PGW_CPP) -lpthread 
+
+
+SINK_P = sink_server.cpp sink_server.h $(SINK_H) $(SINK_CPP)
+SINK_R = $(G++) sink_server.cpp -w -o sink $(SINK_CPP) -lpthread
+
+#-------------------------------------------#
+
+
+#---------------Make Statements-------------#
 
 ran:	$(RAN_P)
 	$(RAN_R)
@@ -46,3 +80,11 @@ sink:	$(SINK_P)
 
 clean:
 	rm -f ran mme hss sgw pgw *~
+
+#-------------------------------------------#
+
+#----------Special Commands-----------------#
+
+# make -k (To keep going even after encountering errors in making a former target)
+
+#-------------------------------------------#
