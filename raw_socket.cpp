@@ -73,8 +73,9 @@ void RawSocket::fill_dst_details(){
 }
 
 void RawSocket::write_data(){
+	
 	status = sendto(raw_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&dst_sock_addr, g_addr_len);
-	report_error(status);
+	report_error(status, "Error in writing data through raw socket");
 }
 
 RawSocket::~RawSocket(){

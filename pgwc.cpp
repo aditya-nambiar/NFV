@@ -1,8 +1,8 @@
 #include "pgwc.h"
 
-vector<char*> g_ip_table;
+vector<string> g_ip_table;
 unordered_map<int, int> g_bearer_table;
-unordered_map<char*, TunCdata> g_tun_ctable;
+unordered_map<string, TunCdata> g_tun_ctable;
 
 TunCdata::TunCdata(){
 
@@ -72,7 +72,7 @@ void PGWc::create_session_response_to_sgw(Server &pgw_server, uint16_t &uteid){
 	pgw_server.pkt.clear_data();
 	pgw_server.pkt.fill_data(0, sizeof(uint16_t), cteid);
 	pgw_server.pkt.fill_data(sizeof(uint16_t), sizeof(uint16_t), uteid);
-	pgw_server.pkt.fill_data(2*sizeof(uint16_t), INET_ADDRSTRLEN, g_ip_table[ue_num]);
+	pgw_server.pkt.fill_data(2*sizeof(uint16_t), INET_ADDRSTRLEN, g_ip_table[ue_num].c_str());
 	pgw_server.pkt.fill_gtpc_hdr(tun_cdata.sgw_cteid);
 	pgw_server.pkt.add_gtpu_hdr();
 	pgw_server.pkt.make_data_packet();
@@ -97,7 +97,7 @@ void setup_ip_table(){
 
 void set_ip_table_size(){
 
-	g_ip_table.resize(MAX_IPS, NULL);
+	g_ip_table.resize(MAX_IPS);
 }
 
 void fill_ip_table(){
@@ -110,17 +110,6 @@ void fill_ip_table(){
 	size = g_ip_table.size();
 	for(i=0;i<size;i++){
 		ip = prefix + to_string(i+3);
-		g_ip_table[i] = allocate_str_mem(INET_ADDRSTRLEN);
-		strcpy(g_ip_table[i], ip.c_str());
-	}
-}
-
-void free_ip_table(){
-	int i;
-	int size;
-
-	size = g_ip_table.size();
-	for(i=0;i<size;i++){
-		free(g_ip_table[i]);
+		g_ip_table[i] = ip;
 	}
 }
