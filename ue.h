@@ -27,7 +27,7 @@ public:
 	unsigned long long generate_key(int);		
 	void authenticate(Client&);
 	unsigned long long get_autn_res(unsigned long long, unsigned long long);	
-	void setup_tunnel(Client&, uint16_t&, uint16_t&, int&, char*);
+	void setup_tunnel(Client&, uint16_t&, uint16_t&, int&, string&);
 	void send_traffic();
 	void setup_interface();	
 	void set_sink();

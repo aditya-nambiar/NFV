@@ -10,7 +10,7 @@ struct TunCdata{
 	uint16_t mme_cteid;
 	uint16_t pgw_cteid;
 	int pgw_port;
-	char *pgw_addr;
+	string pgw_addr;
 
 	TunCdata();
 	~TunCdata();
@@ -44,7 +44,7 @@ struct SGWc{
 	void create_session_response_to_mme(Server&);
 	void modify_session_request_from_mme(Server&, uint16_t&);
 	void modify_session_response_to_mme(Server&, uint16_t&);
-	void fill_pgw_addr(int&, char*);
+	void fill_pgw_addr(int&, string&);
 	void fill_tun_ctable();
 	~SGWc();
 };

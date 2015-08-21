@@ -51,7 +51,7 @@ unsigned long long UserEquipment::get_autn_res(unsigned long long autn, unsigned
 	return res;
 }
 
-void UserEquipment::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, char *sgw_addr){
+void UserEquipment::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, string &sgw_addr){
 
 	to_mme.pkt.clear_data();
 	to_mme.pkt.fill_data(0, sizeof(uint16_t), enodeb_uteid);
@@ -61,13 +61,13 @@ void UserEquipment::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_
 	memcpy(&sgw_uteid, to_mme.pkt.data, sizeof(uint16_t));
 	memcpy(ip_addr, to_mme.pkt.data + sizeof(uint16_t), INET_ADDRSTRLEN);
 	sgw_port = g_sgw1_port;
-	strcpy(sgw_addr , g_sgw1_addr);
+	sgw_addr.assign(g_sgw1_addr);
 	cout<<"Data tunnel is formed from eNodeB to SGW(Both uplink & downlink direction) for UE - "<<key<<endl;
 }
 
 void UserEquipment::send_traffic(){	
 	TCPClient to_sink;
-
+	
 	setup_interface();
 	set_sink();
 	generate_data();
@@ -79,7 +79,7 @@ void UserEquipment::send_traffic(){
 	to_sink.pkt.fill_data(0, pkt.data_len, pkt.data);
 	to_sink.pkt.make_data_packet();
 	to_sink.write_data();	
-	cout<<"Data sent successfully "<<num<<endl;
+	cout<<"Data sent successfully for UE - "<<num<<endl;
 }
 
 void UserEquipment::setup_interface(){
@@ -89,6 +89,7 @@ void UserEquipment::setup_interface(){
 	arg.append(to_string(num));
 	arg.append(" ");
 	arg.append(ip_addr);
+	arg.append("/16");
 	cout<<arg.c_str()<<endl;
 	system(arg.c_str());
 	cout<<"Interface successfully created for UE - "<<num<<endl;

@@ -3,7 +3,7 @@
 void setup_interface(){
 	string arg;
 
-	arg = "sudo ifconfig eth0:192.168.100.2";
+	arg = "sudo ifconfig eth0:192.168.100.2/16";
 	system(arg.c_str());
 	cout<<"Interface successfullly created for Sink"<<endl;
 }

@@ -5,12 +5,12 @@ unordered_map<uint16_t, TunCdata> g_tun_ctable;
 
 TunCdata::TunCdata(){
 
-	pgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
+
 }
 
 TunCdata::~TunCdata(){
 
-	free(pgw_addr);
+
 }
 
 SGWc::SGWc(){
@@ -102,7 +102,7 @@ void SGWc::set_tun_cdata(){
 	memcpy(&tun_cdata.mme_cteid, pkt.data + 3*sizeof(int), sizeof(uint16_t));
 	memcpy(&tun_cdata.pgw_cteid, to_pgw.pkt.data, sizeof(uint16_t));
 	tun_cdata.pgw_port = g_pgw_port;
-	strcpy(tun_cdata.pgw_addr, g_pgw_addr);
+	tun_cdata.pgw_addr.assign(g_pgw_addr);
 }
 
 void SGWc::set_ue_ip(){
@@ -143,10 +143,10 @@ void SGWc::modify_session_response_to_mme(Server &sgw_server, uint16_t &sgw_utei
 	sgw_server.write_data();
 }
 
-void SGWc::fill_pgw_addr(int &pgw_port, char *pgw_addr){
+void SGWc::fill_pgw_addr(int &pgw_port, string &pgw_addr){
 
 	pgw_port = tun_cdata.pgw_port;
-	strcpy(pgw_addr, tun_cdata.pgw_addr);
+	pgw_addr = tun_cdata.pgw_addr;
 }
 
 void SGWc::fill_tun_ctable(){

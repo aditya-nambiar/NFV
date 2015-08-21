@@ -41,19 +41,40 @@ void handle_cdata(Server &sgw_server){
 
 void handle_udata(Server &sgw_server){
 	SGWu sgwu;
-	
+	fd_set read_set;
+	int max_fd;
+	int size;
+	int i;
+	int status;
+
 	while(1){
-		sgwu.recv_enodeb(sgw_server);
-		sgwu.set_uteid();
-		sgwu.set_tun_udata();
-		sgwu.set_pgw_num();
-		sgwu.make_data_pgw();
-		sgwu.send_pgw();
-		sgwu.recv_pgw();
-		sgwu.set_uteid();
-		sgwu.set_tun_udata();
-		sgwu.make_data_enodeb();
-		sgwu.send_enodeb(sgw_server);
+		FD_ZERO(&read_set);
+		FD_SET(sgw_server.server_socket, &read_set); 
+		max_fd = sgw_server.server_socket;
+		size = sgwu.pos;
+		for(i=0;i<size;i++){
+			FD_SET(sgwu.to_pgw[i].client_socket, &read_set); 
+			max_fd = max(max_fd, sgwu.to_pgw[i].client_socket);
+		}
+		status = select(max_fd + 1, &read_set, NULL, NULL, NULL);
+		report_error(status, "Select-process failure\tTry again");		
+		if(FD_ISSET(sgw_server.server_socket, &read_set)){
+			sgwu.recv_enodeb(sgw_server);
+			sgwu.set_uteid();
+			sgwu.set_tun_udata();
+			sgwu.set_pgw_num();
+			sgwu.make_data_pgw();
+			sgwu.send_pgw();
+		}
+		for(i=0;i<size;i++){
+			if(FD_ISSET(sgwu.to_pgw[i].client_socket, &read_set)){
+				sgwu.recv_pgw(i);
+				sgwu.set_uteid();
+				sgwu.set_tun_udata();
+				sgwu.make_data_enodeb();
+				sgwu.send_enodeb(sgw_server);
+			}
+		}
 	}
 }
 

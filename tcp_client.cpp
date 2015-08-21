@@ -44,7 +44,6 @@ void TCPClient::fill_server_details(int server_port, const char *server_addr){
 void TCPClient::connect_with_server(){
 	status = connect(client_socket, (struct sockaddr*)&server_sock_addr, sizeof(server_sock_addr));
 	report_error(status);
-	cout<<"Successfully connected with server "<<endl;
 }
 
 void TCPClient::read_data(){
