@@ -27,20 +27,24 @@ void PGWcMonitor::attach_to_tun(){
 		exit(-1);
 	}
 	strcpy(tun_name, ifr.ifr_name);
+	cout<<"Successfully attached to TUN device"<<endl;
 }
 
 void PGWcMonitor::read_tun(){
 
+	cout<<"Waiting to read data from the TUN device"<<endl;
 	pkt.clear_data();
 	count = read(tun_fd, pkt.data, BUFFER_SIZE);
 	report_error(count);
 	pkt.data_len = count;
+	cout<<"Successfully read data from the TUN device"<<endl;
 }
 
 void PGWcMonitor::write_tun(){
 
 	count = write(tun_fd, pkt.data, pkt.data_len);
 	report_error(count);
+	cout<<"Successfully written data into the TUN device"<<endl;
 }
 
 void PGWcMonitor::attach_to_sink(){
@@ -49,6 +53,7 @@ void PGWcMonitor::attach_to_sink(){
 	to_sink.bind_client();
 	to_sink.fill_server_details(g_public_sink_port, g_public_sink_addr);
 	to_sink.connect_with_server();	
+	cout<<"Successfully connected with the Sink server"<<endl;
 }
 
 void PGWcMonitor::write_sink(){
@@ -56,6 +61,7 @@ void PGWcMonitor::write_sink(){
 	copy_to_sinkpkt();
 	to_sink.pkt.make_data_packet();
 	to_sink.write_data();		
+	cout<<"Successfully written data into the Sink"<<endl;
 }
 
 void PGWcMonitor::copy_to_sinkpkt(){

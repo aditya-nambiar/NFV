@@ -31,10 +31,10 @@ struct PGWu{
 	void copy_sinkpkt_to_pgwpkt(Packet&);
 	void send_raw_socket();
 	void recv_sink();
-	void fill_tun_utable(char*, TunUdata&);
+	void fill_tun_utable(string, TunUdata&);
 	~PGWu();
 };
 
-extern unordered_map<char*, TunUdata> g_tun_utable;
+extern unordered_map<string, TunUdata> g_tun_utable;
 
 #endif //PGWU_H
