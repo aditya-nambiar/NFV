@@ -32,7 +32,6 @@ void PGWcMonitor::attach_to_tun(){
 
 void PGWcMonitor::read_tun(){
 
-	cout<<"Waiting to read data from the TUN device"<<endl;
 	pkt.clear_data();
 	count = read(tun_fd, pkt.data, BUFFER_SIZE);
 	report_error(count);

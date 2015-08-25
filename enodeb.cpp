@@ -78,7 +78,7 @@ void EnodeB::set_tun_data(){
 
 	ue_ip_str.assign(ue_ip);
 	tun_data = g_tun_table[ue_ip_str];
-	cout<<"Details fetched are "<<ue_ip_str<<" "<<tun_data.sgw_port<<" "<<tun_data.sgw_addr<<endl;
+	cout<<"Details fetched are: "<<"UE IP - "<<ue_ip_str<<" SGW - port "<<tun_data.sgw_port<<" SGW addr "<<tun_data.sgw_addr<<endl;
 }
 
 void EnodeB::set_sgw_num(){

@@ -67,19 +67,34 @@ void UserEquipment::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_
 
 void UserEquipment::send_traffic(){	
 	TCPClient to_sink;
-	
+	string command;
+	string ip_addr_str;
+	string sink_addr_str;
+	string rate;
+	string mtu;
+	string time_limit;
+
 	setup_interface();
 	set_sink();
-	generate_data();
-	to_sink.fill_client_details(ip_addr);
-	to_sink.bind_client();
-	to_sink.fill_server_details(sink_port, sink_addr);
-	to_sink.connect_with_server();
-	to_sink.pkt.clear_data();
-	to_sink.pkt.fill_data(0, pkt.data_len, pkt.data);
-	to_sink.pkt.make_data_packet();
-	to_sink.write_data();	
-	cout<<"Data sent successfully for UE - "<<num<<endl;
+	ip_addr_str.assign(ip_addr);
+	sink_addr_str.assign(sink_addr);
+	rate = " -b 1M";
+	mtu = " -M 500";
+	time_limit = " -t 1";
+	command = "iperf3 -B " + ip_addr_str + " -c " + sink_addr + " -p " + to_string(sink_port) + rate + mtu + time_limit; 
+	cout<<command<<endl;
+	system(command.c_str());
+	cout<<"IPERF Traffic successfully sent"<<endl;
+	// generate_data();
+	// to_sink.fill_client_details(ip_addr);
+	// to_sink.bind_client();
+	// to_sink.fill_server_details(sink_port, sink_addr);
+	// to_sink.connect_with_server();
+	// to_sink.pkt.clear_data();
+	// to_sink.pkt.fill_data(0, pkt.data_len, pkt.data);
+	// to_sink.pkt.make_data_packet();
+	// to_sink.write_data();	
+	// cout<<"Data sent successfully for UE - "<<num<<endl;
 }
 
 void UserEquipment::setup_interface(){
@@ -97,7 +112,8 @@ void UserEquipment::setup_interface(){
 
 void UserEquipment::set_sink(){
 
-	sink_port = g_private_sink_port;
+	// sink_port = g_private_sink_port;
+	sink_port = (num + 55000);
 	strcpy(sink_addr, g_private_sink_addr);
 }
 
