@@ -10,14 +10,14 @@
 struct TunData{
 	uint16_t sgw_uteid;
 	int sgw_port;
-	char *sgw_addr;
+	string sgw_addr;
 
 	TunData();
 	~TunData();
 };
 
 struct EnodeB{
-	unordered_map<char*, int> socket_table;
+	unordered_map<string, int> socket_table;
 	vector<Client> to_sgw;
 	Packet pkt;
 	int tun_fd;
@@ -40,10 +40,10 @@ struct EnodeB{
 	void handshake_with_sgw();
 	void make_data();
 	void send_data();
-	void recv_data();
+	void recv_data(int&);
 	~EnodeB();
 };
 
-extern unordered_map<char*, TunData> g_tun_table;
+extern unordered_map<string, TunData> g_tun_table;
 
 #endif //ENODEB_H

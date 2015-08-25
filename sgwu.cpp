@@ -4,12 +4,12 @@ unordered_map<uint16_t, TunUdata> g_tun_utable;
 
 TunUdata::TunUdata(){
 	
-	pgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
+
 }
 
 TunUdata::~TunUdata(){
 	
-	free(pgw_addr);
+
 }
 
 SGWu::SGWu(){
@@ -48,7 +48,7 @@ void SGWu::set_pgw_num(){
 void SGWu::connect_with_pgw(){
 
 	to_pgw[pos].bind_client();
-	to_pgw[pos].fill_server_details(tun_udata.pgw_port, tun_udata.pgw_addr);
+	to_pgw[pos].fill_server_details(tun_udata.pgw_port, tun_udata.pgw_addr.c_str());
 	to_pgw[pos].connect_with_server(pos);
 	handshake_with_pgw();
 	socket_table[uteid] = pos;
@@ -86,6 +86,7 @@ void SGWu::recv_enodeb(Server &sgw_server){
 	sgw_server.read_data();
 	copy_data(sgw_server.pkt);
 	pkt.rem_gtpu_hdr();
+	cout<<endl<<"Received data from Enodeb successfully and removed the GTPu header"<<endl;
 }
 
 void SGWu::send_enodeb(Server &sgw_server){
@@ -94,13 +95,28 @@ void SGWu::send_enodeb(Server &sgw_server){
 	sgw_server.pkt.fill_data(0, pkt.data_len, pkt.data);
 	sgw_server.pkt.make_data_packet();
 	sgw_server.write_data();
+	cout<<"Sent data to the Enodeb successfully"<<endl<<endl;
 }
 
-void SGWu::recv_pgw(){
+void SGWu::recv_pgw(int &pgw_num){
 
-	to_pgw[num].read_data();
-	copy_data(to_pgw[num].pkt);
+	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
+	struct tcphdr *tcp_hdr = (tcphdr*)malloc(20 * sizeof(u_int8_t)); 
+	char *sink = (char*)malloc(INET_ADDRSTRLEN);
+
+
+	to_pgw[pgw_num].read_data();
+	copy_data(to_pgw[pgw_num].pkt);
 	pkt.rem_gtpu_hdr();
+
+	memcpy(iphdr, pkt.data, 20 * sizeof(uint8_t));
+	memcpy(tcp_hdr, pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
+	inet_ntop(AF_INET, &(iphdr->ip_dst), sink, INET_ADDRSTRLEN);
+	cout<<endl<<"UE IP is "<<sink<<endl;
+	cout<<"TCP destination port is "<<ntohs(tcp_hdr->th_dport)<<endl;	
+
+
+	cout<<"Received data from PGW successfully and removed the GTPu header"<<endl;
 }
 
 void SGWu::send_pgw(){
@@ -109,6 +125,7 @@ void SGWu::send_pgw(){
 	to_pgw[num].pkt.fill_data(0, pkt.data_len, pkt.data);
 	to_pgw[num].pkt.make_data_packet();
 	to_pgw[num].write_data();
+	cout<<"Send data successfully to PGW with TEID - "<<tun_udata.pgw_uteid<<endl<<endl;
 }
 
 void SGWu::fill_tun_utable(uint16_t &uteid, TunUdata &tun_udata){

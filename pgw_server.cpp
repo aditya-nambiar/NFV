@@ -13,6 +13,7 @@ void* monitor_traffic(void *arg){
 
 	pgwc_monitor.attach_to_tun();
 	pgwc_monitor.attach_to_sink();
+	cout<<"PGW Monitoring started "<<endl;
 	while(1){
 		pgwc_monitor.read_tun();
 		pgwc_monitor.write_sink();		
@@ -55,16 +56,31 @@ void handle_cdata(Server &pgw_server){
 
 void handle_udata(Server &pgw_server){
 	PGWu pgwu;
-
+	fd_set read_set;
+	int max_fd;
+	int size;
+	int i;
+	int status;
+	
 	pgwu.configure_raw_client();
 	pgwu.configure_server_for_sink();
 	while(1){
-		pgwu.recv_sgw(pgw_server);
-		pgwu.send_raw_socket();	
-		pgwu.recv_sink();
-		pgwu.set_ue_ip();
-		pgwu.set_tun_udata();
-		pgwu.send_sgw(pgw_server);
+		FD_ZERO(&read_set);
+		FD_SET(pgw_server.server_socket, &read_set); 
+		FD_SET(pgwu.for_sink.server_socket, &read_set); 
+		max_fd = max(pgw_server.server_socket, pgwu.for_sink.server_socket);
+		status = select(max_fd + 1, &read_set, NULL, NULL, NULL);
+		report_error(status, "Select-process failure\tTry again");		
+		if(FD_ISSET(pgw_server.server_socket, &read_set)){
+			pgwu.recv_sgw(pgw_server);
+			pgwu.send_raw_socket();		
+		}
+		if(FD_ISSET(pgwu.for_sink.server_socket, &read_set)){
+			pgwu.recv_sink();
+			pgwu.set_ue_ip();
+			pgwu.set_tun_udata();
+			pgwu.send_sgw(pgw_server);	
+		}
 	}
 }
 
@@ -80,6 +96,5 @@ int main(){
 	pgw_server.fill_server_details(g_pgw_port, g_pgw_addr);
 	pgw_server.bind_server();
 	pgw_server.listen_accept(process_traffic);
-	free_ip_table();
 	return 0;
 }

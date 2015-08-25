@@ -12,7 +12,7 @@ struct TunUdata{
 	uint16_t enodeb_uteid;
 	uint16_t pgw_uteid;
 	int pgw_port;
-	char *pgw_addr;
+	string pgw_addr;
 
 	TunUdata();
 	~TunUdata();
@@ -40,7 +40,7 @@ struct SGWu{
 	void make_data_pgw();
 	void recv_enodeb(Server&);
 	void send_enodeb(Server&);
-	void recv_pgw();
+	void recv_pgw(int&);
 	void send_pgw();
 	void fill_tun_utable(uint16_t&, TunUdata&);
 	~SGWu();

@@ -3,10 +3,10 @@
 
 #include "utils.h"
 #include "packet.h"
-#include "tcp_client.h"
+#include "client.h"
 
 struct PGWcMonitor{
-	TCPClient to_sink; 
+	Client to_sink; 
 	int tun_fd;
 	int count;
 	char *tun_name;

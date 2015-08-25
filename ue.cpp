@@ -51,35 +51,50 @@ unsigned long long UserEquipment::get_autn_res(unsigned long long autn, unsigned
 	return res;
 }
 
-void UserEquipment::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, char *sgw_addr){
+void UserEquipment::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, string &sgw_addr){
 
 	to_mme.pkt.clear_data();
 	to_mme.pkt.fill_data(0, sizeof(uint16_t), enodeb_uteid);
 	to_mme.pkt.make_data_packet();
 	to_mme.write_data();
 	to_mme.read_data();
-	memcpy(ip_addr, to_mme.pkt.data, INET_ADDRSTRLEN);
-	memcpy(&sgw_uteid, to_mme.pkt.data + INET_ADDRSTRLEN, sizeof(uint16_t));
+	memcpy(&sgw_uteid, to_mme.pkt.data, sizeof(uint16_t));
+	memcpy(ip_addr, to_mme.pkt.data + sizeof(uint16_t), INET_ADDRSTRLEN);
 	sgw_port = g_sgw1_port;
-	strcpy(sgw_addr , g_sgw1_addr);
+	sgw_addr.assign(g_sgw1_addr);
 	cout<<"Data tunnel is formed from eNodeB to SGW(Both uplink & downlink direction) for UE - "<<key<<endl;
 }
 
 void UserEquipment::send_traffic(){	
 	TCPClient to_sink;
+	string command;
+	string ip_addr_str;
+	string sink_addr_str;
+	string rate;
+	string mtu;
+	string time_limit;
 
 	setup_interface();
 	set_sink();
-	generate_data();
-	to_sink.fill_client_details(ip_addr);
-	to_sink.bind_client();
-	to_sink.fill_server_details(sink_port, sink_addr);
-	to_sink.connect_with_server();
-	to_sink.pkt.clear_data();
-	to_sink.pkt.fill_data(0, pkt.data_len, pkt.data);
-	to_sink.pkt.make_data_packet();
-	to_sink.write_data();	
-	cout<<"Data sent successfully"<<num<<endl;
+	ip_addr_str.assign(ip_addr);
+	sink_addr_str.assign(sink_addr);
+	rate = " -b 1M";
+	mtu = " -M 500";
+	time_limit = " -t 1";
+	command = "iperf3 -B " + ip_addr_str + " -c " + sink_addr + " -p " + to_string(sink_port) + rate + mtu + time_limit; 
+	cout<<command<<endl;
+	system(command.c_str());
+	cout<<"IPERF Traffic successfully sent"<<endl;
+	// generate_data();
+	// to_sink.fill_client_details(ip_addr);
+	// to_sink.bind_client();
+	// to_sink.fill_server_details(sink_port, sink_addr);
+	// to_sink.connect_with_server();
+	// to_sink.pkt.clear_data();
+	// to_sink.pkt.fill_data(0, pkt.data_len, pkt.data);
+	// to_sink.pkt.make_data_packet();
+	// to_sink.write_data();	
+	// cout<<"Data sent successfully for UE - "<<num<<endl;
 }
 
 void UserEquipment::setup_interface(){
@@ -89,13 +104,16 @@ void UserEquipment::setup_interface(){
 	arg.append(to_string(num));
 	arg.append(" ");
 	arg.append(ip_addr);
+	arg.append("/16");
+	cout<<arg.c_str()<<endl;
 	system(arg.c_str());
-	cout<<"Interface successfullly created for UE - "<<num<<endl;
+	cout<<"Interface successfully created for UE - "<<num<<endl;
 }
 
 void UserEquipment::set_sink(){
 
-	sink_port = g_private_sink_port;
+	// sink_port = g_private_sink_port;
+	sink_port = (num + 55000);
 	strcpy(sink_addr, g_private_sink_addr);
 }
 

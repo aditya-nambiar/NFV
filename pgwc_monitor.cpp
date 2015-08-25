@@ -27,6 +27,7 @@ void PGWcMonitor::attach_to_tun(){
 		exit(-1);
 	}
 	strcpy(tun_name, ifr.ifr_name);
+	cout<<"Successfully attached to TUN device"<<endl;
 }
 
 void PGWcMonitor::read_tun(){
@@ -35,27 +36,42 @@ void PGWcMonitor::read_tun(){
 	count = read(tun_fd, pkt.data, BUFFER_SIZE);
 	report_error(count);
 	pkt.data_len = count;
+	cout<<endl<<"Successfully read data from the TUN device"<<endl;
 }
 
 void PGWcMonitor::write_tun(){
 
 	count = write(tun_fd, pkt.data, pkt.data_len);
 	report_error(count);
+	cout<<"Successfully written data into the TUN device"<<endl;
 }
 
 void PGWcMonitor::attach_to_sink(){
+	int dummy_num = -1;
 
-	to_sink.fill_client_details(g_pgw_addr);
 	to_sink.bind_client();
 	to_sink.fill_server_details(g_public_sink_port, g_public_sink_addr);
-	to_sink.connect_with_server();	
+	to_sink.connect_with_server(dummy_num);
+	cout<<"Successfully connected with the Sink server"<<endl;
 }
 
 void PGWcMonitor::write_sink(){
+	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
+	struct tcphdr *tcp_hdr = (tcphdr*)malloc(20 * sizeof(u_int8_t)); 
+	char *sink = (char*)malloc(INET_ADDRSTRLEN);
 
 	copy_to_sinkpkt();
+
+	memcpy(iphdr, to_sink.pkt.data, 20 * sizeof(uint8_t));
+	memcpy(tcp_hdr, to_sink.pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
+	inet_ntop(AF_INET, &(iphdr->ip_dst), sink, INET_ADDRSTRLEN);
+	cout<<"At PGW: Sink IP is "<<sink<<endl;
+	cout<<"TCP destination port is "<<ntohs(tcp_hdr->th_dport)<<endl;	
+	cout<<"Size is "<<to_sink.pkt.data_len<<endl;
+	
 	to_sink.pkt.make_data_packet();
 	to_sink.write_data();		
+	cout<<"Successfully written data into the Sink"<<endl<<endl;
 }
 
 void PGWcMonitor::copy_to_sinkpkt(){

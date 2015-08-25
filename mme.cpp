@@ -89,6 +89,7 @@ void setup_tunnel(Server &mme, Client &to_hss, int ue_num){
 	modify_session(to_sgw, ue_num, tun);
 	memcpy(&tun.sgw_uteid, to_sgw.pkt.data, sizeof(uint16_t));
 	memcpy(ue_addr, to_sgw.pkt.data + sizeof(uint16_t), INET_ADDRSTRLEN);
+	cout<<"UE addr is "<<ue_addr<<endl;
 	mme.pkt.clear_data();
 	mme.pkt.fill_data(0, sizeof(uint16_t), tun.sgw_uteid);	
 	mme.pkt.fill_data(sizeof(uint16_t), INET_ADDRSTRLEN, ue_addr);	

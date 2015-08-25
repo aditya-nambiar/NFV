@@ -36,13 +36,12 @@ struct PGWc{
 	~PGWc();
 };
 
-extern vector<char*> g_ip_table;
+extern vector<string> g_ip_table;
 extern unordered_map<int, int> g_bearer_table;
-extern unordered_map<char*, TunCdata> g_tun_ctable;
+extern unordered_map<string, TunCdata> g_tun_ctable;
 
 void setup_ip_table();
 void set_ip_table_size();
 void fill_ip_table();
-void free_ip_table();
 
 #endif //PGWC_H

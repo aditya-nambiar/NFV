@@ -13,7 +13,7 @@ void RawSocket::set_interface(const char *interface_inp){
 RawSocket::RawSocket(){
 	// src_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	// dst_addr = allocate_str_mem(INET_ADDRSTRLEN);
-	raw_socket = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
+	raw_socket = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
 	report_error(raw_socket);
 	setsockopt(raw_socket, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on));	
 	signal(SIGPIPE, SIG_IGN);					
@@ -73,8 +73,9 @@ void RawSocket::fill_dst_details(){
 }
 
 void RawSocket::write_data(){
+	
 	status = sendto(raw_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&dst_sock_addr, g_addr_len);
-	report_error(status);
+	report_error(status, "Error in writing data through raw socket");
 }
 
 RawSocket::~RawSocket(){

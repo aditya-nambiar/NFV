@@ -1,15 +1,15 @@
 #include "enodeb.h"
 
-unordered_map<char*, TunData> g_tun_table;
+unordered_map<string, TunData> g_tun_table;
 
 TunData::TunData(){
 
-	sgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
+
 }
 
 TunData::~TunData(){
 
-	free(sgw_addr);
+
 }
 
 EnodeB::EnodeB(){
@@ -19,7 +19,6 @@ EnodeB::EnodeB(){
 	pos = 0;
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	tun_name = allocate_str_mem(BUFFER_SIZE);
-
 }
 
 uint16_t EnodeB::generate_uteid(int ue_num){
@@ -49,6 +48,7 @@ void EnodeB::attach_to_tun(){
 		exit(-1);
 	}
 	strcpy(tun_name, ifr.ifr_name);
+	cout<<"Enodeb attached to tun device - "<<tun_name<<endl;
 }
 
 void EnodeB::read_tun(){
@@ -70,11 +70,15 @@ void EnodeB::set_ue_ip(){
 
 	memcpy(iphdr, pkt.data, 20 * sizeof(uint8_t));
 	inet_ntop(AF_INET, &(iphdr->ip_src), ue_ip, INET_ADDRSTRLEN);
+	cout<<"Through tunnel: UE IP is "<<ue_ip<<endl;
 }
 
 void EnodeB::set_tun_data(){
+	string ue_ip_str;
 
-	tun_data = g_tun_table[ue_ip];
+	ue_ip_str.assign(ue_ip);
+	tun_data = g_tun_table[ue_ip_str];
+	cout<<"Details fetched are: "<<"UE IP - "<<ue_ip_str<<" SGW - port "<<tun_data.sgw_port<<" SGW addr "<<tun_data.sgw_addr<<endl;
 }
 
 void EnodeB::set_sgw_num(){
@@ -90,7 +94,7 @@ void EnodeB::set_sgw_num(){
 void EnodeB::connect_with_sgw(){
 
 	to_sgw[pos].bind_client();
-	to_sgw[pos].fill_server_details(tun_data.sgw_port, tun_data.sgw_addr);
+	to_sgw[pos].fill_server_details(tun_data.sgw_port, tun_data.sgw_addr.c_str());
 	to_sgw[pos].connect_with_server(pos);
 	handshake_with_sgw();
 	socket_table[tun_data.sgw_addr] = pos;
@@ -120,11 +124,11 @@ void EnodeB::send_data(){
 	to_sgw[num].write_data();
 }
 
-void EnodeB::recv_data(){
+void EnodeB::recv_data(int &sgw_num){
 
-	to_sgw[num].read_data();
+	to_sgw[sgw_num].read_data();
 	pkt.clear_data();	
-	pkt.fill_data(0, to_sgw[num].pkt.data_len, to_sgw[num].pkt.data);
+	pkt.fill_data(0, to_sgw[sgw_num].pkt.data_len, to_sgw[sgw_num].pkt.data);
 	pkt.rem_gtpu_hdr();
 }
 

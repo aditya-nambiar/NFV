@@ -21,8 +21,8 @@ HSS_CPP = utils.cpp packet.cpp server.cpp db_mysql.cpp
 SGW_H = utils.h packet.h server.h client.h sgwc.h sgwu.h
 SGW_CPP = utils.cpp packet.cpp server.cpp client.cpp sgwc.cpp sgwu.cpp
 
-PGW_H = utils.h packet.h server.h tcp_client.h raw_socket.h pgwc.h pgwc_monitor.h pgwu.h
-PGW_CPP = utils.cpp packet.cpp server.cpp tcp_client.cpp raw_socket.cpp pgwc.cpp pgwc_monitor.cpp pgwu.cpp
+PGW_H = utils.h packet.h server.h client.h raw_socket.h pgwc.h pgwc_monitor.h pgwu.h
+PGW_CPP = utils.cpp packet.cpp server.cpp client.cpp raw_socket.cpp pgwc.cpp pgwc_monitor.cpp pgwu.cpp
 
 SINK_H = utils.h packet.h server.h client.h sink_monitor.h
 SINK_CPP = utils.cpp packet.cpp server.cpp client.cpp sink_monitor.cpp

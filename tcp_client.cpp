@@ -1,14 +1,14 @@
 #include "tcp_client.h"
 
 TCPClient::TCPClient(){
-	client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	client_socket = socket(AF_INET, SOCK_STREAM, 0);
 	report_error(client_socket);
 	client_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	signal(SIGPIPE, SIG_IGN);			
 }
 
-void TCPClient::fill_client_details(const char*){
+void TCPClient::fill_client_details(const char* client_addr){
 	strcpy(this->client_addr, client_addr);
 	bzero((char *) &client_sock_addr, sizeof(client_sock_addr));
 	client_sock_addr.sin_family = AF_INET;  	
@@ -56,6 +56,7 @@ void TCPClient::read_data(){
 void TCPClient::write_data(){
 	status = write(client_socket, pkt.packet, pkt.packet_len);
 	report_error(status);
+	cout<<"Sent size is "<<status<<endl;
 }
 
 TCPClient::~TCPClient(){
