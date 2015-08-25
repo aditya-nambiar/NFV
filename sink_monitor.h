@@ -3,14 +3,14 @@
 
 #include "utils.h"
 #include "packet.h"
-#include "tcp_server.h"
+#include "server.h"
 #include "client.h"
 
 struct SinkMonitor{
 	static Client to_pgw;
 	static int tun_fd;
 	static const char *tun_name;
-	TCPServer for_pgw;
+	Server for_pgw;
 	int count;
 	Packet pkt;
 

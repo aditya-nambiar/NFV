@@ -48,7 +48,7 @@ using namespace std;
 
 #define MAX_CONNECTIONS 100
 #define UE_COUNT 1
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 2048
 
 extern int g_freeport;
 extern int g_mme_port;

@@ -32,10 +32,11 @@ void TCPServer::listen_accept(void*(*multithreading_func)(void*)){
 	int i;
 	i=0;
 	status = listen(server_socket, 100);
-	report_error(status);
+	report_error(status, "Error in incoming connection");
 	while(1){
 		client_socket[i] = accept(server_socket, (struct sockaddr *)&client_sock_addr, &client_addr_len);
-		report_error(client_socket[i]);
+		report_error(client_socket[i], "Error in accepting connection");
+		cout<<"Successfully connected with Client "<<endl;
 		status = pthread_create(&tid[i], NULL, multithreading_func, &client_socket[i]);
 		report_error(status);
 		i++;

@@ -3,9 +3,11 @@
 
 #include "utils.h"
 #include "packet.h"
+#include "server.h"
 #include "client.h"
-#include "tcp_server.h"
 #include "sink_monitor.h"
+
+#define MAX_THREADS 1
 
 void setup_interface();
 void setup_tun();
