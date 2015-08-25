@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "packet.h"
 #include "server.h"
-#include "tcp_client.h"
+#include "client.h"
 #include "raw_socket.h"
 #include "pgwc.h"
 #include "pgwc_monitor.h"

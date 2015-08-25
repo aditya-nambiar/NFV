@@ -56,6 +56,7 @@ void TCPClient::read_data(){
 void TCPClient::write_data(){
 	status = write(client_socket, pkt.packet, pkt.packet_len);
 	report_error(status);
+	cout<<"Sent size is "<<status<<endl;
 }
 
 TCPClient::~TCPClient(){

@@ -42,7 +42,7 @@ void PGWu::recv_sgw(Server &pgw_server){
 	pgw_server.read_data();
 	pgw_server.pkt.rem_gtpu_hdr();
 	copy_to_rawpkt(pgw_server.pkt);
-	cout<<"Received data from SGW and removed GTPu header successfully"<<endl;
+	//cout<<endl<<"Received data from SGW and removed GTPu header successfully"<<endl;
 }
 
 void PGWu::copy_to_rawpkt(Packet &arg){
@@ -59,15 +59,15 @@ void PGWu::send_sgw(Server &pgw_server){
 	memcpy(iphdr, for_sink.pkt.data, 20 * sizeof(uint8_t));
 	memcpy(tcp_hdr, for_sink.pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
 	inet_ntop(AF_INET, &(iphdr->ip_dst), sink, INET_ADDRSTRLEN);
-	cout<<endl<<"At PGW: UE IP is "<<sink<<endl;
-	cout<<"TCP destination port is "<<ntohs(tcp_hdr->th_dport)<<endl<<endl;	
+	//cout<<"At PGW: UE IP is "<<sink<<endl;
+	//cout<<"TCP destination port is "<<ntohs(tcp_hdr->th_dport)<<endl;	
 
 	copy_sinkpkt_to_pgwpkt(pgw_server.pkt);
 	pgw_server.pkt.fill_gtpu_hdr(tun_udata.sgw_uteid);
 	pgw_server.pkt.add_gtpu_hdr();
 	pgw_server.pkt.make_data_packet();
 	pgw_server.write_data();
-	cout<<"Sent data to SGW successfully"<<endl;
+	//cout<<"Sent data to SGW successfully"<<endl<<endl;
 }
 
 void PGWu::copy_sinkpkt_to_pgwpkt(Packet &arg){
@@ -78,17 +78,15 @@ void PGWu::copy_sinkpkt_to_pgwpkt(Packet &arg){
 
 void PGWu::send_raw_socket(){
 
-	cout<<"Starting to send data through raw socket"<<endl;
 	raw_client.pkt.make_data_packet();
 	raw_client.write_data();
-	cout<<"Sent data through raw socket successfully"<<endl;
+	//cout<<"Sent data through raw socket successfully"<<endl<<endl;
 }
 
 void PGWu::recv_sink(){
 
-	cout<<"Waiting to read data from the Sink"<<endl;
 	for_sink.read_data();
-	cout<<"Data received from sink successfully of "<<for_sink.pkt.data_len<<" bytes"<<endl;
+	//cout<<endl<<"Data received from sink successfully of "<<for_sink.pkt.data_len<<" bytes"<<endl;
 }
 
 void PGWu::set_ue_ip(){
