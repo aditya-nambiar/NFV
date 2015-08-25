@@ -25,24 +25,36 @@ void* monitor_traffic(void *arg){
 }
 
 void* process_traffic(void *arg){
-	TCPServer sink_server;
+	int tnum;
+	string command;
+	string addr;
+	int port;
 
-	sink_server.server_socket = *(int*)arg;
-	sink_server.read_data();
-	cout<<"Sent message is "<<sink_server.pkt.data<<endl;
+	tnum = *((int*)arg);
+	port = (tnum + 55000);
+	addr.assign(g_private_sink_addr);
+	command = "iperf3 -s -B " + addr + " -p " + to_string(port);
+	system(command.c_str());
 }
 
 int main(){
-	TCPServer sink_server;
+	pthread_t tid[MAX_CONNECTIONS];
+	int tnum[MAX_CONNECTIONS];
 	pthread_t mon_tid;
 	int status;
+	int i;
 
 	setup_interface();
 	setup_tun();
 	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);
 	report_error(status);	
-	sink_server.fill_server_details(g_private_sink_port, g_private_sink_addr);
-	sink_server.bind_server();
-	sink_server.listen_accept(process_traffic);
+	for(i=0;i<MAX_CONNECTIONS;i++){
+		tnum[i] = i;
+		status = pthread_create(&tid[i], NULL, process_traffic, &tnum[i]);
+		report_error(status);	
+	}
+	for(i=0;i<MAX_CONNECTIONS;i++){
+		pthread_join(tid[i], NULL);
+	}
 	return 0;
 }
