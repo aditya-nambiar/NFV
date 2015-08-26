@@ -90,5 +90,6 @@ void print_message(string, unsigned long long);
 const char* to_char_array(unsigned long long);
 char* allocate_str_mem(int);
 uint8_t* allocate_uint8_mem(int);
+void usage_server(int, char*[]);
 
 #endif //UTILS_H

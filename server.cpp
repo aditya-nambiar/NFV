@@ -2,31 +2,19 @@
 
 int g_reuse = 1;
 
-int g_total_threads;
-queue<ClientDetails> g_connections;
-
-pthread_mutex_t g_queue_lock = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t g_enqueue = PTHREAD_COND_INITIALIZER;
-pthread_cond_t g_queue_full = PTHREAD_COND_INITIALIZER;
-
-ClientDetails fetch_connection(){
-	ClientDetails entity;
-	struct sockaddr_in client_sock_addr;
-	if(!g_connections.empty()){
-		entity = g_connections.front();
-		g_connections.pop();
-	}
-	else
-		entity = make_pair(-1, client_sock_addr);
-	return entity;
-}
-
 Server::Server(){
 	server_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	report_error(server_socket);
 	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));
 	signal(SIGPIPE, SIG_IGN);	  
+}
+
+void Server::begin_thread_pool(int count, void*(*thread_func)(void*)){
+
+	tpool.set_max_threads(count);
+	tpool.set_thread_func(thread_func);
+	tpool.create_threads();
 }
 
 void Server::fill_server_details(int server_port, const char *server_addr){
@@ -48,6 +36,28 @@ void Server::bind_server(){
 	getsockname(server_socket, (struct sockaddr*)&server_sock_addr, &len);
 	server_port = ntohs(server_sock_addr.sin_port);	
 	//cout<<"Server binded with port "<<server_port<<endl;
+}
+
+void Server::listen_accept(){
+	ClientDetails entity;
+
+	while(1){
+		status = recvfrom(server_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&entity.client_sock_addr, &g_addr_len);
+		report_error(status);
+		memcpy(&entity.num, pkt.data, sizeof(int)); 		
+		status = pthread_mutex_lock(&tpool.conn_lock);
+		report_error(status, "Error in locking");
+		if(tpool.connections.size() == tpool.max_threads){
+			status = pthread_cond_wait(&tpool.conn_full, &tpool.conn_lock);
+			report_error(status, "Error in conditional wait");
+		}
+		tpool.connections.push(entity);
+		status = pthread_cond_signal(&tpool.conn_req);
+		report_error(status, "Error in signalling");
+		status = pthread_mutex_unlock(&tpool.conn_lock);
+		report_error(status, "Error in unlocking");
+		cout<<"Server side: Connection made with Client "<<entity.num<<endl;
+	}
 }
 
 void Server::listen_accept(void*(*multithreading_func)(void*)){

@@ -3,17 +3,9 @@
 
 #include "utils.h"
 #include "packet.h"
+#include "thread_pool.h"
 
 extern int g_reuse;
-
-extern int g_total_threads;
-extern queue<ClientDetails> g_connections;
-
-extern pthread_mutex_t g_queue_lock = PTHREAD_MUTEX_INITIALIZER;
-extern pthread_cond_t g_enqueue = PTHREAD_COND_INITIALIZER;
-extern pthread_cond_t g_queue_full = PTHREAD_COND_INITIALIZER;
-
-ClientDetails fetch_connection();
 
 class Server{
 public:
@@ -27,12 +19,16 @@ public:
 	int client_num;
 	struct sockaddr_in client_sock_addr;
 	ClientDetails clients[MAX_CONNECTIONS];
-	pthread_t tid[MAX_CONNECTIONS];
+	pthread_t tid[MAX_CONNECTIONS];	
 	
+	struct ThreadPool tpool;
+
 	Server();
+	void begin_thread_pool(int, void*(*thread_func)(void*));
 	void fill_server_details(int, const char*);
 	void bind_server();
-	void listen_accept(void*(*multithreading_func)(void*));
+	void listen_accept();
+	void listen_accept(void*(*multithreading_func)(void*));	
 	void connect_with_client();
 	void read_data();
 	void write_data();	

@@ -84,17 +84,19 @@ void handle_udata(Server &pgw_server){
 	}
 }
 
-int main(){
+int main(int argc, char *argv[]){
 	Server pgw_server;
 	pthread_t mon_tid;
 	int status;
 
+	usage_server(argc, argv);
 	setup_tun();
 	setup_ip_table();
 	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);
 	report_error(status);	
+	pgw_server.begin_thread_pool(atoi(argv[1]), process_traffic);
 	pgw_server.fill_server_details(g_pgw_port, g_pgw_addr);
 	pgw_server.bind_server();
-	pgw_server.listen_accept(process_traffic);
+	pgw_server.listen_accept();
 	return 0;
 }
