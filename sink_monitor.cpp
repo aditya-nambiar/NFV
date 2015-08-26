@@ -114,7 +114,7 @@ void* start_monitor(void *arg){
 		status = select(maxfd + 1, &rd_set, NULL, NULL, NULL);
 		report_error(status, "Select-process failure\tTry again");
 		if(FD_ISSET(tun_fd, &rd_set)){
-			cout<<endl<<"Detected data from private sink"<<endl;
+			//cout<<endl<<"Detected data from private sink"<<endl;
 			sink_monitor.read_tun();
 			to_pgw.pkt.clear_data();
 			to_pgw.pkt.fill_data(0, sink_monitor.pkt.data_len, sink_monitor.pkt.data);			
@@ -122,30 +122,30 @@ void* start_monitor(void *arg){
 			memcpy(iphdr, to_pgw.pkt.data, 20 * sizeof(uint8_t));
 			memcpy(tcp_hdr, to_pgw.pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
 			inet_ntop(AF_INET, &(iphdr->ip_dst), sink, INET_ADDRSTRLEN);
-			cout<<"At Sink Monitor(From Sink To PGW): UE IP is "<<sink<<endl;
-			cout<<"TCP destination port is "<<ntohs(tcp_hdr->th_dport)<<endl;
-			cout<<"Size is "<<to_pgw.pkt.data_len<<endl;
-			cout<<"Address of to_pgw server is "<<to_pgw.server_addr<<endl;
-			cout<<"Port of to_pgw server is "<<to_pgw.server_port<<endl;
+			//cout<<"At Sink Monitor(From Sink To PGW): UE IP is "<<sink<<endl;
+			//cout<<"TCP destination port is "<<ntohs(tcp_hdr->th_dport)<<endl;
+			//cout<<"Size is "<<to_pgw.pkt.data_len<<endl;
+			//cout<<"Address of to_pgw server is "<<to_pgw.server_addr<<endl;
+			//cout<<"Port of to_pgw server is "<<to_pgw.server_port<<endl;
 						
 			to_pgw.pkt.make_data_packet();
 			to_pgw.write_data();
-			cout<<"Successfully written to PGW"<<endl<<endl;
+			//cout<<"Successfully written to PGW"<<endl<<endl;
 		}
 		if(FD_ISSET(net_fd, &rd_set)) {
-			cout<<endl<<"Detected data from the PGW"<<endl;
+			//cout<<endl<<"Detected data from the PGW"<<endl;
 			monitor.read_data();
 			sink_monitor.copy_to_pkt(monitor.pkt);
 			
 			memcpy(iphdr, sink_monitor.pkt.data, 20 * sizeof(uint8_t));
 			memcpy(tcp_hdr, sink_monitor.pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
 			inet_ntop(AF_INET, &(iphdr->ip_dst), sink, INET_ADDRSTRLEN);
-			cout<<"At Sink Monitor: Sink IP is "<<sink<<endl;
-			cout<<"TCP destination port is "<<ntohs(tcp_hdr->th_dport)<<endl;	
-			cout<<"Size is "<<sink_monitor.pkt.data_len<<endl;
+			//cout<<"At Sink Monitor: Sink IP is "<<sink<<endl;
+			//cout<<"TCP destination port is "<<ntohs(tcp_hdr->th_dport)<<endl;	
+			//cout<<"Size is "<<sink_monitor.pkt.data_len<<endl;
 			
 			sink_monitor.write_tun();
-			cout<<"Successfully written to private sink"<<endl<<endl;
+			//cout<<"Successfully written to private sink"<<endl<<endl;
 		}
 	}
 }

@@ -7,7 +7,7 @@
 #include "client.h"
 #include "sink_monitor.h"
 
-#define MAX_THREADS 1
+#define MAX_THREADS UE_COUNT
 
 void setup_interface();
 void setup_tun();
