@@ -2,6 +2,25 @@
 
 int g_reuse = 1;
 
+int g_total_threads;
+queue<ClientDetails> g_connections;
+
+pthread_mutex_t g_queue_lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t g_enqueue = PTHREAD_COND_INITIALIZER;
+pthread_cond_t g_queue_full = PTHREAD_COND_INITIALIZER;
+
+ClientDetails fetch_connection(){
+	ClientDetails entity;
+	struct sockaddr_in client_sock_addr;
+	if(!g_connections.empty()){
+		entity = g_connections.front();
+		g_connections.pop();
+	}
+	else
+		entity = make_pair(-1, client_sock_addr);
+	return entity;
+}
+
 Server::Server(){
 	server_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	report_error(server_socket);

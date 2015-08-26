@@ -41,13 +41,8 @@ void* process_traffic(void *arg){
 }
 
 int main(){
-<<<<<<< HEAD
 	pthread_t tid[MAX_THREADS];
 	int tnum[MAX_THREADS];
-=======
-	pthread_t tid[MAX_CONNECTIONS];
-	int tnum[MAX_CONNECTIONS];
->>>>>>> 83505f7e837ec0837ee1253898abd95143d65763
 	pthread_t mon_tid;
 	int status;
 	int i;
@@ -56,20 +51,12 @@ int main(){
 	setup_tun();
 	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);
 	report_error(status);	
-<<<<<<< HEAD
 	for(i=0;i<MAX_THREADS;i++){
-=======
-	for(i=0;i<MAX_CONNECTIONS;i++){
->>>>>>> 83505f7e837ec0837ee1253898abd95143d65763
 		tnum[i] = i;
 		status = pthread_create(&tid[i], NULL, process_traffic, &tnum[i]);
 		report_error(status);	
 	}
-<<<<<<< HEAD
 	for(i=0;i<MAX_THREADS;i++){
-=======
-	for(i=0;i<MAX_CONNECTIONS;i++){
->>>>>>> 83505f7e837ec0837ee1253898abd95143d65763
 		pthread_join(tid[i], NULL);
 	}
 	return 0;

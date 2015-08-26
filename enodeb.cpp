@@ -70,7 +70,7 @@ void EnodeB::set_ue_ip(){
 
 	memcpy(iphdr, pkt.data, 20 * sizeof(uint8_t));
 	inet_ntop(AF_INET, &(iphdr->ip_src), ue_ip, INET_ADDRSTRLEN);
-	cout<<"Through tunnel: UE IP is "<<ue_ip<<endl;
+	// cout<<"Through tunnel: UE IP is "<<ue_ip<<endl;
 }
 
 void EnodeB::set_tun_data(){
@@ -78,7 +78,7 @@ void EnodeB::set_tun_data(){
 
 	ue_ip_str.assign(ue_ip);
 	tun_data = g_tun_table[ue_ip_str];
-	cout<<"Details fetched are: "<<"UE IP - "<<ue_ip_str<<" SGW - port "<<tun_data.sgw_port<<" SGW addr "<<tun_data.sgw_addr<<endl;
+	// cout<<"Details fetched are: "<<"UE IP - "<<ue_ip_str<<" SGW - port "<<tun_data.sgw_port<<" SGW addr "<<tun_data.sgw_addr<<endl;
 }
 
 void EnodeB::set_sgw_num(){

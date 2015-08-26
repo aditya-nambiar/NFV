@@ -4,7 +4,7 @@ Things to do:
 2. Integrity check
 3. Threaded pool
 4. Detach procedure
-5. Sending data at a fixed rate
+5. Running program for a fixed time
 
 Doubts in the implementation:
 
