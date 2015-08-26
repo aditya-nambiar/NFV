@@ -9,23 +9,23 @@ all:	ran mme hss sgw pgw sink
 
 G++ = g++ -std=c++0x -std=gnu++0x
 
-RAN_H	= utils.h packet.h client.h tcp_client.h ue.h enodeb.h
-RAN_CPP = utils.cpp packet.cpp client.cpp tcp_client.cpp ue.cpp enodeb.cpp
+RAN_H	= utils.h packet.h client.h ue.h enodeb.h
+RAN_CPP = utils.cpp packet.cpp client.cpp ue.cpp enodeb.cpp
 
-MME_H = utils.h packet.h server.h client.h
-MME_CPP = utils.cpp packet.cpp server.cpp client.cpp
+MME_H = utils.h packet.h thread_pool.h server.h client.h
+MME_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp client.cpp
 
-HSS_H = utils.h packet.h server.h db_mysql.h
-HSS_CPP = utils.cpp packet.cpp server.cpp db_mysql.cpp
+HSS_H = utils.h packet.h thread_pool.h server.h db_mysql.h
+HSS_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp db_mysql.cpp
 
-SGW_H = utils.h packet.h server.h client.h sgwc.h sgwu.h
-SGW_CPP = utils.cpp packet.cpp server.cpp client.cpp sgwc.cpp sgwu.cpp
+SGW_H = utils.h packet.h thread_pool.h server.h client.h sgwc.h sgwu.h
+SGW_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp client.cpp sgwc.cpp sgwu.cpp
 
-PGW_H = utils.h packet.h server.h client.h raw_socket.h pgwc.h pgwc_monitor.h pgwu.h
-PGW_CPP = utils.cpp packet.cpp server.cpp client.cpp raw_socket.cpp pgwc.cpp pgwc_monitor.cpp pgwu.cpp
+PGW_H = utils.h packet.h thread_pool.h server.h client.h raw_socket.h pgwc.h pgwc_monitor.h pgwu.h
+PGW_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp client.cpp raw_socket.cpp pgwc.cpp pgwc_monitor.cpp pgwu.cpp
 
-SINK_H = utils.h packet.h server.h client.h sink_monitor.h
-SINK_CPP = utils.cpp packet.cpp server.cpp client.cpp sink_monitor.cpp
+SINK_H = utils.h packet.h thread_pool.h server.h client.h sink_monitor.h
+SINK_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp client.cpp sink_monitor.cpp
 
 #-------------------------------------------#
 

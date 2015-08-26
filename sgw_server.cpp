@@ -78,11 +78,13 @@ void handle_udata(Server &sgw_server){
 	}
 }
 
-int main(){
+int main(int argc, char *argv[]){
 	Server sgw_server;
 	
+	usage_server(argc, argv);
+	sgw_server.begin_thread_pool(atoi(argv[1]), process_traffic);
 	sgw_server.fill_server_details(g_sgw1_port, g_sgw1_addr);
 	sgw_server.bind_server();
-	sgw_server.listen_accept(process_traffic);
+	sgw_server.listen_accept();
 	return 0;
 }

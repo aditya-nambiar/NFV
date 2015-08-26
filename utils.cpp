@@ -125,3 +125,16 @@ uint8_t* allocate_uint8_mem(int len){
 		exit (EXIT_FAILURE);
 	}
 }
+
+void usage_server(int argc, char *argv[]){
+
+	if(argc < 2){
+		cout<<"Please try again with the number of threads to be spawn"<<endl;
+		exit(-1);
+	}
+	if(atoi(argv[1]) == 0){
+		cout<<"Please try again with a valid number of threads to be spawn"<<endl;
+		exit(-1);
+	}
+}
+

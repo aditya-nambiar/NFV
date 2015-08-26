@@ -4,7 +4,6 @@
 #include "utils.h"
 #include "packet.h"
 #include "client.h"
-#include "tcp_client.h"
 
 class UserEquipment{
 public:

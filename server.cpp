@@ -10,6 +10,13 @@ Server::Server(){
 	signal(SIGPIPE, SIG_IGN);	  
 }
 
+void Server::begin_thread_pool(int count, void*(*thread_func)(void*)){
+
+	tpool.set_max_threads(count);
+	tpool.set_thread_func(thread_func);
+	tpool.create_threads();
+}
+
 void Server::fill_server_details(int server_port, const char *server_addr){
 	strcpy(this->server_addr, server_addr);
 	bzero((char *) &server_sock_addr, sizeof(server_sock_addr));
@@ -29,6 +36,28 @@ void Server::bind_server(){
 	getsockname(server_socket, (struct sockaddr*)&server_sock_addr, &len);
 	server_port = ntohs(server_sock_addr.sin_port);	
 	//cout<<"Server binded with port "<<server_port<<endl;
+}
+
+void Server::listen_accept(){
+	ClientDetails entity;
+
+	while(1){
+		status = recvfrom(server_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&entity.client_sock_addr, &g_addr_len);
+		report_error(status);
+		memcpy(&entity.num, pkt.data, sizeof(int)); 		
+		status = pthread_mutex_lock(&tpool.conn_lock);
+		report_error(status, "Error in locking");
+		if(tpool.connections.size() == tpool.max_threads){
+			status = pthread_cond_wait(&tpool.conn_full, &tpool.conn_lock);
+			report_error(status, "Error in conditional wait");
+		}
+		tpool.connections.push(entity);
+		status = pthread_cond_signal(&tpool.conn_req);
+		report_error(status, "Error in signalling");
+		status = pthread_mutex_unlock(&tpool.conn_lock);
+		report_error(status, "Error in unlocking");
+		cout<<"Server side: Connection made with Client "<<entity.num<<endl;
+	}
 }
 
 void Server::listen_accept(void*(*multithreading_func)(void*)){

@@ -40,13 +40,14 @@ void* process_traffic(void *arg){
 	system(command.c_str());
 }
 
-int main(){
+int main(int argc, char *argv[]){
 	pthread_t tid[MAX_THREADS];
 	int tnum[MAX_THREADS];
 	pthread_t mon_tid;
 	int status;
 	int i;
 
+	usage_server(argc, argv);
 	setup_interface();
 	setup_tun();
 	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);

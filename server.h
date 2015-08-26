@@ -3,6 +3,7 @@
 
 #include "utils.h"
 #include "packet.h"
+#include "thread_pool.h"
 
 extern int g_reuse;
 
@@ -18,12 +19,16 @@ public:
 	int client_num;
 	struct sockaddr_in client_sock_addr;
 	ClientDetails clients[MAX_CONNECTIONS];
-	pthread_t tid[MAX_CONNECTIONS];
+	pthread_t tid[MAX_CONNECTIONS];	
 	
+	struct ThreadPool tpool;
+
 	Server();
+	void begin_thread_pool(int, void*(*thread_func)(void*));
 	void fill_server_details(int, const char*);
 	void bind_server();
-	void listen_accept(void*(*multithreading_func)(void*));
+	void listen_accept();
+	void listen_accept(void*(*multithreading_func)(void*));	
 	void connect_with_client();
 	void read_data();
 	void write_data();	

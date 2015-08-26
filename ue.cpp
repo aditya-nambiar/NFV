@@ -66,7 +66,6 @@ void UserEquipment::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_
 }
 
 void UserEquipment::send_traffic(){	
-	TCPClient to_sink;
 	string command;
 	string ip_addr_str;
 	string sink_addr_str;

@@ -146,10 +146,14 @@ int generate_bearer_id(int ue_num){
 	return ue_num;
 }
 
-int main(){
+
+int main(int argc, char *argv[]){
 	Server mme;
+
+	usage_server(argc, argv);
+	mme.begin_thread_pool(atoi(argv[1]), multithreading_func);
 	mme.fill_server_details(g_mme_port, g_mme_addr);
 	mme.bind_server();
-	mme.listen_accept(multithreading_func);
+	mme.listen_accept();
   return 0;
 }
