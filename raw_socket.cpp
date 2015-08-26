@@ -61,10 +61,13 @@ void RawSocket::bind_client(){
 // }
 
 void RawSocket::fill_dst_details(){
+	struct tcphdr *tcp_hdr = (tcphdr*)malloc(20 * sizeof(u_int8_t)); 
 
+
+	memcpy(tcp_hdr, pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
 	bzero((char*)&dst_sock_addr, sizeof(dst_sock_addr));
 	dst_sock_addr.sin_family = AF_INET;
-	dst_sock_addr.sin_port = htons(5000);
+	dst_sock_addr.sin_port = htons(ntohs(tcp_hdr->th_dport));
 	status = inet_aton(g_private_sink_addr, &dst_sock_addr.sin_addr);
 	if(status == 0){
 		cout<<"ERROR: Invalid IP address"<<endl;

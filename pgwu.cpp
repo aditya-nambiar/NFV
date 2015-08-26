@@ -26,7 +26,6 @@ void PGWu::configure_raw_client(){
 
 	RawSocket::set_interface("tun1");
 	raw_client.bind_client();	
-	raw_client.fill_dst_details();
 	cout<<"Raw client configured successfully"<<endl;
 }
 
@@ -78,6 +77,7 @@ void PGWu::copy_sinkpkt_to_pgwpkt(Packet &arg){
 
 void PGWu::send_raw_socket(){
 
+	raw_client.fill_dst_details();
 	raw_client.pkt.make_data_packet();
 	raw_client.write_data();
 	//cout<<"Sent data through raw socket successfully"<<endl<<endl;
