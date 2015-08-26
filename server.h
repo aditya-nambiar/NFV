@@ -6,6 +6,15 @@
 
 extern int g_reuse;
 
+extern int g_total_threads;
+extern queue<ClientDetails> g_connections;
+
+extern pthread_mutex_t g_queue_lock = PTHREAD_MUTEX_INITIALIZER;
+extern pthread_cond_t g_enqueue = PTHREAD_COND_INITIALIZER;
+extern pthread_cond_t g_queue_full = PTHREAD_COND_INITIALIZER;
+
+ClientDetails fetch_connection();
+
 class Server{
 public:
 	int status;
