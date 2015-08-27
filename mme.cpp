@@ -26,6 +26,7 @@ void Tunnel::set_mme_cteid(int ue_num){
 
 void *multithreading_func(void *arg){
 	int type;
+	
 	ClientDetails ue = *(ClientDetails*)arg;
 	Server mme;
 	mme.fill_server_details(g_freeport, g_mme_addr);

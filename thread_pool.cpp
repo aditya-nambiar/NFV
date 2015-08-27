@@ -54,24 +54,24 @@ ThreadPool::~ThreadPool(){
 }
 
 void* thread_handler(void *arg){
-	struct ThreadPool tpool;
+	struct ThreadPool *tpool;
 	ClientDetails entity;
 	int num;
 	int status;
 	void *conn_info;
 
-	tpool = *((struct ThreadPool*)arg);
+	tpool = ((struct ThreadPool*)arg);
 	while(1){
-		status = pthread_mutex_lock(&tpool.conn_lock);
+		status = pthread_mutex_lock(&(tpool->conn_lock));
 		report_error(status, "Error in locking");
-		while((entity = tpool.fetch_connection()).num == -1){
-			status = pthread_cond_wait(&tpool.conn_req, &tpool.conn_lock);
+		while((entity = tpool->fetch_connection()).num == -1){
+			status = pthread_cond_wait(&(tpool->conn_req), &(tpool->conn_lock));
 			report_error(status, "Conditional wait failed");
 		}
-		status = pthread_cond_signal(&tpool.conn_full);
+		status = pthread_cond_signal(&(tpool->conn_full));
 		report_error(status, "Error in signalling event");
-		status = pthread_mutex_unlock(&tpool.conn_lock);
+		status = pthread_mutex_unlock(&(tpool->conn_lock));
 		conn_info = &entity;
-		(*tpool.thread_func)(conn_info);
+		(*(tpool->thread_func))(conn_info);
 	}	
 }

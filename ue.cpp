@@ -6,9 +6,10 @@ UserEquipment::UserEquipment(int ue_num){
 	key = generate_key(num);
 	imsi = key*1000;
 	msisdn = 9000000000 + key;
+	
+	cout<<"IMSI is "<<imsi<<" "<<"MSISDN is "<<msisdn<<endl;
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
-
 }
 
 unsigned long long UserEquipment::generate_key(int ue_num){
@@ -30,9 +31,8 @@ void UserEquipment::authenticate(Client &to_mme){
 	to_mme.read_data();
 	memcpy(&autn, to_mme.pkt.data, sizeof(autn));
 	memcpy(&rand, to_mme.pkt.data + sizeof(autn), sizeof(rand));
-	cout<<autn<<"	"<<rand<<endl;
 	res = get_autn_res(autn, rand);
-	cout<<"Result is "<<res<<endl;
+	cout<<"AUTN is "<<autn<<", RAND is "<<rand<<" and the result is "<<res<<endl;
 	to_mme.pkt.clear_data();
 	to_mme.pkt.fill_data(0, sizeof(res), res);
 	to_mme.pkt.make_data_packet();
