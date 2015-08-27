@@ -18,13 +18,14 @@ public:
 	
 	int client_num;
 	struct sockaddr_in client_sock_addr;
-	ClientDetails clients[MAX_CONNECTIONS];
-	pthread_t tid[MAX_CONNECTIONS];	
+	vector<ClientDetails> clients;
+	vector<pthread_t> tid;
 	
 	struct ThreadPool tpool;
 
 	Server();
 	void begin_thread_pool(int, void*(*thread_func)(void*));
+	void set_total_connections(int);
 	void fill_server_details(int, const char*);
 	void bind_server();
 	void listen_accept();

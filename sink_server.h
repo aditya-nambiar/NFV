@@ -8,11 +8,12 @@
 #include "client.h"
 #include "sink_monitor.h"
 
-#define MAX_THREADS UE_COUNT
+extern int g_total_connections;
 
 void setup_interface();
 void setup_tun();
 void* monitor_traffic(void*);
 void* process_traffic(void*);
+void startup_sink(char**, vector<int>&, vector<pthread_t>&);
 
 #endif //SINK_SERVER_H

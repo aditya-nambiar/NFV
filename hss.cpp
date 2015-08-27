@@ -86,7 +86,7 @@ void fetch_db_data(MySql &db, const char *query){
 int main(int argc, char *argv[]){
 	Server hss;
 	
-	usage_server(argc, argv);
+	usage(argc, argv);
 	if(mysql_library_init(0, NULL, NULL))
 		cout<<"ERROR: mysql library cannot be opened"<<endl;
 	hss.begin_thread_pool(atoi(argv[1]), multithreading_func);

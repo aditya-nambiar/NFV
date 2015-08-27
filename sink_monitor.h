@@ -19,7 +19,7 @@ struct SinkMonitor{
 	void read_tun();
 	void write_tun();
 	static void configure_topgw();
-	void listen_accept_pgw();
+	void listen_accept_pgw(int);
 	void set_global_variables();
 	// void* start_monitor(void*);
 	void copy_to_topgwpkt();

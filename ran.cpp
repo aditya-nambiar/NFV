@@ -1,5 +1,7 @@
 #include "ran.h"
 
+int g_total_connections;
+
 void setup_tun(){
 
 	system("sudo openvpn --rmtun --dev tun1");
@@ -76,22 +78,31 @@ void send_traffic(UserEquipment &ue){
 	ue.send_traffic();
 }
 
-int main(){
+void startup_ran(char *argv[], vector<int> &ue_num, vector<pthread_t> &tid){
+
+	g_total_connections = atoi(argv[1]);
+	ue_num.resize(g_total_connections);
+	tid.resize(g_total_connections);
+}
+
+int main(int argc, char *argv[]){
 	int status;
 	int i;
-	vector<int> ue_num(UE_COUNT);
+	vector<int> ue_num;
 	pthread_t mon_tid;
-	pthread_t tid[UE_COUNT];
+	vector<pthread_t> tid;
 
+	usage(argc, argv);
+	startup_ran(argv, ue_num, tid);
 	setup_tun();
 	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);
 	report_error(status);
-	for(i=0;i<UE_COUNT;i++){
+	for(i=0;i<g_total_connections;i++){
 		ue_num[i] = i;
 		status = pthread_create(&tid[i], NULL, generate_traffic, &ue_num[i]);
 		report_error(status);
 	}
-	// for(int i=0;i<UE_COUNT;i++)
+	// for(int i=0;i<g_total_connections;i++)
 	// 	pthread_join(tid[i],NULL);
 	pthread_join(mon_tid, NULL);
 	return 0;

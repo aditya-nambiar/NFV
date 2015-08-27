@@ -17,6 +17,12 @@ void Server::begin_thread_pool(int count, void*(*thread_func)(void*)){
 	tpool.create_threads();
 }
 
+void Server::set_total_connections(int total_connections){
+
+	clients.resize(total_connections);
+	tid.resize(total_connections);
+}
+
 void Server::fill_server_details(int server_port, const char *server_addr){
 	strcpy(this->server_addr, server_addr);
 	bzero((char *) &server_sock_addr, sizeof(server_sock_addr));

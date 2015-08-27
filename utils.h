@@ -46,8 +46,6 @@
 
 using namespace std;
 
-#define MAX_CONNECTIONS 100
-#define UE_COUNT 10
 #define BUFFER_SIZE 2048
 
 extern int g_freeport;
@@ -90,6 +88,6 @@ void print_message(string, unsigned long long);
 const char* to_char_array(unsigned long long);
 char* allocate_str_mem(int);
 uint8_t* allocate_uint8_mem(int);
-void usage_server(int, char*[]);
+void usage(int, char*[]);
 
 #endif //UTILS_H

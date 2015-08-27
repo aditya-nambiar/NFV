@@ -57,8 +57,9 @@ void SinkMonitor::configure_topgw(){
 	cout<<"Configured the server to_pgw successfully "<<endl;
 }
 
-void SinkMonitor::listen_accept_pgw(){
+void SinkMonitor::listen_accept_pgw(int total_connections){
 
+	for_pgw.set_total_connections(total_connections);
 	for_pgw.fill_server_details(g_public_sink_port, g_public_sink_addr);
 	for_pgw.bind_server();
 	for_pgw.listen_accept(start_monitor);
