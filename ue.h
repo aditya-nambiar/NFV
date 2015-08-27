@@ -31,6 +31,8 @@ public:
 	void setup_interface();	
 	void set_sink();
 	void generate_data();
+	void send_detach_req(Client&);
+	void recv_detach_res(Client&);
 	~UserEquipment();		
 };
 

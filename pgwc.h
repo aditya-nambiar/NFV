@@ -34,6 +34,10 @@ struct PGWc{
 	uint16_t generate_cteid(int&);	
 	void create_session_response_to_sgw(Server&, uint16_t&);
 	void fill_tun_ctable();	
+	void delete_session_req_from_sgw(Server&);
+	void erase_bearer_table();
+	void erase_tun_ctable();
+	void delete_session_res_to_sgw(Server&);
 	~PGWc();
 };
 

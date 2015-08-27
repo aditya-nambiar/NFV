@@ -16,7 +16,7 @@ void ThreadPool::clear_connections(){
 
 void ThreadPool::set_max_threads(int count){
 
-	max_threads = count;
+	max_threads = count; 
 	thread_num.resize(max_threads);
 	thread_id.resize(max_threads);	
 }

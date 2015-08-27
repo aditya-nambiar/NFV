@@ -133,6 +133,11 @@ void SGWu::fill_tun_utable(uint16_t &uteid, TunUdata &tun_udata){
 	g_tun_utable[uteid] = tun_udata;
 }
 
+void SGWu::erase_tun_utable(uint16_t &uteid){
+
+	g_tun_utable.erase(uteid);
+}
+
 SGWu::~SGWu(){
 
 	// Dummy

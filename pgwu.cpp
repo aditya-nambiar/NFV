@@ -108,6 +108,11 @@ void PGWu::fill_tun_utable(string ue_ip, TunUdata &tun_udata){
 	g_tun_utable[ue_ip] = tun_udata;
 }
 
+void PGWu::erase_tun_utable(string ue_ip){
+
+	g_tun_utable.erase(ue_ip);
+}
+
 PGWu::~PGWu(){
 
 	free(ue_ip);

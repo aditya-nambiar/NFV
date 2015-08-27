@@ -33,6 +33,7 @@ struct PGWu{
 	void send_raw_socket();
 	void recv_sink();
 	void fill_tun_utable(string, TunUdata&);
+	void erase_tun_utable(string);
 	~PGWu();
 };
 

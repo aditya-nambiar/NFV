@@ -122,6 +122,27 @@ void UserEquipment::generate_data(){
 	pkt.fill_data(0, 19, "This is my traffic");
 }
 
+void UserEquipment::send_detach_req(Client &to_mme){
+	int type = 3;
+
+	to_mme.pkt.clear_data();
+	to_mme.pkt.fill_data(0, sizeof(int), type);
+	to_mme.pkt.make_data_packet();
+	to_mme.write_data();
+}
+
+void UserEquipment::recv_detach_res(Client &to_mme){
+	char *reply;
+
+	reply = allocate_str_mem(BUFFER_SIZE);
+	to_mme.read_data();
+	memcpy(reply, to_mme.pkt.data, to_mme.pkt.data_len);
+	if(strcmp((const char*)reply, "OK") == 0){
+		cout<<"UE - "<<num<<" has successfully detached from EPC"<<endl;
+	}
+	free(reply);
+}
+
 UserEquipment::~UserEquipment(){
 
 	free(ip_addr);

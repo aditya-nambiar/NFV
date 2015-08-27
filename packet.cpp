@@ -50,17 +50,17 @@ void Packet::fill_udp_hdr(int src_port, int dst_port){
 	udp_hdr.len = htons(UDP_LEN + data_len);
 }
 
-void Packet::fill_data(int pos, int len, int arg){
+void Packet::fill_data(int pos, int len, int &arg){
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len+= len;
 }
 
-void Packet::fill_data(int pos, int len, uint16_t arg){
+void Packet::fill_data(int pos, int len, uint16_t &arg){
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len+= len;
 }
 
-void Packet::fill_data(int pos, int len, unsigned long long arg){
+void Packet::fill_data(int pos, int len, unsigned long long &arg){
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len+= len;
 }
@@ -72,6 +72,11 @@ void Packet::fill_data(int pos, int len, uint8_t *message){
 
 void Packet::fill_data(int pos, int len, const char *message){
 	memcpy(data + pos, message, len * sizeof(uint8_t));
+	data_len+= len;
+}
+
+void Packet::fill_data(int pos, int len, string &message){
+	memcpy(data + pos, &message, len * sizeof(uint8_t));
 	data_len+= len;
 }
 
@@ -147,13 +152,11 @@ uint16_t Packet::udp_checksum(){
   	return ip_checksum((uint16_t*)buf, chk_sum_len);
 }
 
-
 void Packet::make_data_packet(){
 	clear_packet();
 	memcpy(packet, data, data_len);
 	packet_len = data_len;
 }
-
 
 void Packet::add_gtpc_hdr(){
 	int len;

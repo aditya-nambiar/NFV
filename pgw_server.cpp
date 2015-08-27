@@ -52,6 +52,10 @@ void handle_cdata(Server &pgw_server){
 	pgwc.fill_tun_ctable();
 	pgwu.fill_tun_utable(g_ip_table[pgwc.ue_num], tun_udata);
 	cout<<"Tunnel created from PGW to SGW for UE - "<<pgwc.ue_num<<endl;
+	pgwc.delete_session_req_from_sgw(pgw_server);
+	pgwc.delete_session_res_to_sgw(pgw_server);
+	pgwu.erase_tun_utable(g_ip_table[pgwc.ue_num]);
+	cout<<"PGW has successfully deallocated resources for UE - "<<pgwc.ue_num<<endl;
 }
 
 void handle_udata(Server &pgw_server){
@@ -94,7 +98,7 @@ int main(int argc, char *argv[]){
 	setup_ip_table();
 	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);
 	report_error(status);	
-	pgw_server.begin_thread_pool(atoi(argv[1]), process_traffic);
+	pgw_server.begin_thread_pool(2 * atoi(argv[1]), process_traffic);
 	pgw_server.fill_server_details(g_pgw_port, g_pgw_addr);
 	pgw_server.bind_server();
 	pgw_server.listen_accept();

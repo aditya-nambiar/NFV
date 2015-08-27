@@ -44,6 +44,7 @@ struct SGWu{
 	void recv_pgw(int&);
 	void send_pgw();
 	void fill_tun_utable(uint16_t&, TunUdata&);
+	void erase_tun_utable(uint16_t&);
 	~SGWu();
 };
 

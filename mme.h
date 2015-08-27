@@ -3,39 +3,30 @@
 
 #include "utils.h"
 #include "packet.h"
-#include "thread_pool.h"
-#include "server.h"
-#include "client.h"
 
-unordered_map<int, int> g_bearer_table;
-
-struct Gateways{
+struct TunData{
+	uint16_t sgw_cteid;
 	int sgw_port;
 	int pgw_port;
 	char *sgw_addr;
 	char *pgw_addr;
 
-	Gateways();
-	void set_sgw();
-	void set_pgw();
-	~Gateways();
+	TunData();
+	~TunData();
 };
 
-struct Tunnel{
-	uint16_t mme_cteid;
-	uint16_t sgw_cteid;
-	uint16_t enodeb_uteid;
-	uint16_t sgw_uteid;
+struct MME{
+	uint16_t cteid;
+	int ue_num;
+	char *ue_ip;
+	char *reply;
 
-	void set_mme_cteid(int);
+	MME();
+	void set_ue_num();
+	void set_cteid();
+	uint16_t generate_cteid(int&);
+	~MME();
 };
 
-void* multithreading_func(void*);
-void authenticate(Server&, Client&);
-void setup_tunnel(Server&, Client&, int);
-void create_session(Client&, int, Tunnel&);
-void modify_session(Client&, int, Tunnel&);
-void set_bearer_id(int);
-int generate_bearer_id(int);
 
 #endif //MME_H

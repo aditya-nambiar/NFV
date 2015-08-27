@@ -56,11 +56,12 @@ void* generate_traffic(void *arg){
 	to_mme.fill_server_details(g_mme_port, g_mme_addr);
 	to_mme.connect_with_server(ue_num);	
 	UserEquipment ue(ue_num);
-	attach_with_mme(ue, to_mme);
+	attach(ue, to_mme);
 	send_traffic(ue);
+	detach(ue, to_mme);
 }
 
-void attach_with_mme(UserEquipment &ue, Client &to_mme){
+void attach(UserEquipment &ue, Client &to_mme){
 	EnodeB enodeb;
 	TunData tun_data;
 	uint16_t enodeb_uteid;
@@ -76,6 +77,12 @@ void attach_with_mme(UserEquipment &ue, Client &to_mme){
 void send_traffic(UserEquipment &ue){
 
 	ue.send_traffic();
+}
+
+void detach(UserEquipment &ue, Client &to_mme){
+
+	ue.send_detach_req(to_mme);
+	ue.recv_detach_res(to_mme);
 }
 
 void startup_ran(char *argv[], vector<int> &ue_num, vector<pthread_t> &tid){

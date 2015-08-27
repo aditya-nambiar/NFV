@@ -1,10 +1,10 @@
 Things to do:
 
-1. Encryption
-2. Integrity check
-3. Detach procedure
-4. Employing Distribution function 
-5. Running program for a fixed amount of time
+- Encryption
+- Integrity check
+- Detach procedure
+- Running program for a fixed amount of time
+- Employing Distribution function 
 
 Doubts in the implementation:
 
@@ -163,13 +163,13 @@ User Equipment Uplink & Downlink Data transfer:
 Detach Procedure:
 
 Step - 1:
-After sending iperf data traffic for a required amount of time, UE sends detach request to MME with type - 2.
+After sending iperf data traffic for a required amount of time, UE sends detach request to MME with type - 3.
 
 RAN to MME(Plain)
-type = 2
+type = 3
 
 Step - 2:
-On receiving type-2 detach request from UE, MME would forward the Delete Session Request message but now the type would be 3(through GTP-C) to the concerned SGW for this UE and it would then remove the corresponding entry(Client num it has obtained when this UE requested for attach) in the bearer table for this UE.
+On receiving type-3 detach request from UE, MME would forward the Delete Session Request message(through GTP-C) to the concerned SGW for this UE and it would then remove the corresponding entry(Client num it has obtained when this UE requested for attach) in the bearer table for this UE.
 
 MME to SGW(GTP-C)
 type = 3
