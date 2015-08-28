@@ -191,6 +191,7 @@ void delete_session_res_from_sgw(Server &mme_server, Client &to_sgw, int &ue_num
 	to_sgw.read_data();
 	to_sgw.pkt.rem_gtpc_hdr();
 	memcpy(reply, to_sgw.pkt.data, to_sgw.pkt.data_len);
+	cout<<"Reply is "<<reply<<endl;
 	if(strcmp((const char*)reply, "OK") == 0){
 		cout<<"SGW has successfully deallocated resources for this UE - "<<ue_num<<endl;
 	}

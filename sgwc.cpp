@@ -198,6 +198,7 @@ void SGWc::delete_session_res_from_pgw(){
 	to_pgw.pkt.rem_gtpc_hdr();
 	memcpy(reply, to_pgw.pkt.data, to_pgw.pkt.data_len);
 	res.assign(reply);
+	cout<<"Response is "<<res<<" and reply is "<<reply<<endl;
 	if(res == "OK"){
 		cout<<"PGW has successfully deallocated resources for UE - "<<ue_num<<endl;
 	}
