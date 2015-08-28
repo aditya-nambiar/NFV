@@ -1,5 +1,8 @@
 #include "sgw_server.h"
 
+double g_req_duration;
+time_t g_start_time;
+
 void* process_traffic(void *arg){
 	int type;
 	ClientDetails entity = *(ClientDetails*)arg;
@@ -18,6 +21,7 @@ void* process_traffic(void *arg){
 	if(type == 2){
 		handle_udata(sgw_server);
 	}
+	time_check(g_start_time, g_req_duration);
 }
 
 void handle_cdata(Server &sgw_server){
@@ -84,10 +88,17 @@ void handle_udata(Server &sgw_server){
 	}
 }
 
+void startup_sgw_server(char *argv[]){
+
+	g_start_time = time(0);
+	g_req_duration = atof(argv[2]);
+}
+
 int main(int argc, char *argv[]){
 	Server sgw_server;
 	
 	usage(argc, argv);
+	startup_sgw_server(argv);
 	sgw_server.begin_thread_pool(2 * atoi(argv[1]), process_traffic);
 	sgw_server.fill_server_details(g_sgw1_port, g_sgw1_addr);
 	sgw_server.bind_server();

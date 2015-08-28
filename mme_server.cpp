@@ -1,6 +1,8 @@
 #include "mme_server.h"
 
 unordered_map<int, int> g_bearer_table;
+double g_req_duration;
+time_t g_start_time;
 
 Gateways::Gateways(){
 	sgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
@@ -50,6 +52,7 @@ void *multithreading_func(void *arg){
 		setup_tunnel(mme_server, to_sgw, mme_server.client_num, tun);
 		detach(mme_server, to_sgw, tun, mme_server.client_num);
 	}
+	time_check(g_start_time, g_req_duration);
 }
 
 void authenticate(Server &mme_server, Client &to_hss){
@@ -209,10 +212,17 @@ void detach_res(Server &mme_server, int &ue_num){
 	cout<<"MME has successfully deallocated resources for this UE - "<<ue_num<<endl;
 }
 
+void startup_mme(char *argv[]){
+
+	g_start_time = time(0);
+	g_req_duration = atof(argv[2]);
+}
+
 int main(int argc, char *argv[]){
 	Server mme_server;
 
 	usage(argc, argv);
+	startup_mme(argv);
 	mme_server.begin_thread_pool(atoi(argv[1]), multithreading_func);
 	mme_server.fill_server_details(g_mme_port, g_mme_addr);
 	mme_server.bind_server();

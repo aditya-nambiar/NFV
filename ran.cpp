@@ -1,6 +1,8 @@
 #include "ran.h"
 
 int g_total_connections;
+double g_req_duration;
+time_t g_start_time;
 
 void setup_tun(){
 
@@ -50,15 +52,19 @@ void* monitor_traffic(void *arg){
 
 void* generate_traffic(void *arg){
 	int ue_num = *(int*)arg;
-	Client to_mme;
 
-	to_mme.bind_client();
-	to_mme.fill_server_details(g_mme_port, g_mme_addr);
-	to_mme.connect_with_server(ue_num);	
-	UserEquipment ue(ue_num);
-	attach(ue, to_mme);
-	send_traffic(ue);
-	detach(ue, to_mme);
+	while(1){
+		Client to_mme;
+
+		to_mme.bind_client();
+		to_mme.fill_server_details(g_mme_port, g_mme_addr);
+		to_mme.connect_with_server(ue_num);	
+		UserEquipment ue(ue_num);
+		attach(ue, to_mme);
+		send_traffic(ue);
+		detach(ue, to_mme);
+		time_check(g_start_time, g_req_duration);
+	}
 }
 
 void attach(UserEquipment &ue, Client &to_mme){
@@ -87,7 +93,9 @@ void detach(UserEquipment &ue, Client &to_mme){
 
 void startup_ran(char *argv[], vector<int> &ue_num, vector<pthread_t> &tid){
 
+	g_start_time = time(0);
 	g_total_connections = atoi(argv[1]);
+	g_req_duration = atof(argv[2]);
 	ue_num.resize(g_total_connections);
 	tid.resize(g_total_connections);
 }
@@ -111,6 +119,6 @@ int main(int argc, char *argv[]){
 	}
 	// for(int i=0;i<g_total_connections;i++)
 	// 	pthread_join(tid[i],NULL);
-	pthread_join(mon_tid, NULL);
+	// pthread_join(mon_tid, NULL);
 	return 0;
 }

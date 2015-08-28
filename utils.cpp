@@ -128,13 +128,26 @@ uint8_t* allocate_uint8_mem(int len){
 
 void usage(int argc, char *argv[]){
 
-	if(argc < 2){
-		cout<<"Please try again with the number of threads to be spawn"<<endl;
+	if(argc < 3){
+		cout<<"Please enter the correct number of arguments"<<endl;
+		cout<<"Argument-1: Number of threads to be spawn"<<endl;
+		cout<<"Argument-2: Duration of simulation"<<endl;
 		exit(-1);
 	}
-	if(atoi(argv[1]) == 0){
-		cout<<"Please try again with a valid number of threads to be spawn"<<endl;
+	if(atoi(argv[1]) == 0 || atof(argv[2]) == 0){
+		cout<<"Please enter valid arguments"<<endl;
+		cout<<"Argument-1: Number of threads to be spawn"<<endl;
+		cout<<"Argument-2: Duration of simulation"<<endl;
 		exit(-1);
+	}
+}
+
+void time_check(time_t &start_time, double &duration_time){
+	double elapsed_time;
+
+	if((elapsed_time = difftime(time(0), start_time)) > duration_time){
+		cout<<"Requested duration has ended. Finishing the program."<<endl;
+		exit(0);
 	}
 }
 

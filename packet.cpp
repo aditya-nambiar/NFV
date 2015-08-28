@@ -76,7 +76,7 @@ void Packet::fill_data(int pos, int len, const char *message){
 }
 
 void Packet::fill_data(int pos, int len, string &message){
-	memcpy(data + pos, &message, len * sizeof(uint8_t));
+	memcpy(data + pos, message.c_str(), len * sizeof(uint8_t));
 	data_len+= len;
 }
 
