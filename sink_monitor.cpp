@@ -150,6 +150,6 @@ void* start_monitor(void *arg){
 			sink_monitor.write_tun();
 			//cout<<"Successfully written to private sink"<<endl<<endl;
 		}
-		time_check(g_start_time, g_req_duration);
+		// time_check(g_start_time, g_req_duration);
 	}
 }
