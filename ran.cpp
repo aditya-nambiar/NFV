@@ -119,6 +119,6 @@ int main(int argc, char *argv[]){
 	}
 	// for(int i=0;i<g_total_connections;i++)
 	// 	pthread_join(tid[i],NULL);
-	// pthread_join(mon_tid, NULL);
+	pthread_join(mon_tid, NULL);
 	return 0;
 }
