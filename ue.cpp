@@ -77,7 +77,7 @@ void UserEquipment::send_traffic(){
 	set_sink();
 	ip_addr_str.assign(ip_addr);
 	sink_addr_str.assign(sink_addr);
-	rate = " -b 1M";
+	rate = " -b 200M";
 	mtu = " -M 500";
 	time_limit = " -t 1";
 	command = "iperf3 -B " + ip_addr_str + " -c " + sink_addr + " -p " + to_string(sink_port) + rate + mtu + time_limit; 
