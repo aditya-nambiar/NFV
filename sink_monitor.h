@@ -29,6 +29,8 @@ struct SinkMonitor{
 
 extern Client to_pgw;
 extern int tun_fd;
+extern double g_req_duration;
+extern time_t g_start_time;
 
 void* start_monitor(void*);
 

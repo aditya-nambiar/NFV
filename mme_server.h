@@ -9,6 +9,8 @@
 #include "mme.h"
 
 extern unordered_map<int, int> g_bearer_table;
+extern double g_req_duration;
+extern time_t g_start_time;
 
 struct Gateways{
 	int sgw_port;
@@ -44,5 +46,6 @@ void delete_session_req_to_sgw(Server&, Client&, Tunnel&);
 void delete_bearer_id(int&);
 void delete_session_res_from_sgw(Server&, Client&, int&);
 void detach_res(Server&, int&);
+void startup_mme(char *argv[]);
 
 #endif //MME_SERVER_H
