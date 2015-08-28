@@ -3,6 +3,8 @@
 Client SinkMonitor::to_pgw;
 int SinkMonitor::tun_fd;
 const char* SinkMonitor::tun_name;
+double g_req_duration;
+time_t g_start_time;
 
 SinkMonitor::SinkMonitor(){
 
@@ -148,5 +150,6 @@ void* start_monitor(void *arg){
 			sink_monitor.write_tun();
 			//cout<<"Successfully written to private sink"<<endl<<endl;
 		}
+		time_check(g_start_time, g_req_duration);
 	}
 }

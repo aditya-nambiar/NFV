@@ -8,6 +8,8 @@
 #include "enodeb.h"
 
 extern int g_total_connections;
+extern double g_req_duration;
+extern time_t g_start_time;
 
 void setup_tun();
 void* monitor_traffic(void*);
