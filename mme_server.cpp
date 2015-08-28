@@ -52,7 +52,7 @@ void *multithreading_func(void *arg){
 		setup_tunnel(mme_server, to_sgw, mme_server.client_num, tun);
 		detach(mme_server, to_sgw, tun, mme_server.client_num);
 	}
-	time_check(g_start_time, g_req_duration);
+	// time_check(g_start_time, g_req_duration);
 }
 
 void authenticate(Server &mme_server, Client &to_hss){

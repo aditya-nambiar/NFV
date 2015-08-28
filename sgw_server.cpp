@@ -21,7 +21,7 @@ void* process_traffic(void *arg){
 	if(type == 2){
 		handle_udata(sgw_server);
 	}
-	time_check(g_start_time, g_req_duration);
+	// time_check(g_start_time, g_req_duration);
 }
 
 void handle_cdata(Server &sgw_server){
