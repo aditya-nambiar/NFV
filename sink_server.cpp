@@ -46,7 +46,7 @@ void startup_sink(char *argv[], vector<int> &tnum, vector<pthread_t> &tid){
 
 	g_start_time = time(0);
 	g_total_connections = atoi(argv[1]);
-	g_req_duration = atof(argv[2]);	
+	// g_req_duration = atof(argv[2]);	
 	tnum.resize(g_total_connections);
 	tid.resize(g_total_connections);
 }

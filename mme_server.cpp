@@ -215,7 +215,7 @@ void detach_res(Server &mme_server, int &ue_num){
 void startup_mme(char *argv[]){
 
 	g_start_time = time(0);
-	g_req_duration = atof(argv[2]);
+	// g_req_duration = atof(argv[2]);
 }
 
 int main(int argc, char *argv[]){

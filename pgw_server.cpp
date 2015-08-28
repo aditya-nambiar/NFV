@@ -95,7 +95,7 @@ void handle_udata(Server &pgw_server){
 void startup_pgw_server(char *argv[]){
 
 	g_start_time = time(0);
-	g_req_duration = atof(argv[2]);
+	// g_req_duration = atof(argv[2]);
 }
 
 int main(int argc, char *argv[]){
