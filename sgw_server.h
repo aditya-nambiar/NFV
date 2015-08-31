@@ -9,9 +9,6 @@
 #include "sgwc.h"
 #include "sgwu.h"
 
-extern double g_req_duration;
-extern time_t g_start_time;
-
 void* process_traffic(void*);
 void handle_cdata(Server&);
 void handle_udata(Server&);

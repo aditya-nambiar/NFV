@@ -5,6 +5,7 @@ Client::Client(){
 	report_error(client_socket);
 	client_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));	
 	signal(SIGPIPE, SIG_IGN);			
 	//status = 0;
 	//setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));

@@ -7,7 +7,6 @@ UserEquipment::UserEquipment(int ue_num){
 	imsi = key*1000;
 	msisdn = 9000000000 + key;
 	
-	cout<<"IMSI is "<<imsi<<" "<<"MSISDN is "<<msisdn<<endl;
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
 }
@@ -21,11 +20,9 @@ void UserEquipment::authenticate(Client &to_mme){
 	unsigned long long autn, rand, res;
 	char *reply = allocate_str_mem(IP_MAXPACKET);
 
-	type = 1;
 	to_mme.pkt.clear_data();
-	to_mme.pkt.fill_data(0, sizeof(int), type);
-	to_mme.pkt.fill_data(sizeof(int), sizeof(imsi), imsi);
-	to_mme.pkt.fill_data(sizeof(int) + sizeof(imsi), sizeof(msisdn), msisdn);
+	to_mme.pkt.fill_data(0, sizeof(unsigned long long), imsi);
+	to_mme.pkt.fill_data(sizeof(unsigned long long), sizeof(unsigned long long), msisdn);
 	to_mme.pkt.make_data_packet();
 	to_mme.write_data();
 	to_mme.read_data();

@@ -17,9 +17,9 @@ PGWu::PGWu(){
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
-uint16_t PGWu::generate_uteid(int &ue_num){
+uint16_t PGWu::generate_uteid(int &ue_number){
 
-	return ue_num;
+	return ue_number;
 }
 
 void PGWu::configure_raw_client(){

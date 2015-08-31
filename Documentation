@@ -1,10 +1,13 @@
+Problems facing so-far:
+
+- Too many open files (For connections < 100)
+
 Things to do:
 
 - Encryption
 - Integrity check
-- Detach procedure
-- Running program for a fixed amount of time
 - Employing Distribution function 
+- Employing APN during registration
 
 Doubts in the implementation:
 
@@ -84,7 +87,7 @@ When the authentication match was successful at the MME, the RAN is supposed to 
 
 MME to SGW:(Plain)
 MME GTP-C TEID
-UE IMSI
+UE IMSI (UE NUM is made to send instead)
 UE Bearer ID
 
 Step-2:

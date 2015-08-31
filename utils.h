@@ -48,6 +48,7 @@ using namespace std;
 
 #define BUFFER_SIZE 2048
 
+extern int g_reuse;
 extern int g_freeport;
 extern int g_mme_port;
 extern int g_hss_port;
@@ -91,5 +92,6 @@ uint8_t* allocate_uint8_mem(int);
 void usage(int, char*[]);
 void usage_client(int, char*[]);
 void time_check(time_t&, double&);
+void handle_exceptions();
 
 #endif //UTILS_H

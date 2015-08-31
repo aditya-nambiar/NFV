@@ -20,9 +20,9 @@ SGWu::SGWu(){
 	type = 2;
 }
 
-uint16_t SGWu::generate_uteid(int &ue_num){
+uint16_t SGWu::generate_uteid(int &ue_number){
 	
-	return ue_num;
+	return ue_number;
 }
 
 void SGWu::set_uteid(){

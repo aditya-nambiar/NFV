@@ -1,7 +1,5 @@
 #include "server.h"
 
-int g_reuse = 1;
-
 Server::Server(){
 	server_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	report_error(server_socket);

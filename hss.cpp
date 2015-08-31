@@ -14,14 +14,11 @@ void* multithreading_func(void *arg){
 	hss.client_num = mme.num;
 	hss.connect_with_client();
 	hss.read_data();
-	memcpy(&type, hss.pkt.data, sizeof(int));
-	if(type == 1){
-		memcpy(&imsi, hss.pkt.data + sizeof(type), sizeof(imsi));
-		memcpy(&msisdn, hss.pkt.data + sizeof(type) + sizeof(imsi), sizeof(msisdn));
-		authenticate_query(imsi, msisdn, hss.pkt);
-		hss.pkt.make_data_packet();
-		hss.write_data();
-	}		
+	memcpy(&imsi, hss.pkt.data, sizeof(unsigned long long));
+	memcpy(&msisdn, hss.pkt.data + sizeof(unsigned long long), sizeof(unsigned long long));
+	authenticate_query(imsi, msisdn, hss.pkt);
+	hss.pkt.make_data_packet();
+	hss.write_data();
 	mysql_thread_end();
 }
 

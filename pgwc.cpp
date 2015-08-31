@@ -62,9 +62,9 @@ void PGWc::set_cteid(){
 	cteid = generate_cteid(ue_num);
 }
 
-uint16_t PGWc::generate_cteid(int &ue_num){
+uint16_t PGWc::generate_cteid(int &ue_number){
 
-	return ue_num;
+	return ue_number;
 }
 
 void PGWc::create_session_response_to_sgw(Server &pgw_server, uint16_t &uteid){

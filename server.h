@@ -5,8 +5,6 @@
 #include "packet.h"
 #include "thread_pool.h"
 
-extern int g_reuse;
-
 class Server{
 public:
 	int status;

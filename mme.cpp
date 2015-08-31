@@ -18,19 +18,223 @@ MME::MME(){
 	reply = allocate_str_mem(BUFFER_SIZE);
 }
 
-void MME::set_ue_num(){
-
-
-}
-
 void MME::set_cteid(){
 
-	cteid = generate_cteid(ue_num);
+	tun_data.mme_cteid = generate_cteid(ue_num);
 }
 
 uint16_t MME::generate_cteid(int &ue_number){
 
 	return ue_number;
+}
+
+void MME::set_bearer_id(){
+
+	bearer_id = generate_bearer_id(ue_num);
+}
+
+int MME::generate_bearer_id(int &ue_number){
+
+	return ue_number;
+}
+
+void MME::set_sgw(){
+	
+	tun_data.sgw_port = g_sgw1_port;
+	strcpy(tun_data.sgw_addr, g_sgw1_addr);
+}
+
+void MME::set_pgw(){
+
+	tun_data.pgw_port = g_pgw_port;
+	strcpy(tun_data.pgw_addr, g_pgw_addr);
+}
+
+void MME::startup_mme_server(ClientDetails &entity){
+
+	mme_server.fill_server_details(g_freeport, g_mme_addr);
+	mme_server.bind_server();
+	mme_server.client_sock_addr = entity.client_sock_addr;
+	mme_server.client_num = ue_num;
+	mme_server.connect_with_client();
+}
+
+void MME::set_ue_num(){
+
+	ue_num = mme_server.client_num;
+}
+
+void MME::attach_req_from_ue(){
+
+	mme_server.read_data();
+}
+
+void MME::setup_hss_client(){
+
+	to_hss.bind_client();
+	to_hss.fill_server_details(g_hss_port, g_hss_addr);
+	to_hss.connect_with_server(ue_num);
+}
+
+void MME::fetch_ue_data(){
+
+	to_hss.pkt.clear_data();
+	to_hss.pkt.fill_data(0, mme_server.pkt.data_len, mme_server.pkt.data);
+	to_hss.pkt.make_data_packet();
+	to_hss.write_data();
+	to_hss.read_data();	
+	memcpy(&autn_num, to_hss.pkt.data, sizeof(unsigned long long));
+	memcpy(&rand_num, to_hss.pkt.data + sizeof(unsigned long long), sizeof(unsigned long long));
+	memcpy(&autn_xres, to_hss.pkt.data + 2 * sizeof(unsigned long long), sizeof(unsigned long long));
+}
+
+void MME::authenticate_ue(){
+
+	mme_server.pkt.clear_data();
+	mme_server.pkt.fill_data(0, 2 * sizeof(unsigned long long), to_hss.pkt.data);
+	mme_server.pkt.make_data_packet();
+	mme_server.write_data();
+	mme_server.read_data();
+	memcpy(&autn_res, mme_server.pkt.data, sizeof(unsigned long long));
+	if(autn_xres == autn_res){
+		strcpy(reply, "OK");
+		mme_server.pkt.clear_data();
+		mme_server.pkt.fill_data(0, strlen(reply), reply);
+		mme_server.pkt.make_data_packet();
+		mme_server.write_data();
+		cout<<"Authentication is successful for UE - "<<ue_num<<endl;
+	}	
+	else{
+		cout<<"Authentication failed: Please disconnect and connect again with proper authentication"<<endl;
+		handle_exceptions();
+	}
+}
+
+void MME::setup_sgw_client(){
+
+	to_sgw.bind_client();
+	to_sgw.fill_server_details(tun_data.sgw_port, tun_data.sgw_addr);
+	to_sgw.connect_with_server(ue_num);
+}
+
+void MME::create_session_req_to_sgw(){
+
+	type = 1;
+	to_sgw.pkt.clear_data();
+	to_sgw.pkt.fill_data(0, sizeof(int), type);
+	to_sgw.pkt.fill_data(sizeof(int), sizeof(int), ue_num);
+	to_sgw.pkt.fill_data(2 * sizeof(int), sizeof(int), bearer_id);
+	to_sgw.pkt.fill_data(3 * sizeof(int), sizeof(uint16_t), tun_data.mme_cteid);
+	to_sgw.pkt.make_data_packet();
+	to_sgw.write_data();
+}
+
+void MME::create_session_res_from_sgw(){
+
+	to_sgw.read_data();
+	to_sgw.pkt.rem_gtpc_hdr();
+	memcpy(&tun_data.sgw_cteid, to_sgw.pkt.data, sizeof(uint16_t));
+	memcpy(reply, to_sgw.pkt.data + sizeof(uint16_t), to_sgw.pkt.data_len - sizeof(uint16_t));
+	if(strcmp((const char*)reply, "OK") == 0){
+		cout<<"Create session request was successful for UE - "<<ue_num<<endl;
+	}
+	else{
+		cout<<"Create session request failed: Please disconnect and connect again"<<endl;
+		handle_exceptions();
+	}
+}
+
+void MME::recv_enodeb(){
+
+	mme_server.read_data();	
+	memcpy(&tun_data.enodeb_uteid, mme_server.pkt.data, sizeof(uint16_t));
+}
+
+void MME::modify_session_req_to_sgw(){
+
+	to_sgw.pkt.clear_data();
+	to_sgw.pkt.fill_gtpc_hdr(tun_data.sgw_cteid);
+	to_sgw.pkt.fill_data(0, sizeof(uint16_t), tun_data.enodeb_uteid);
+	to_sgw.pkt.add_gtpc_hdr();
+	to_sgw.pkt.make_data_packet();
+	to_sgw.write_data();	
+}
+
+void MME::modify_session_res_from_sgw(){
+
+	to_sgw.read_data();
+	to_sgw.pkt.rem_gtpc_hdr();
+	memcpy(&tun_data.sgw_uteid, to_sgw.pkt.data, sizeof(uint16_t));
+	memcpy(ue_ip, to_sgw.pkt.data + sizeof(uint16_t), INET_ADDRSTRLEN);
+	memcpy(reply, to_sgw.pkt.data + sizeof(uint16_t) + INET_ADDRSTRLEN, to_sgw.pkt.data_len - sizeof(uint16_t) - INET_ADDRSTRLEN);
+	if(strcmp((const char*)reply, "OK") == 0){
+		cout<<"Modify Session Request was successful for UE - "<<ue_num<<endl;
+	}
+	else{
+		cout<<"Modify session request failed: Please disconnect and connect again"<<endl;
+		handle_exceptions();		
+	}
+}
+
+void MME::send_enodeb(){
+
+	mme_server.pkt.clear_data();
+	mme_server.pkt.fill_data(0, sizeof(uint16_t), tun_data.sgw_uteid);	
+	mme_server.pkt.fill_data(sizeof(uint16_t), INET_ADDRSTRLEN, ue_ip);	
+	mme_server.pkt.make_data_packet();
+	mme_server.write_data();
+}
+
+void MME::detach_req_from_ue(){
+
+	mme_server.read_data();
+	memcpy(&type, mme_server.pkt.data, sizeof(int));	
+	if(type == 3){
+		cout<<"Detach request has been received successfully at MME for UE - "<<ue_num<<endl;
+	}
+	else{
+		cout<<"Invalid Detach type num: Please disconnect and connect again"<<endl;
+		handle_exceptions();
+	}
+}
+
+void MME::delete_session_req_to_sgw(){
+
+	to_sgw.pkt.clear_data();
+	to_sgw.pkt.fill_data(0, mme_server.pkt.data_len, mme_server.pkt.data);
+	to_sgw.pkt.fill_gtpc_hdr(tun_data.sgw_cteid);
+	to_sgw.pkt.add_gtpc_hdr();
+	to_sgw.pkt.make_data_packet();
+	to_sgw.write_data();
+}
+
+void MME::delete_session_res_from_sgw(){
+
+	to_sgw.read_data();
+	to_sgw.pkt.rem_gtpc_hdr();
+	memcpy(reply, to_sgw.pkt.data, to_sgw.pkt.data_len);
+	if(strcmp((const char*)reply, "OK") == 0){
+		cout<<"MME has received successful detach response for UE - "<<ue_num<<endl;
+	}
+	else{
+		cout<<"Detach process failure at SGW: Please disconnect and connect again"<<endl;
+		handle_exceptions();		
+	}
+}
+
+void MME::detach_res_to_ue(){
+
+	strcpy(reply, "OK");
+	mme_server.pkt.clear_data();
+	mme_server.pkt.fill_data(0, strlen(reply), reply);
+	mme_server.pkt.make_data_packet();
+	mme_server.write_data();
+	cout<<"MME has successfully deallocated resources for UE - "<<ue_num<<endl;
+}
+
+void MME::rem_bearer_id(){
+
+	bearer_id = -1; // Dummy statement
 }
 
 MME::~MME(){

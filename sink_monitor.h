@@ -21,7 +21,6 @@ struct SinkMonitor{
 	static void configure_topgw();
 	void listen_accept_pgw(int);
 	void set_global_variables();
-	// void* start_monitor(void*);
 	void copy_to_topgwpkt();
 	void copy_to_pkt(Packet&);
 	~SinkMonitor();
@@ -29,8 +28,6 @@ struct SinkMonitor{
 
 extern Client to_pgw;
 extern int tun_fd;
-extern double g_req_duration;
-extern time_t g_start_time;
 
 void* start_monitor(void*);
 

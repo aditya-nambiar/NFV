@@ -59,7 +59,10 @@ struct Packet{
 	void decap();
 	void clear_data();
 	void clear_packet();
-
+	void copy_pkts(Packet&, Packet&);
+	void copy_frompkt(Packet&);
+	void copy_topkt(Packet&);
+	
 	~Packet();
 };
 

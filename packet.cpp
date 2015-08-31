@@ -227,6 +227,24 @@ void Packet::clear_packet(){
 	packet_len = 0;
 }
 
+void Packet::copy_pkts(Packet &dst, Packet &src){
+
+	dst.clear_data();
+	dst.fill_data(0, src.data_len, src.data);
+}
+
+void Packet::copy_frompkt(Packet &src){
+
+	this->clear_data();
+	this->fill_data(0, src.data_len, src.data);
+}
+
+void Packet::copy_topkt(Packet &dst){
+
+	dst.clear_data();
+	dst.fill_data(0, data_len, data);
+}
+
 Packet::~Packet(){
 	free(src_ip);
 	free(dst_ip);
