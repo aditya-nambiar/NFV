@@ -55,7 +55,7 @@ void MME::startup_mme_server(ClientDetails &entity){
 	mme_server.fill_server_details(g_freeport, g_mme_addr);
 	mme_server.bind_server();
 	mme_server.client_sock_addr = entity.client_sock_addr;
-	mme_server.client_num = ue_num;
+	mme_server.client_num = entity.num;
 	mme_server.connect_with_client();
 }
 

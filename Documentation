@@ -1,6 +1,11 @@
 Problems facing so-far:
 
 - Too many open files (For connections < 100)
+- Successive data transfer not working
+- Invalid IP address being received at SGW for some time when no. of simultaneous connections > 1
+- Invalid detach type request num received at MME for Threads = 15
+
+
 
 Things to do:
 

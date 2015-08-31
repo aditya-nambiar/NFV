@@ -61,9 +61,9 @@ void* generate_traffic(void *arg){
 		to_mme.connect_with_server(ue_num);	
 		UserEquipment ue(ue_num);
 		attach(ue, to_mme);
-		// send_traffic(ue);
-		// detach(ue, to_mme);
-		// time_check(g_start_time, g_req_duration);
+		send_traffic(ue);
+		detach(ue, to_mme);
+		time_check(g_start_time, g_req_duration);
 	}
 }
 
@@ -74,10 +74,10 @@ void attach(UserEquipment &ue, Client &to_mme){
 	string ue_ip_str;
 
 	ue.authenticate(to_mme);
-	// enodeb_uteid = enodeb.generate_uteid(ue.num);
-	// ue.setup_tunnel(to_mme, enodeb_uteid, tun_data.sgw_uteid, tun_data.sgw_port, tun_data.sgw_addr);
-	// ue_ip_str.assign(ue.ip_addr);
-	// g_tun_table[ue_ip_str] = tun_data;
+	enodeb_uteid = enodeb.generate_uteid(ue.num);
+	ue.setup_tunnel(to_mme, enodeb_uteid, tun_data.sgw_uteid, tun_data.sgw_port, tun_data.sgw_addr);
+	ue_ip_str.assign(ue.ip_addr);
+	g_tun_table[ue_ip_str] = tun_data;
 }
 
 void send_traffic(UserEquipment &ue){

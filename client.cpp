@@ -2,7 +2,7 @@
 
 Client::Client(){
 	client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	report_error(client_socket);
+	report_error(client_socket, "Error in creating sockets ");
 	client_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));	
