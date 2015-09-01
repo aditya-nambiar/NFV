@@ -5,7 +5,8 @@ int g_total_connections;
 void setup_interface(){
 	string arg;
 
-	arg = "sudo ifconfig eth0:192.168.100.2/16";
+	arg = "sudo ifconfig eth0:0 192.168.100.2/16";
+	cout<<arg<<endl;
 	system(arg.c_str());
 	cout<<"Interface successfullly created for Sink"<<endl;
 }
