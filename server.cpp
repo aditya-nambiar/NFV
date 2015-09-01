@@ -60,7 +60,7 @@ void Server::listen_accept(){
 		report_error(status, "Error in signalling");
 		status = pthread_mutex_unlock(&tpool.conn_lock);
 		report_error(status, "Error in unlocking");
-		cout<<"Server side: Connection made with Client "<<entity.num<<endl;
+		// cout<<"Server side: Connection made with Client "<<entity.num<<endl;
 	}
 }
 

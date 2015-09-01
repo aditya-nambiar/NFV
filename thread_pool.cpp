@@ -64,6 +64,7 @@ void* thread_handler(void *arg){
 	while(1){
 		status = pthread_mutex_lock(&(tpool->conn_lock));
 		report_error(status, "Error in locking");
+		cout<<"Thread waiting here"<<endl;
 		while((entity = tpool->fetch_connection()).num == -1){
 			status = pthread_cond_wait(&(tpool->conn_req), &(tpool->conn_lock));
 			report_error(status, "Conditional wait failed");

@@ -4,7 +4,11 @@ Problems facing so-far:
 - Successive data transfer not working
 - Invalid IP address being received at SGW for some time when no. of simultaneous connections > 1
 - Invalid detach type request num received at MME for Threads = 15
+- RAN disconnected for no known reason without printing any error message for Threads = 70
 
+Findings:
+
+- Number of sockets that can be opened simultanously is 1021
 
 
 Things to do:
