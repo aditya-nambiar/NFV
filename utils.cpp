@@ -42,7 +42,6 @@ void report_error(int arg, const char *message){
 
 	if(arg<0){
 		perror(message);
-		while(1){};
 		exit(EXIT_FAILURE);
 	}
 }

@@ -47,7 +47,7 @@ void Client::connect_with_server(int client_num){
 	read_data();
 	memcpy(&new_server_port, pkt.data, sizeof(int));
 	fill_server_details(new_server_port, server_addr);
-	cout<<"Client side: Client-"<<client_num<<" connected with server with port "<<new_server_port<<endl;	
+	// cout<<"Client side: Client-"<<client_num<<" connected with server with port "<<new_server_port<<endl;	
 }
 
 void Client::read_data(){
