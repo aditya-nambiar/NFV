@@ -12,6 +12,7 @@ Problems:
 - RAN disconnected for no known reason without printing any error message for Threads = 70
 - Invalid IP address being received at SGW for some time when no. of simultaneous connections > 1
 - Invalid detach type request num received at MME for Threads = 15
+- PGW disconnected for no known reason without printing any error message for Threads = 2 and Time = 3s
 
 Findings/Bugs Solved:
 
