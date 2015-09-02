@@ -1,24 +1,25 @@
 #include "client.h"
 
 Client::Client(){
-	client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	report_error(client_socket, "Error in creating sockets ");
+	
+	client_socket = -1;
 	client_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
-	setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));	
 	signal(SIGPIPE, SIG_IGN);			
-	//status = 0;
-	//setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));
 }
 
 void Client::bind_client(){
+	
+	client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	report_error(client_socket, "Error in creating sockets ");	
+	setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));	
 	socklen_t len = sizeof(sockaddr_in);
 	bzero((char *) &client_sock_addr, sizeof(client_sock_addr));
 	client_sock_addr.sin_family = AF_INET;  
 	client_sock_addr.sin_addr.s_addr = INADDR_ANY;	
 	client_sock_addr.sin_port = 0;
 	status = bind(client_socket, (struct sockaddr*)&client_sock_addr, sizeof(client_sock_addr));
-	report_error(status);	
+	report_error(status, "Error in binding");	
 	getsockname(client_socket, (struct sockaddr*)&client_sock_addr, &len);
 	client_port = ntohs(client_sock_addr.sin_port);	
 	strcpy(client_addr, inet_ntoa(client_sock_addr.sin_addr));
@@ -26,6 +27,7 @@ void Client::bind_client(){
 }
 
 void Client::fill_server_details(int server_port, const char *server_addr){
+	
 	this->server_port = server_port;
 	strcpy(this->server_addr, server_addr);
 	bzero((char*)&server_sock_addr, sizeof(server_sock_addr));
@@ -40,6 +42,7 @@ void Client::fill_server_details(int server_port, const char *server_addr){
 
 void Client::connect_with_server(int client_num){
 	int new_server_port;
+	
 	pkt.clear_data();
 	pkt.fill_data(0, sizeof(int), client_num);
 	pkt.make_data_packet();
@@ -51,6 +54,7 @@ void Client::connect_with_server(int client_num){
 }
 
 void Client::read_data(){
+	
 	pkt.clear_data();
 	status = recvfrom(client_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&server_sock_addr, &g_addr_len);
 	report_error(status);
@@ -59,11 +63,13 @@ void Client::read_data(){
 }
 
 void Client::write_data(){
+	
 	status = sendto(client_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&server_sock_addr, g_addr_len);
-	report_error(status);
+	report_error(status, "Client side: Error in writing data");
 }
 
 Client::~Client(){
+	
 	free(client_addr);
 	free(server_addr);
 	close(client_socket);

@@ -55,11 +55,11 @@ void* generate_traffic(void *arg){
 	ue_num = *((int*)arg);
 	while(1){
 		Client to_mme;
+		UserEquipment ue(ue_num);
 
 		to_mme.bind_client();
 		to_mme.fill_server_details(g_mme_port, g_mme_addr);
 		to_mme.connect_with_server(ue_num);	
-		UserEquipment ue(ue_num);
 		attach(ue, to_mme);
 		send_traffic(ue);
 		detach(ue, to_mme);

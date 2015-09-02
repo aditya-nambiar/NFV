@@ -87,6 +87,8 @@ void EnodeB::set_sgw_num(){
 		num = socket_table[tun_data.sgw_addr];
 	else{	
 		connect_with_sgw();
+		socket_table[tun_data.sgw_addr] = pos;
+		pos++;
 		num = socket_table[tun_data.sgw_addr];
 	}
 }
@@ -97,8 +99,6 @@ void EnodeB::connect_with_sgw(){
 	to_sgw[pos].fill_server_details(tun_data.sgw_port, tun_data.sgw_addr.c_str());
 	to_sgw[pos].connect_with_server(pos);
 	handshake_with_sgw();
-	socket_table[tun_data.sgw_addr] = pos;
-	pos++;
 }
 
 void EnodeB::handshake_with_sgw(){
