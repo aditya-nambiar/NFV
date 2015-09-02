@@ -51,7 +51,9 @@ void* monitor_traffic(void *arg){
 
 void* generate_traffic(void *arg){
 	int ue_num;
+	bool time_exceeded;
 
+	time_exceeded = false;
 	ue_num = *((int*)arg);
 	while(1){
 		Client to_mme;
@@ -63,7 +65,9 @@ void* generate_traffic(void *arg){
 		attach(ue, to_mme);
 		send_traffic(ue);
 		detach(ue, to_mme);
-		time_check(g_start_time, g_req_duration);
+		time_check(g_start_time, g_req_duration, time_exceeded);
+		if(time_exceeded)
+			break;
 	}
 }
 
@@ -117,8 +121,10 @@ int main(int argc, char *argv[]){
 		status = pthread_create(&tid[i], NULL, generate_traffic, &ue_num[i]);
 		report_error(status);
 	}
-	// for(int i=0;i<g_total_connections;i++)
-	// 	pthread_join(tid[i],NULL);
-	pthread_join(mon_tid, NULL);
+	for(int i=0;i<g_total_connections;i++){
+		pthread_join(tid[i],NULL);
+	}
+	// pthread_join(mon_tid, NULL);
+	cout<<"Requested duration has ended. Finishing the program."<<endl;
 	return 0;
 }

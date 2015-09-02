@@ -91,7 +91,7 @@ char* allocate_str_mem(int);
 uint8_t* allocate_uint8_mem(int);
 void usage(int, char*[]);
 void usage_client(int, char*[]);
-void time_check(time_t&, double&);
+void time_check(time_t&, double&, bool&);
 void handle_exceptions();
 
 #endif //UTILS_H

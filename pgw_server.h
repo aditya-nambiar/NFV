@@ -11,9 +11,6 @@
 #include "pgwc_monitor.h"
 #include "pgwu.h"
 
-extern double g_req_duration;
-extern time_t g_start_time;
-
 void setup_tun();
 void* monitor_traffic(void*);
 void* process_traffic(void*);
