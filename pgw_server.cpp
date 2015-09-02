@@ -1,8 +1,5 @@
 #include "pgw_server.h"
 
-double g_req_duration;
-time_t g_start_time;
-
 void setup_tun(){
 
 	system("sudo openvpn --rmtun --dev tun1");
@@ -41,7 +38,6 @@ void* process_traffic(void *arg){
 	if(type == 2){
 		handle_udata(pgw_server);
 	}
-	// time_check(g_start_time, g_req_duration);
 }
 
 void handle_cdata(Server &pgw_server){
@@ -92,19 +88,12 @@ void handle_udata(Server &pgw_server){
 	}
 }
 
-void startup_pgw_server(char *argv[]){
-
-	g_start_time = time(0);
-	// g_req_duration = atof(argv[2]);
-}
-
 int main(int argc, char *argv[]){
 	Server pgw_server;
 	pthread_t mon_tid;
 	int status;
 
 	usage(argc, argv);
-	startup_pgw_server(argv);
 	setup_tun();
 	setup_ip_table();
 	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);

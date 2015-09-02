@@ -156,12 +156,13 @@ void usage_client(int argc, char *argv[]){
 	}
 }
 
-void time_check(time_t &start_time, double &duration_time){
+void time_check(time_t &start_time, double &duration_time, bool &time_exceeded){
 	double elapsed_time;
 
 	if((elapsed_time = difftime(time(0), start_time)) > duration_time){
-		cout<<"Requested duration has ended. Finishing the program."<<endl;
-		exit(0);
+		time_exceeded = true;
+		//cout<<"Requested duration has ended. Finishing the program."<<endl;
+		// exit(0);
 	}
 }
 
