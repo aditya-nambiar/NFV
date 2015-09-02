@@ -6,7 +6,6 @@ UserEquipment::UserEquipment(int ue_num){
 	key = generate_key(num);
 	imsi = key*1000;
 	msisdn = 9000000000 + key;
-	
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
 }
@@ -38,7 +37,12 @@ void UserEquipment::authenticate(Client &to_mme){
 	memcpy(reply, to_mme.pkt.data, to_mme.pkt.data_len);
 	cout<<"This is the message -"<<reply<<endl;
 	if(strcmp((const char*)reply, "OK") == 0)
-		print_message("Authentication Successful for UserEquipment - ", key);
+		print_message("Authentication Successful for UserEquipment - ", num);
+	else{
+		cout<<"Authentication is not successful for UE - "<<num<<endl;
+		handle_exceptions();
+	}
+		
 }
 
 unsigned long long UserEquipment::get_autn_res(unsigned long long autn, unsigned long long rand){

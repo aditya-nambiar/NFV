@@ -1,10 +1,9 @@
 #include "server.h"
 
 Server::Server(){
-	server_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	report_error(server_socket);
+	
+	server_socket = -1;
 	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
-	setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));
 	signal(SIGPIPE, SIG_IGN);	  
 }
 
@@ -22,6 +21,7 @@ void Server::set_total_connections(int total_connections){
 }
 
 void Server::fill_server_details(int server_port, const char *server_addr){
+	
 	strcpy(this->server_addr, server_addr);
 	bzero((char *) &server_sock_addr, sizeof(server_sock_addr));
 	server_sock_addr.sin_family = AF_INET;  	
@@ -34,6 +34,10 @@ void Server::fill_server_details(int server_port, const char *server_addr){
 }
 
 void Server::bind_server(){
+	
+	server_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	report_error(server_socket);	
+	setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));
 	socklen_t len = sizeof(sockaddr_in);
 	status = bind(server_socket, (struct sockaddr*)&server_sock_addr, sizeof(server_sock_addr));
 	report_error(status);	
@@ -66,6 +70,7 @@ void Server::listen_accept(){
 
 void Server::listen_accept(void*(*multithreading_func)(void*)){
 	int i;
+	
 	i=0;
 	while(1){
 		status = recvfrom(server_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&clients[i].client_sock_addr, &g_addr_len);
@@ -79,6 +84,7 @@ void Server::listen_accept(void*(*multithreading_func)(void*)){
 }
 
 void Server::connect_with_client(){
+	
 	pkt.clear_data();
 	pkt.fill_data(0, sizeof(int), server_port);
 	pkt.make_data_packet();
@@ -86,6 +92,7 @@ void Server::connect_with_client(){
 }
 
 void Server::read_data(){
+	
 	pkt.clear_data();
 	status = recvfrom(server_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&client_sock_addr, &g_addr_len);
 	report_error(status);
@@ -94,11 +101,13 @@ void Server::read_data(){
 }
 
 void Server::write_data(){
+	
 	status = sendto(server_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&client_sock_addr, g_addr_len);
 	report_error(status);
 }
 
 Server::~Server(){
+	
 	free(server_addr);
 	close(server_socket);
 }
