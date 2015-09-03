@@ -8,6 +8,21 @@ Client::Client(){
 	signal(SIGPIPE, SIG_IGN);			
 }
 
+Client::Client(const Client &src_obj){
+	
+	client_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	status = src_obj.status;
+	client_socket = src_obj.client_socket;
+	client_port = src_obj.client_port;
+	strcpy(client_addr, src_obj.client_addr);
+	client_sock_addr = src_obj.client_sock_addr;
+	pkt = src_obj.pkt;
+	server_port = src_obj.server_port;
+	strcpy(server_addr, src_obj.server_addr);
+	server_sock_addr = src_obj.server_sock_addr;
+}
+
 void Client::bind_client(){
 	
 	client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);

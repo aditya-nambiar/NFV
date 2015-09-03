@@ -18,6 +18,7 @@ public:
 	struct sockaddr_in server_sock_addr;
 	
 	Client();
+	Client(const Client&);
 	void bind_client();
 	void fill_server_details(int, const char*);
 	void connect_with_server(int);
