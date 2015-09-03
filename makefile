@@ -79,7 +79,7 @@ sink:	$(SINK_P)
 	$(SINK_R)
 
 clean:
-	rm -f ran mme hss sgw pgw *~
+	rm -f ran mme hss sgw pgw tem *~
 
 #-------------------------------------------#
 

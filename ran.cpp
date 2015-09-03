@@ -70,6 +70,7 @@ void* generate_traffic(void *arg){
 			break;
 		}
 	}
+	return NULL;
 }
 
 void attach(UserEquipment &ue, Client &to_mme){

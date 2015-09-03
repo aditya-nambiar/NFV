@@ -1,37 +1,4 @@
-Problems:
 
-[Solved for now] - Too many open files (For connections < 100)
-[Solution]: Because a large number of sockets got created. This is because the constructor of Enodeb at UE side created an initial array of client sockets(10) for each UE and hence this alone created 100 * 10 = 1000 sockets for 100 UEs. This initial array creation is not necessary. Hence creating client sockets is moved while binding and a dummy value(-1) is assigned to client_socket in the constructor.
-
-[Solved] - Somehow after the first run of UE traffic transmission, Socket FD of enodeb_client to SGW gets closed, because of which, it is not able to transfer data
-[Solution]: This is because, an enodeb object is created during attach procedure from the UE side and the sockets that were closed belonged to this object and since a default value of 0 is assigned, these sockets actually messed up sockets which actually had socket_num as 0.
-
-[Expected behaviour only] - Successive data transfer not working
-[Reasoning]: Data plane side working in infinite loop. Hence no other threads can service the incoming request for data transfer.
-
-- RAN disconnected for no known reason without printing any error message for Threads = 70
-- Invalid IP address being received at SGW for some time when no. of simultaneous connections > 1
-- Invalid detach type request num received at MME for Threads = 15
-- PGW disconnected for no known reason without printing any error message for Threads = 2 and Time = 3s
-
-Findings/Bugs Solved:
-
-- Number of sockets that can be opened simultaneously is 1021. Important thing is that this number(1021) might be fixed for a particular time, because other processes might increase the number of file descriptors at a later time, but I am not sure about this and I think this number should pretty much work fine. 
-- Changing "ulimit -n 4096" will reduce this problem. I can now create upto 1021 + (4096 - 1024) = 4093 connections!
-
-- When socket is created in the constructor, it is created multiple times(during some situations which coincide in my RAN case) and the reason is not known. Creating socket during bind section solves this problem.
-
-
-Things to do:
-
-- Encryption
-- Integrity check
-- Employing Distribution function 
-- Employing APN during registration
-
-Doubts in the implementation:
-
-1. GTP-C headers usage
 
 
 Modules created:
