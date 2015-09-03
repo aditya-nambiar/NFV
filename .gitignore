@@ -5,9 +5,10 @@ sgw
 pgw
 sink
 tem
-rpc_server_responses.txt
+fd.txt
+output.txt
 kill.sh
 *~
-*txt
+
 
 
