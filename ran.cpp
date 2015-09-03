@@ -52,13 +52,13 @@ void* monitor_traffic(void *arg){
 void* generate_traffic(void *arg){
 	int ue_num;
 	bool time_exceeded;
-
-	time_exceeded = false;
+	
 	ue_num = *((int*)arg);
+	time_exceeded = false;
 	while(1){
 		Client to_mme;
 		UserEquipment ue(ue_num);
-
+				
 		to_mme.bind_client();
 		to_mme.fill_server_details(g_mme_port, g_mme_addr);
 		to_mme.connect_with_server(ue_num);	
@@ -66,8 +66,9 @@ void* generate_traffic(void *arg){
 		send_traffic(ue);
 		detach(ue, to_mme);
 		time_check(g_start_time, g_req_duration, time_exceeded);
-		if(time_exceeded)
+		if(time_exceeded){
 			break;
+		}
 	}
 }
 
