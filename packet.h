@@ -49,7 +49,7 @@ struct Packet{
 	void fill_data(int, int, unsigned long long&);
 	void fill_data(int, int, uint8_t*);	
 	void fill_data(int, int, const char*);	
-	void fill_data(int, int, string&);	
+	void fill_data(int, int, string&);
 	void eval_udp_checksum();
 	uint16_t ip_checksum(uint16_t*, int);
 	uint16_t udp_checksum();	
