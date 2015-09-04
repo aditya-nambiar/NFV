@@ -7,6 +7,50 @@ Server::Server(){
 	signal(SIGPIPE, SIG_IGN);	  
 }
 
+Server::Server(const Server &src_obj){
+
+	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	status = src_obj.status;
+	server_port = src_obj.server_port;
+	strcpy(server_addr, src_obj.server_addr);
+	server_socket = src_obj.server_socket;
+	server_sock_addr = src_obj.server_sock_addr;
+	Packet pkt = src_obj.pkt;
+	client_num = src_obj.client_num;
+	client_sock_addr = src_obj.client_sock_addr;
+	clients = src_obj.clients;
+	tid = src_obj.tid;	
+	tpool = src_obj.tpool;
+}
+
+void swap(Server &src_obj, Server &dst_obj){
+	using std::swap;
+
+	swap(src_obj.status, dst_obj.status);
+	swap(src_obj.server_port, dst_obj.server_port);
+	swap(src_obj.server_addr, dst_obj.server_addr);
+	swap(src_obj.server_socket, dst_obj.server_socket);
+	swap(src_obj.server_sock_addr, dst_obj.server_sock_addr);
+	swap(src_obj.pkt, dst_obj.pkt);
+	swap(src_obj.client_num, dst_obj.client_num);
+	swap(src_obj.client_sock_addr, dst_obj.client_sock_addr);
+	swap(src_obj.clients, dst_obj.clients);
+	swap(src_obj.tid, dst_obj.tid);
+	swap(src_obj.tpool, dst_obj.tpool);
+}
+
+Server& Server::operator=(Server src_obj){
+
+	swap(*this, src_obj);
+	return *this;	
+}
+
+Server::Server(Server&& src_obj)
+	:Server(){
+
+	swap(*this, src_obj);
+}
+
 void Server::begin_thread_pool(int count, void*(*thread_func)(void*)){
 
 	tpool.set_max_threads(count);

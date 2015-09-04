@@ -19,6 +19,9 @@ public:
 	
 	Client();
 	Client(const Client&);
+	friend void swap(Client&, Client&);
+	Client& operator=(Client);
+	Client(Client&&);
 	void bind_client();
 	void fill_server_details(int, const char*);
 	void connect_with_server(int);
