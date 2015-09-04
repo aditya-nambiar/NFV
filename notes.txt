@@ -9,11 +9,20 @@ Problems:
 [Expected behaviour only] - Successive data transfer not working
 [Reasoning]: Data plane side working in infinite loop. Hence no other threads can service the incoming request for data transfer.
 
+[Solved/Possible Fix] - Getting this error *** Error in `./sgw': double free or corruption (fasttop): 0x0000000001412010 *** both at SGW and PGW when running for 20 UEs.
+[Solution]: Following the rule of three in C++
+	1. Copy constructor
+	2. Destructor
+	3. Assignment Operator
+
+In the future, rule of three should be changed to rule of Five, which includes to the above three rules the following
+	4. Move constructor
+	5. Move assignment operator
+
 - RAN disconnected for no known reason without printing any error message for Threads = 70
 - Invalid IP address being received at SGW for some time when no. of simultaneous connections > 1
 - Invalid detach type request num received at MME for Threads = 15
 - PGW disconnected for no known reason without printing any error message for Threads = 2 and Time = 3s
-- Getting this error *** Error in `./sgw': double free or corruption (fasttop): 0x0000000001412010 *** both at SGW and PGW when running for 20 UEs.
 
 Findings/Bugs Solved:
 
