@@ -35,6 +35,10 @@ struct Packet{
 	int packet_len;
 	
 	Packet();
+	Packet(const Packet&);
+	friend void swap(Packet&, Packet&);
+	Packet& operator=(Packet);
+	Packet(Packet&&);
 
 	void fill_gtpc_hdr(uint16_t);
 	void fill_gtpu_hdr(uint16_t);

@@ -3,6 +3,7 @@
 const int Packet::ip_flags[4] = {0, 0, 0, 0};
 
 Packet::Packet(){
+	
 	src_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	dst_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	data = allocate_uint8_mem(IP_MAXPACKET);
@@ -11,15 +12,34 @@ Packet::Packet(){
 	packet_len = 0;
 }
 
+Packet::Packet(const Packet &src_obj){
+
+}
+
+void swap(Packet &src_obj, Packet &dst_obj){
+
+}
+
+Packet& Packet::operator=(Packet src_obj){
+	
+}
+
+Packet::Packet(Packet &&src_obj){
+	
+}
+
 void Packet::fill_gtpc_hdr(uint16_t teid){
+	
 	gtpc_hdr.cteid = teid;
 }
 
 void Packet::fill_gtpu_hdr(uint16_t teid){
+	
 	gtpu_hdr.uteid = teid;
 }
 
 void Packet::fill_ip_hdr(const char *src_ip, const char *dst_ip){
+	
 	strcpy(this->src_ip, src_ip);
 	strcpy(this->dst_ip, dst_ip);
 	ip_hdr.ip_hl = IP_LEN / sizeof(uint32_t);
@@ -43,6 +63,7 @@ void Packet::fill_ip_hdr(const char *src_ip, const char *dst_ip){
 }
 
 void Packet::fill_udp_hdr(int src_port, int dst_port){
+	
 	this->src_port = src_port;
 	this->dst_port = dst_port;
 	udp_hdr.source = htons(this->src_port);
@@ -51,36 +72,43 @@ void Packet::fill_udp_hdr(int src_port, int dst_port){
 }
 
 void Packet::fill_data(int pos, int len, int &arg){
+	
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len+= len;
 }
 
 void Packet::fill_data(int pos, int len, uint16_t &arg){
+	
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len+= len;
 }
 
 void Packet::fill_data(int pos, int len, unsigned long long &arg){
+	
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len+= len;
 }
 
 void Packet::fill_data(int pos, int len, uint8_t *message){
+	
 	memcpy(data + pos, message, len * sizeof(uint8_t));
 	data_len+= len;
 }
 
 void Packet::fill_data(int pos, int len, const char *message){
+	
 	memcpy(data + pos, message, len * sizeof(uint8_t));
 	data_len+= len;
 }
 
 void Packet::fill_data(int pos, int len, string &message){
+	
 	memcpy(data + pos, message.c_str(), len * sizeof(uint8_t));
 	data_len+= len;
 }
 
 void Packet::eval_udp_checksum(){
+	
 	udp_hdr.check = udp_checksum();
 }
 
@@ -88,7 +116,7 @@ uint16_t Packet::ip_checksum(uint16_t *addr, int len){
 	int count;
 	register uint32_t sum;
 	uint16_t answer;
-	// len = IP_LEN;
+	
 	count = len;
 	sum = answer = 0;
 	while(count > 1){
@@ -108,8 +136,10 @@ uint16_t Packet::ip_checksum(uint16_t *addr, int len){
 uint16_t Packet::udp_checksum(){
 	char buf[IP_MAXPACKET];
 	char *ptr;
-	int chk_sum_len = 0;
+	int chk_sum_len;
 	int i;
+  	
+  	chk_sum_len = 0;
   	ptr = &buf[0];
   	memcpy (ptr, &ip_hdr.ip_src.s_addr, sizeof (ip_hdr.ip_src.s_addr));
   	ptr+= sizeof(ip_hdr.ip_src.s_addr);
@@ -153,6 +183,7 @@ uint16_t Packet::udp_checksum(){
 }
 
 void Packet::make_data_packet(){
+	
 	clear_packet();
 	memcpy(packet, data, data_len);
 	packet_len = data_len;
@@ -160,6 +191,7 @@ void Packet::make_data_packet(){
 
 void Packet::add_gtpc_hdr(){
 	int len;
+	
 	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);
 	memcpy(tem, &gtpc_hdr, GTPC_LEN * sizeof(uint8_t));
 	memcpy((tem + GTPC_LEN), data, data_len * sizeof(uint8_t));
@@ -171,6 +203,7 @@ void Packet::add_gtpc_hdr(){
 
 void Packet::add_gtpu_hdr(){
 	int len;
+	
 	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);
 	memcpy(tem, &gtpu_hdr, GTPU_LEN * sizeof(uint8_t));
 	memcpy((tem + GTPU_LEN), data, data_len * sizeof(uint8_t));
@@ -182,6 +215,7 @@ void Packet::add_gtpu_hdr(){
 
 void Packet::rem_gtpc_hdr(){
 	int len;
+	
 	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);
 	memcpy(&gtpc_hdr, data, GTPC_LEN * sizeof(uint8_t));
 	memcpy(tem, (data + GTPC_LEN), (data_len - GTPC_LEN) * sizeof(uint8_t));
@@ -193,6 +227,7 @@ void Packet::rem_gtpc_hdr(){
 
 void Packet::rem_gtpu_hdr(){
 	int len;
+	
 	uint8_t *tem = allocate_uint8_mem(IP_MAXPACKET);
 	memcpy(&gtpu_hdr, data, GTPU_LEN * sizeof(uint8_t));
 	memcpy(tem, (data + GTPU_LEN), (data_len - GTPU_LEN) * sizeof(uint8_t));
@@ -203,6 +238,7 @@ void Packet::rem_gtpu_hdr(){
 }
 
 void Packet::encap(){
+	
 	clear_packet();
 	memcpy(packet, &ip_hdr, IP_LEN * sizeof(uint8_t));
 	memcpy((packet + IP_LEN), &udp_hdr, UDP_LEN * sizeof(uint8_t));
@@ -211,18 +247,21 @@ void Packet::encap(){
 }
 
 void Packet::decap(){
+	
 	// Dummy: No decapsulation needed. Raw sockets help in decapsulting outer IP and UDP headers.
 	clear_packet();
 }
 
 void Packet::clear_data(){
 	int len = IP_MAXPACKET;
+	
 	memset(data, 0, len * sizeof (uint8_t));	
 	data_len = 0;
 }
 
 void Packet::clear_packet(){
 	int len = IP_MAXPACKET;
+	
 	memset(packet, 0, len * sizeof (uint8_t));	
 	packet_len = 0;
 }
@@ -246,6 +285,7 @@ void Packet::copy_topkt(Packet &dst){
 }
 
 Packet::~Packet(){
+	
 	free(src_ip);
 	free(dst_ip);
 	free(data);
