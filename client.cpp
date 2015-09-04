@@ -23,6 +23,32 @@ Client::Client(const Client &src_obj){
 	server_sock_addr = src_obj.server_sock_addr;
 }
 
+void swap(Client &src_obj, Client &dst_obj){
+	using std::swap;
+
+	swap(src_obj.status, dst_obj.status);
+	swap(src_obj.client_socket, dst_obj.client_socket);
+	swap(src_obj.client_port, dst_obj.client_port);
+	swap(src_obj.client_addr, dst_obj.client_addr);
+	swap(src_obj.client_sock_addr, dst_obj.client_sock_addr);
+	swap(src_obj.pkt, dst_obj.pkt);
+	swap(src_obj.server_port, dst_obj.server_port);
+	swap(src_obj.server_addr, dst_obj.server_addr);
+	swap(src_obj.server_sock_addr, dst_obj.server_sock_addr);
+}
+
+Client& Client::operator=(Client src_obj){
+
+	swap(*this, src_obj);
+	return *this;	
+}
+
+Client::Client(Client &&src_obj)
+	:Client(){
+
+	swap(*this, src_obj);
+}
+
 void Client::bind_client(){
 	
 	client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
