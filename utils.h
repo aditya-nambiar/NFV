@@ -75,6 +75,13 @@ extern long long g_stack_buf;
 struct ClientDetails{
 	int num;
 	struct sockaddr_in client_sock_addr;
+
+	ClientDetails();
+	ClientDetails(const ClientDetails&);
+	friend void swap(ClientDetails&, ClientDetails&);
+	ClientDetails& operator=(ClientDetails);
+	ClientDetails(ClientDetails&&);
+	~ClientDetails();
 };
 
 void check_conn(int&);

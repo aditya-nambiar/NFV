@@ -24,6 +24,41 @@ const char *g_pgw_server_for_sink_addr = "10.14.13.29";
 socklen_t g_addr_len = sizeof(sockaddr_in);
 timeval g_timeout = {2, 0};
 
+ClientDetails::ClientDetails(){
+
+
+}
+
+ClientDetails::ClientDetails(const ClientDetails &src_obj){
+
+	num = src_obj.num;
+	client_sock_addr = src_obj.client_sock_addr;
+}
+
+void swap(ClientDetails &src_obj, ClientDetails &dst_obj){
+	using std::swap;
+
+	swap(src_obj.num, dst_obj.num);
+	swap(src_obj.client_sock_addr, dst_obj.client_sock_addr);
+}
+
+ClientDetails& ClientDetails::operator=(ClientDetails src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+ClientDetails::ClientDetails(ClientDetails &&src_obj)
+	:ClientDetails(){
+
+	swap(*this, src_obj);
+}
+
+ClientDetails::~ClientDetails(){
+
+
+}
+
 void check_conn(int &status){
 
 	if(errno==EAGAIN || errno==EWOULDBLOCK || errno==EINPROGRESS)
