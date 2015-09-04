@@ -11,6 +11,56 @@ Packet::Packet(){
 	packet_len = 0;
 }
 
+Packet::Packet(const Packet &src_obj){
+	
+	src_ip = allocate_str_mem(INET_ADDRSTRLEN);
+	dst_ip = allocate_str_mem(INET_ADDRSTRLEN);
+	data = allocate_uint8_mem(IP_MAXPACKET);
+	packet = allocate_uint8_mem(IP_MAXPACKET);	
+	strcpy(src_ip, src_obj.src_ip);
+	strcpy(dst_ip, src_obj.dst_ip);
+	src_port = src_obj.src_port;
+	dst_port = src_obj.dst_port;
+	gtpc_hdr = src_obj.gtpc_hdr;
+	gtpu_hdr = src_obj.gtpu_hdr;
+	ip_hdr = src_obj.ip_hdr;
+	udp_hdr = src_obj.udp_hdr;
+	memcpy(data, src_obj.data, src_obj.data_len);
+	memcpy(packet, src_obj.packet, src_obj.packet_len);
+	data_len = src_obj.data_len;
+	packet_len = src_obj.packet_len;
+}
+
+void swap(Packet &src_obj, Packet &dst_obj){
+	using std::swap;
+
+	swap(src_obj.src_ip, dst_obj.src_ip);
+	swap(src_obj.dst_ip, dst_obj.dst_ip);
+	swap(src_obj.src_port, dst_obj.src_port);
+	swap(src_obj.dst_port, dst_obj.dst_port);
+	swap(src_obj.gtpc_hdr, dst_obj.gtpc_hdr);
+	swap(src_obj.gtpu_hdr, dst_obj.gtpu_hdr);
+	swap(src_obj.ip_hdr, dst_obj.ip_hdr);
+	swap(src_obj.udp_hdr, dst_obj.udp_hdr);
+	swap(src_obj.data, dst_obj.data);
+	swap(src_obj.packet, dst_obj.packet);
+	swap(src_obj.data_len, dst_obj.data_len);
+	swap(src_obj.packet_len, dst_obj.packet_len);
+}
+
+Packet& Packet::operator=(Packet src_obj){
+	
+	swap(*this, src_obj);
+	return *this;	
+}
+
+Packet::Packet(Packet &&src_obj)
+	:Packet(){
+
+	swap(*this, src_obj);	
+}
+
+
 void Packet::fill_gtpc_hdr(uint16_t teid){
 	gtpc_hdr.cteid = teid;
 }
