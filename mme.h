@@ -18,6 +18,10 @@ struct TunData{
 	char *pgw_addr;
 
 	TunData();
+	TunData(const TunData&);
+	friend void swap(TunData&, TunData&);
+	TunData& operator=(TunData);
+	TunData(TunData&&);
 	~TunData();
 };
 
@@ -37,6 +41,10 @@ struct MME{
 	TunData tun_data;
 
 	MME();
+	MME(const MME&);
+	friend void swap(MME&, MME&);
+	MME& operator=(MME);
+	MME(MME&&);
 	void set_cteid();
 	uint16_t generate_cteid(int&);
 	void set_bearer_id();

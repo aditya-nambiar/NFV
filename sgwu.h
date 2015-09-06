@@ -16,6 +16,10 @@ struct TunUdata{
 	string pgw_addr;
 
 	TunUdata();
+	TunUdata(const TunUdata&);
+	friend void swap(TunUdata&, TunUdata&);
+	TunUdata& operator=(TunUdata);
+	TunUdata(TunUdata&&);
 	~TunUdata();
 };
 
@@ -30,6 +34,10 @@ struct SGWu{
 	TunUdata tun_udata;
 
 	SGWu();
+	SGWu(const SGWu&);
+	friend void swap(SGWu&, SGWu&);
+	SGWu& operator=(SGWu);
+	SGWu(SGWu&&);
 	uint16_t generate_uteid(int&);
 	void set_uteid();
 	void set_tun_udata();

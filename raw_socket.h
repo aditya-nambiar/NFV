@@ -22,6 +22,10 @@ public:
 	struct sockaddr_in dst_sock_addr;
 
 	RawSocket();
+	RawSocket(const RawSocket&);
+	friend void swap(RawSocket&, RawSocket&);
+	RawSocket& operator=(RawSocket);
+	RawSocket(RawSocket&&);
 	void bind_client();	
 	// void fill_traffic_details(Packet&);
 	// void fill_src_details();

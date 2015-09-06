@@ -57,7 +57,7 @@ void* generate_traffic(void *arg){
 	time_exceeded = false;
 	while(1){
 		Client to_mme;
-		UserEquipment ue(ue_num);
+		UE ue(ue_num);
 				
 		to_mme.bind_client();
 		to_mme.fill_server_details(g_mme_port, g_mme_addr);
@@ -73,7 +73,7 @@ void* generate_traffic(void *arg){
 	return NULL;
 }
 
-void attach(UserEquipment &ue, Client &to_mme){
+void attach(UE &ue, Client &to_mme){
 	EnodeB enodeb;
 	TunData tun_data;
 	uint16_t enodeb_uteid;
@@ -86,12 +86,12 @@ void attach(UserEquipment &ue, Client &to_mme){
 	g_tun_table[ue_ip_str] = tun_data;
 }
 
-void send_traffic(UserEquipment &ue){
+void send_traffic(UE &ue){
 
 	ue.send_traffic();
 }
 
-void detach(UserEquipment &ue, Client &to_mme){
+void detach(UE &ue, Client &to_mme){
 
 	ue.send_detach_req(to_mme);
 	ue.recv_detach_res(to_mme);

@@ -8,20 +8,33 @@
 #include <mysql/my_global.h>
 
 struct ConnDetails{
-	const char *server;
-	const char *user;
-	const char *passwd;
-	const char *database;
+	char *server;
+	char *user;
+	char *password;
+	char *db;
+
+	ConnDetails();
+	ConnDetails(const ConnDetails&);
+	friend void swap(ConnDetails&, ConnDetails&);
+	ConnDetails& operator=(ConnDetails);
+	ConnDetails(ConnDetails&&);
+	void set_details();
+	~ConnDetails();
 };
 
 class MySql{
 public:
-	static ConnDetails details;
+	static struct ConnDetails conn_details;
 	MYSQL *conn;
 	MYSQL_RES *result;
 	
 	MySql();
-	void conn_setup();
+	MySql(const MySql&);
+	friend void swap(MySql&, MySql&);
+	MySql& operator=(MySql);
+	MySql(MySql&&);
+	static void set_conn_details();
+	void setup_conn();
 	void perform_query(const char*);
 	void fetch_result();
 	void report_error(MYSQL*);

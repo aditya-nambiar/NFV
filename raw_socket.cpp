@@ -5,6 +5,7 @@ const char* RawSocket::interface;
 struct ifreq RawSocket::ifr;
 
 void RawSocket::set_interface(const char *interface_inp){
+	
 	interface = interface_inp;
 	memset(&ifr, 0, sizeof(ifr));
 	snprintf(ifr.ifr_name, sizeof (ifr.ifr_name), "%s", interface);
@@ -13,15 +14,46 @@ void RawSocket::set_interface(const char *interface_inp){
 RawSocket::RawSocket(){
 	// src_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	// dst_addr = allocate_str_mem(INET_ADDRSTRLEN);
-	raw_socket = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
-	report_error(raw_socket);
-	setsockopt(raw_socket, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on));	
+	raw_socket = -1;
 	signal(SIGPIPE, SIG_IGN);					
 	//status = 0;
 	//setsockopt(raw_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));
 }
 
+RawSocket::RawSocket(const RawSocket &src_obj){
+	
+	status = src_obj.status;
+	raw_socket = src_obj.raw_socket;
+	pkt = src_obj.pkt;
+	dst_sock_addr = src_obj.dst_sock_addr;
+}
+
+void swap(RawSocket &src_obj, RawSocket &dst_obj){
+	using std::swap;
+
+	swap(src_obj.status, dst_obj.status);
+	swap(src_obj.raw_socket, dst_obj.raw_socket);
+	swap(src_obj.pkt, dst_obj.pkt);
+	swap(src_obj.dst_sock_addr, dst_obj.dst_sock_addr);
+}
+
+RawSocket& RawSocket::operator=(RawSocket src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+RawSocket::RawSocket(RawSocket &&src_obj)
+	:RawSocket(){
+
+	swap(*this, src_obj);
+}
+
 void RawSocket::bind_client(){
+	
+	raw_socket = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
+	report_error(raw_socket);
+	setsockopt(raw_socket, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on));		
 	status = ioctl(raw_socket, SIOCGIFINDEX, &ifr);
 	report_error(status, "IOCTL failed to find interface");
 	status = setsockopt(raw_socket, SOL_SOCKET, SO_BINDTODEVICE, &ifr, sizeof(ifr));
@@ -62,7 +94,6 @@ void RawSocket::bind_client(){
 
 void RawSocket::fill_dst_details(){
 	struct tcphdr *tcp_hdr = (tcphdr*)malloc(20 * sizeof(u_int8_t)); 
-
 
 	memcpy(tcp_hdr, pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
 	bzero((char*)&dst_sock_addr, sizeof(dst_sock_addr));

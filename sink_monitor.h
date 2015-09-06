@@ -15,6 +15,10 @@ struct SinkMonitor{
 	Packet pkt;
 
 	SinkMonitor();
+	SinkMonitor(const SinkMonitor&);
+	friend void swap(SinkMonitor&, SinkMonitor&);
+	SinkMonitor& operator=(SinkMonitor);
+	SinkMonitor(SinkMonitor&&);
 	static void attach_to_tun();
 	void read_tun();
 	void write_tun();

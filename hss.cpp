@@ -32,6 +32,7 @@ void authenticate_query(unsigned long long imsi, unsigned long long msisdn, Pack
 	imsi_str = to_char_array(imsi);
 	msisdn_str = to_char_array(msisdn);
 	MySql db;
+	MySql::set_conn_details();
 	connect_with_db(db);
 	inp_query = inp_query + "select key_id from ue_data where imsi = " + imsi_str + " and msisdn = " + msisdn_str;
 	g_query = inp_query.c_str();
@@ -72,7 +73,7 @@ void authenticate_query(unsigned long long imsi, unsigned long long msisdn, Pack
 }
 
 void connect_with_db(MySql &db){
-	db.conn_setup();
+	db.setup_conn();
 }
 
 void fetch_db_data(MySql &db, const char *query){	

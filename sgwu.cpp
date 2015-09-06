@@ -7,6 +7,35 @@ TunUdata::TunUdata(){
 
 }
 
+TunUdata::TunUdata(const TunUdata &src_obj){
+
+	enodeb_uteid = src_obj.enodeb_uteid;
+	pgw_uteid = src_obj.pgw_uteid;
+	pgw_port = src_obj.pgw_port;
+	pgw_addr = src_obj.pgw_addr;
+}
+
+void swap(TunUdata &src_obj, TunUdata &dst_obj){
+	using std::swap;
+
+	swap(src_obj.enodeb_uteid, dst_obj.enodeb_uteid);
+	swap(src_obj.pgw_uteid, dst_obj.pgw_uteid);
+	swap(src_obj.pgw_port, dst_obj.pgw_port);
+	swap(src_obj.pgw_addr, dst_obj.pgw_addr);
+}
+
+TunUdata& TunUdata::operator=(TunUdata src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+TunUdata::TunUdata(TunUdata &&src_obj)
+	:TunUdata(){
+
+	swap(*this, src_obj);
+}
+
 TunUdata::~TunUdata(){
 	
 
@@ -18,6 +47,43 @@ SGWu::SGWu(){
 	to_pgw.resize(UDP_LINKS);
 	pos = 0;
 	type = 2;
+}
+
+SGWu::SGWu(const SGWu &src_obj){
+
+	socket_table = src_obj.socket_table; 
+	to_pgw = src_obj.to_pgw; 
+	pkt = src_obj.pkt; 
+	uteid = src_obj.uteid; 
+	pos = src_obj.pos; 
+	num = src_obj.num; 
+	type = src_obj.type; 
+	tun_udata = src_obj.tun_udata; 
+}
+
+void swap(SGWu &src_obj, SGWu &dst_obj){
+	using std::swap;
+
+	swap(src_obj.socket_table, dst_obj.socket_table); 
+	swap(src_obj.to_pgw, dst_obj.to_pgw); 
+	swap(src_obj.pkt, dst_obj.pkt); 
+	swap(src_obj.uteid, dst_obj.uteid); 
+	swap(src_obj.pos, dst_obj.pos); 
+	swap(src_obj.num, dst_obj.num); 
+	swap(src_obj.type, dst_obj.type); 
+	swap(src_obj.tun_udata, dst_obj.tun_udata); 
+}
+
+SGWu& SGWu::operator=(SGWu src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+SGWu::SGWu(SGWu &&src_obj)
+	:SGWu(){
+
+	swap(*this, src_obj);
 }
 
 uint16_t SGWu::generate_uteid(int &ue_number){

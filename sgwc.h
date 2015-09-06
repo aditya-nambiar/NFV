@@ -14,6 +14,10 @@ struct TunCdata{
 	string pgw_addr;
 
 	TunCdata();
+	TunCdata(const TunCdata&);
+	friend void swap(TunCdata&, TunCdata&);
+	TunCdata& operator=(TunCdata);
+	TunCdata(TunCdata&&);
 	~TunCdata();
 };
 
@@ -29,6 +33,10 @@ struct SGWc{
 	TunCdata tun_cdata;
 
 	SGWc();
+	SGWc(const SGWc&);
+	friend void swap(SGWc&, SGWc&);
+	SGWc& operator=(SGWc);
+	SGWc(SGWc&&);
 	void create_session_req_from_mme(Server&);
 	void copy_data(Packet&);
 	void set_ue_num();

@@ -16,6 +16,10 @@ struct ThreadPool{
 	void*(*thread_func)(void*);
 
 	ThreadPool();
+	ThreadPool(const ThreadPool&);
+	friend void swap(ThreadPool&, ThreadPool&);
+	ThreadPool& operator=(ThreadPool);
+	ThreadPool(ThreadPool&&);
 	void clear_connections();
 	void set_max_threads(int);
 	void set_thread_func(void*(*thread_func)(void*));

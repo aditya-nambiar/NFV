@@ -7,6 +7,29 @@ TunUdata::TunUdata(){
 	// Dummy
 };
 
+TunUdata::TunUdata(const TunUdata &src_obj){
+
+	sgw_uteid = src_obj.sgw_uteid;
+}
+
+void swap(TunUdata &src_obj, TunUdata &dst_obj){
+	using std::swap;
+
+	swap(src_obj.sgw_uteid, dst_obj.sgw_uteid);	
+}
+
+TunUdata& TunUdata::operator=(TunUdata src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+TunUdata::TunUdata(TunUdata &&src_obj)
+	:TunUdata(){
+
+	swap(*this, src_obj);
+}
+
 TunUdata::~TunUdata(){
 
 	// Dummy
@@ -15,6 +38,36 @@ TunUdata::~TunUdata(){
 PGWu::PGWu(){
 
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
+}
+
+PGWu::PGWu(const PGWu &src_obj){
+	
+	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
+	raw_client = src_obj.raw_client;
+	for_sink = src_obj.for_sink;
+	strcpy(ue_ip, src_obj.ue_ip);
+	tun_udata = src_obj.tun_udata;
+}
+
+void swap(PGWu &src_obj, PGWu &dst_obj){
+	using std::swap;
+
+	swap(src_obj.raw_client, dst_obj.raw_client);
+	swap(src_obj.for_sink, dst_obj.for_sink);
+	swap(src_obj.ue_ip, dst_obj.ue_ip);
+	swap(src_obj.tun_udata, dst_obj.tun_udata);
+}
+
+PGWu& PGWu::operator=(PGWu src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+PGWu::PGWu(PGWu &&src_obj)
+	:PGWu(){
+
+	swap(*this, src_obj);
 }
 
 uint16_t PGWu::generate_uteid(int &ue_number){

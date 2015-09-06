@@ -44,6 +44,9 @@
 #include <errno.h>
 #include <stdarg.h>
 
+//(C) Operations: Date & Time
+#include <ctime>
+
 using namespace std;
 
 #define BUFFER_SIZE 2048

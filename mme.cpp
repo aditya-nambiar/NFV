@@ -6,6 +6,45 @@ TunData::TunData(){
 	pgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
+TunData::TunData(const TunData &src_obj){
+
+	sgw_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	pgw_addr = allocate_str_mem(INET_ADDRSTRLEN);	
+	mme_cteid = src_obj.mme_cteid;
+	sgw_cteid = src_obj.sgw_cteid;
+	sgw_uteid = src_obj.sgw_uteid;
+	enodeb_uteid = src_obj.enodeb_uteid;
+	sgw_port = src_obj.sgw_port;
+	pgw_port = src_obj.pgw_port;
+	strcpy(sgw_addr, src_obj.sgw_addr);
+	strcpy(pgw_addr, src_obj.pgw_addr);
+}
+
+void swap(TunData &src_obj, TunData &dst_obj){
+	using std::swap;
+
+	swap(src_obj.mme_cteid, dst_obj.mme_cteid);
+	swap(src_obj.sgw_cteid, dst_obj.sgw_cteid);
+	swap(src_obj.sgw_uteid, dst_obj.sgw_uteid);
+	swap(src_obj.enodeb_uteid, dst_obj.enodeb_uteid);
+	swap(src_obj.sgw_port, dst_obj.sgw_port);
+	swap(src_obj.pgw_port, dst_obj.pgw_port);
+	swap(src_obj.sgw_addr, dst_obj.sgw_addr);
+	swap(src_obj.pgw_addr, dst_obj.pgw_addr);
+}
+
+TunData& TunData::operator=(TunData src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+TunData::TunData(TunData &&src_obj)
+	:TunData(){
+
+	swap(*this, src_obj);
+}
+
 TunData::~TunData(){
 
 	free(sgw_addr);
@@ -16,6 +55,55 @@ MME::MME(){
 
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	reply = allocate_str_mem(BUFFER_SIZE);
+}
+
+MME::MME(const MME &src_obj){
+
+	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
+	reply = allocate_str_mem(BUFFER_SIZE);
+	mme_server = src_obj.mme_server;
+	to_hss = src_obj.to_hss;
+	to_sgw = src_obj.to_sgw;
+	ue_num = src_obj.ue_num;
+	bearer_id = src_obj.bearer_id;
+	type = src_obj.type;
+	strcpy(ue_ip, src_obj.ue_ip);
+	strcpy(reply, src_obj.reply);
+	autn_num = src_obj.autn_num;
+	rand_num = src_obj.rand_num;
+	autn_xres = src_obj.autn_xres;
+	autn_res = src_obj.autn_res;
+	tun_data = src_obj.tun_data;
+}
+
+void swap(MME &src_obj, MME &dst_obj){
+	using std::swap;
+
+	swap(src_obj.mme_server, dst_obj.mme_server);
+	swap(src_obj.to_hss, dst_obj.to_hss);
+	swap(src_obj.to_sgw, dst_obj.to_sgw);
+	swap(src_obj.ue_num, dst_obj.ue_num);
+	swap(src_obj.bearer_id, dst_obj.bearer_id);
+	swap(src_obj.type, dst_obj.type);
+	swap(src_obj.ue_ip, dst_obj.ue_ip);
+	swap(src_obj.reply, dst_obj.reply);
+	swap(src_obj.autn_num, dst_obj.autn_num);
+	swap(src_obj.rand_num, dst_obj.rand_num);
+	swap(src_obj.autn_xres, dst_obj.autn_xres);
+	swap(src_obj.autn_res, dst_obj.autn_res);
+	swap(src_obj.tun_data, dst_obj.tun_data);
+}
+
+MME& MME::operator=(MME src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+MME::MME(MME &&src_obj)
+	:MME(){
+
+	swap(*this, src_obj);
 }
 
 void MME::set_cteid(){

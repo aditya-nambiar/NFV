@@ -8,6 +8,35 @@ TunCdata::TunCdata(){
 
 }
 
+TunCdata::TunCdata(const TunCdata &src_obj){
+
+	mme_cteid = src_obj.mme_cteid;
+	pgw_cteid = src_obj.pgw_cteid;
+	pgw_port = src_obj.pgw_port;
+	pgw_addr = src_obj.pgw_addr;
+}
+
+void swap(TunCdata &src_obj, TunCdata &dst_obj){
+	using std::swap;
+
+	swap(src_obj.mme_cteid, dst_obj.mme_cteid);
+	swap(src_obj.pgw_cteid, dst_obj.pgw_cteid);
+	swap(src_obj.pgw_port, dst_obj.pgw_port);
+	swap(src_obj.pgw_addr, dst_obj.pgw_addr);
+}
+
+TunCdata& TunCdata::operator=(TunCdata src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+TunCdata::TunCdata(TunCdata &&src_obj)
+	:TunCdata(){
+
+	swap(*this, src_obj);
+}
+
 TunCdata::~TunCdata(){
 
 
@@ -18,6 +47,47 @@ SGWc::SGWc(){
 	type = 1;
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	reply = allocate_str_mem(BUFFER_SIZE);
+}
+
+SGWc::SGWc(const SGWc &src_obj){
+
+	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
+	reply = allocate_str_mem(BUFFER_SIZE);
+	to_pgw = src_obj.to_pgw;
+	pkt = src_obj.pkt;
+	ue_num = src_obj.ue_num;
+	cteid = src_obj.cteid;
+	bearer_id = src_obj.bearer_id;
+	type = src_obj.type;
+	strcpy(ue_ip, src_obj.ue_ip);
+	strcpy(reply, src_obj.reply);
+	tun_cdata = src_obj.tun_cdata;
+}
+
+void swap(SGWc &src_obj, SGWc &dst_obj){
+	using std::swap;
+
+	swap(src_obj.to_pgw, dst_obj.to_pgw);
+	swap(src_obj.pkt, dst_obj.pkt);
+	swap(src_obj.ue_num, dst_obj.ue_num);
+	swap(src_obj.cteid, dst_obj.cteid);
+	swap(src_obj.bearer_id, dst_obj.bearer_id);
+	swap(src_obj.type, dst_obj.type);
+	swap(src_obj.ue_ip, dst_obj.ue_ip);
+	swap(src_obj.reply, dst_obj.reply);
+	swap(src_obj.tun_cdata, dst_obj.tun_cdata);
+}
+
+SGWc& SGWc::operator=(SGWc src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+SGWc::SGWc(SGWc&& src_obj)
+	:SGWc(){
+
+	swap(*this, src_obj);
 }
 
 void SGWc::create_session_req_from_mme(Server &sgw_server){

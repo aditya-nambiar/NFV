@@ -13,6 +13,10 @@ struct TunData{
 	string sgw_addr;
 
 	TunData();
+	TunData(const TunData&);
+	friend void swap(TunData&, TunData&);
+	TunData& operator=(TunData);
+	TunData(TunData&&);
 	~TunData();
 };
 
@@ -29,6 +33,10 @@ struct EnodeB{
 	TunData tun_data;
 
 	EnodeB();
+	EnodeB(const EnodeB&);
+	friend void swap(EnodeB&, EnodeB&);
+	EnodeB& operator=(EnodeB);
+	EnodeB(EnodeB&&);
 	uint16_t generate_uteid(int);
 	void attach_to_tun();
 	void read_tun();

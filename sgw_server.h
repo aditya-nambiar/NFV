@@ -12,6 +12,5 @@
 void* process_traffic(void*);
 void handle_cdata(Server&);
 void handle_udata(Server&);
-void startup_sgw_server(char *argv[]);
 
 #endif //SGW_SERVER_H

@@ -5,6 +5,38 @@ PGWcMonitor::PGWcMonitor(){
 	tun_name = allocate_str_mem(BUFFER_SIZE);
 }
 
+PGWcMonitor::PGWcMonitor(const PGWcMonitor &src_obj){
+
+	tun_name = allocate_str_mem(BUFFER_SIZE);
+	to_sink = src_obj.to_sink; 
+	tun_fd = src_obj.tun_fd;
+	count = src_obj.count;
+	strcpy(tun_name, src_obj.tun_name);
+	pkt = src_obj.pkt;
+}
+
+void swap(PGWcMonitor &src_obj, PGWcMonitor &dst_obj){
+	using std::swap;
+
+	swap(src_obj.to_sink, dst_obj.to_sink); 
+	swap(src_obj.tun_fd, dst_obj.tun_fd);
+	swap(src_obj.count, dst_obj.count);
+	swap(src_obj.tun_name, dst_obj.tun_name);
+	swap(src_obj.pkt, dst_obj.pkt);
+}
+
+PGWcMonitor& PGWcMonitor::operator=(PGWcMonitor src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+PGWcMonitor::PGWcMonitor(PGWcMonitor &&src_obj)
+	:PGWcMonitor(){
+
+	swap(*this, src_obj);
+}
+
 void PGWcMonitor::attach_to_tun(){	
 	struct ifreq ifr;
 	const char *dev = "/dev/net/tun";

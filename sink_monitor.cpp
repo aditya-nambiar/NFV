@@ -9,6 +9,33 @@ SinkMonitor::SinkMonitor(){
 	// Dummy
 }
 
+SinkMonitor::SinkMonitor(const SinkMonitor &src_obj){
+
+	for_pgw = src_obj.for_pgw;
+	count = src_obj.count;
+	pkt = src_obj.pkt;
+}
+
+void swap(SinkMonitor &src_obj, SinkMonitor &dst_obj){
+	using std::swap;
+
+	swap(src_obj.for_pgw, dst_obj.for_pgw);
+	swap(src_obj.count, dst_obj.count);
+	swap(src_obj.pkt, dst_obj.pkt);
+}
+
+SinkMonitor& SinkMonitor::operator=(SinkMonitor src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+SinkMonitor::SinkMonitor(SinkMonitor &&src_obj)
+	:SinkMonitor(){
+
+	swap(*this, src_obj);
+}
+
 void SinkMonitor::attach_to_tun(){	
 	struct ifreq ifr;
 	const char *dev = "/dev/net/tun";

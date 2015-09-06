@@ -1,6 +1,6 @@
 #include "ue.h"
 
-UserEquipment::UserEquipment(int ue_num){
+UE::UE(int ue_num){
 
 	num = ue_num;
 	key = generate_key(num);
@@ -10,12 +10,53 @@ UserEquipment::UserEquipment(int ue_num){
 	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
-unsigned long long UserEquipment::generate_key(int ue_num){
+unsigned long long UE::generate_key(int ue_num){
 
 	return ue_num;
 }
 
-void UserEquipment::authenticate(Client &to_mme){
+UE::UE(const UE &src_obj){
+
+	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	num = src_obj.num;
+	key = src_obj.key;
+	imsi = src_obj.imsi;
+	msisdn = src_obj.msisdn;
+	strcpy(ip_addr, src_obj.ip_addr);
+	pkt = src_obj.pkt;
+	type = src_obj.type;
+	sink_port = src_obj.sink_port;
+	strcpy(sink_addr, src_obj.sink_addr);
+}
+
+void swap(UE &src_obj, UE &dst_obj){
+	using std::swap;
+
+	swap(src_obj.num, dst_obj.num);
+	swap(src_obj.key, dst_obj.key);
+	swap(src_obj.imsi, dst_obj.imsi);
+	swap(src_obj.msisdn, dst_obj.msisdn);
+	swap(src_obj.ip_addr, dst_obj.ip_addr);
+	swap(src_obj.pkt, dst_obj.pkt);
+	swap(src_obj.type, dst_obj.type);
+	swap(src_obj.sink_port, dst_obj.sink_port);
+	swap(src_obj.sink_addr, dst_obj.sink_addr);
+}
+
+UE& UE::operator=(UE src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+UE::UE(UE &&src_obj)
+	:UE(src_obj.num){
+
+	swap(*this, src_obj);
+}
+
+void UE::authenticate(Client &to_mme){
 	unsigned long long autn, rand, res;
 	char *reply = allocate_str_mem(IP_MAXPACKET);
 
@@ -37,7 +78,7 @@ void UserEquipment::authenticate(Client &to_mme){
 	memcpy(reply, to_mme.pkt.data, to_mme.pkt.data_len);
 	cout<<"This is the message -"<<reply<<endl;
 	if(strcmp((const char*)reply, "OK") == 0)
-		print_message("Authentication Successful for UserEquipment - ", num);
+		print_message("Authentication Successful for UE - ", num);
 	else{
 		cout<<"Authentication is not successful for UE - "<<num<<endl;
 		handle_exceptions();
@@ -45,14 +86,14 @@ void UserEquipment::authenticate(Client &to_mme){
 		
 }
 
-unsigned long long UserEquipment::get_autn_res(unsigned long long autn, unsigned long long rand){
+unsigned long long UE::get_autn_res(unsigned long long autn, unsigned long long rand){
 	unsigned long long res;
 
 	res = autn*key + rand*(key+1);
 	return res;
 }
 
-void UserEquipment::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, string &sgw_addr){
+void UE::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, string &sgw_addr){
 
 	to_mme.pkt.clear_data();
 	to_mme.pkt.fill_data(0, sizeof(uint16_t), enodeb_uteid);
@@ -66,7 +107,7 @@ void UserEquipment::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_
 	cout<<"Data tunnel is formed from eNodeB to SGW(Both uplink & downlink direction) for UE - "<<key<<endl;
 }
 
-void UserEquipment::send_traffic(){	
+void UE::send_traffic(){	
 	string command;
 	string ip_addr_str;
 	string sink_addr_str;
@@ -97,7 +138,7 @@ void UserEquipment::send_traffic(){
 	// cout<<"Data sent successfully for UE - "<<num<<endl;
 }
 
-void UserEquipment::setup_interface(){
+void UE::setup_interface(){
 	string arg;
 
 	arg = "sudo ifconfig eth0:";
@@ -110,20 +151,20 @@ void UserEquipment::setup_interface(){
 	cout<<"Interface successfully created for UE - "<<num<<endl;
 }
 
-void UserEquipment::set_sink(){
+void UE::set_sink(){
 
 	// sink_port = g_private_sink_port;
 	sink_port = (num + 55000);
 	strcpy(sink_addr, g_private_sink_addr);
 }
 
-void UserEquipment::generate_data(){
+void UE::generate_data(){
 
 	pkt.clear_data();
 	pkt.fill_data(0, 19, "This is my traffic");
 }
 
-void UserEquipment::send_detach_req(Client &to_mme){
+void UE::send_detach_req(Client &to_mme){
 	int type = 3;
 
 	to_mme.pkt.clear_data();
@@ -132,7 +173,7 @@ void UserEquipment::send_detach_req(Client &to_mme){
 	to_mme.write_data();
 }
 
-void UserEquipment::recv_detach_res(Client &to_mme){
+void UE::recv_detach_res(Client &to_mme){
 	char *reply;
 
 	reply = allocate_str_mem(BUFFER_SIZE);
@@ -144,7 +185,7 @@ void UserEquipment::recv_detach_res(Client &to_mme){
 	free(reply);
 }
 
-UserEquipment::~UserEquipment(){
+UE::~UE(){
 
 	free(ip_addr);
 	free(sink_addr);

@@ -8,6 +8,43 @@ ThreadPool::ThreadPool(){
 	clear_connections();
 }
 
+ThreadPool::ThreadPool(const ThreadPool &src_obj){
+
+	conn_lock = src_obj.conn_lock;
+	conn_req = src_obj.conn_req;
+	conn_full = src_obj.conn_full;
+	connections = src_obj.connections;
+	max_threads = src_obj.max_threads;
+	thread_num = src_obj.thread_num;
+	thread_id = src_obj.thread_id;
+	thread_func = src_obj.thread_func;
+}
+
+void swap(ThreadPool &src_obj, ThreadPool &dst_obj){
+	using std::swap;
+
+	swap(src_obj.conn_lock, dst_obj.conn_lock);
+	swap(src_obj.conn_req, dst_obj.conn_req);
+	swap(src_obj.conn_full, dst_obj.conn_full);
+	swap(src_obj.connections, dst_obj.connections);
+	swap(src_obj.max_threads, dst_obj.max_threads);
+	swap(src_obj.thread_num, dst_obj.thread_num);
+	swap(src_obj.thread_id, dst_obj.thread_id);
+	swap(src_obj.thread_func, dst_obj.thread_func);
+}
+
+ThreadPool& ThreadPool::operator=(ThreadPool src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+ThreadPool::ThreadPool(ThreadPool &&src_obj)
+	:ThreadPool(){
+
+	swap(*this, src_obj);
+}
+
 void ThreadPool::clear_connections(){
 
 	while(!connections.empty())

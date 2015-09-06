@@ -13,6 +13,10 @@ struct TunCdata{
 	uint16_t sgw_cteid;
 
 	TunCdata();
+	TunCdata(const TunCdata&);
+	friend void swap(TunCdata&, TunCdata&);
+	TunCdata& operator=(TunCdata);
+	TunCdata(TunCdata&&);
 	~TunCdata();
 };
 
@@ -24,6 +28,10 @@ struct PGWc{
 	TunCdata tun_cdata;
 
 	PGWc();
+	PGWc(const PGWc&);
+	friend void swap(PGWc&, PGWc&);
+	PGWc& operator=(PGWc);
+	PGWc(PGWc&&);
 	void create_session_request_from_sgw(Server&, uint16_t&);
 	void copy_to_pkt(Packet&);
 	void set_ue_num();

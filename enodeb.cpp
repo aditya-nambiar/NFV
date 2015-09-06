@@ -7,6 +7,33 @@ TunData::TunData(){
 
 }
 
+TunData::TunData(const TunData &src_obj){
+
+	sgw_uteid = src_obj.sgw_uteid;
+	sgw_port = src_obj.sgw_port;
+	sgw_addr = src_obj.sgw_addr;
+}
+
+void swap(TunData &src_obj, TunData &dst_obj){
+	using std::swap;
+
+	swap(src_obj.sgw_uteid, dst_obj.sgw_uteid);
+	swap(src_obj.sgw_port, dst_obj.sgw_port);
+	swap(src_obj.sgw_addr, dst_obj.sgw_addr);
+}
+
+TunData& TunData::operator=(TunData src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+TunData::TunData(TunData &&src_obj)
+	:TunData(){
+
+	swap(*this, src_obj);
+}
+
 TunData::~TunData(){
 
 
@@ -19,6 +46,49 @@ EnodeB::EnodeB(){
 	pos = 0;
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	tun_name = allocate_str_mem(BUFFER_SIZE);
+}
+
+EnodeB::EnodeB(const EnodeB &src_obj){
+
+	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
+	tun_name = allocate_str_mem(BUFFER_SIZE);
+	socket_table = src_obj.socket_table;
+	to_sgw = src_obj.to_sgw;
+	pkt = src_obj.pkt;
+	tun_fd = src_obj.tun_fd;
+	pos = src_obj.pos;
+	num = src_obj.num;
+	count = src_obj.count;
+	strcpy(ue_ip, src_obj.ue_ip);
+	strcpy(tun_name, src_obj.tun_name);
+	tun_data = src_obj.tun_data;
+}
+
+void swap(EnodeB &src_obj, EnodeB &dst_obj){
+	using std::swap;
+
+	swap(src_obj.socket_table, dst_obj.socket_table);
+	swap(src_obj.to_sgw, dst_obj.to_sgw);
+	swap(src_obj.pkt, dst_obj.pkt);
+	swap(src_obj.tun_fd, dst_obj.tun_fd);
+	swap(src_obj.pos, dst_obj.pos);
+	swap(src_obj.num, dst_obj.num);
+	swap(src_obj.count, dst_obj.count);
+	swap(src_obj.ue_ip, dst_obj.ue_ip);
+	swap(src_obj.tun_name, dst_obj.tun_name);
+	swap(src_obj.tun_data, dst_obj.tun_data);
+}
+
+EnodeB& EnodeB::operator=(EnodeB src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+EnodeB::EnodeB(EnodeB &&src_obj)
+	:EnodeB(){
+
+	swap(*this, src_obj);
 }
 
 uint16_t EnodeB::generate_uteid(int ue_num){

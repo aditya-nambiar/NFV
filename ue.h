@@ -5,7 +5,7 @@
 #include "packet.h"
 #include "client.h"
 
-class UserEquipment{
+class UE{
 public:
 	// UE data
 	int num;
@@ -22,7 +22,11 @@ public:
 	int sink_port;
 	char *sink_addr;
 	
-	UserEquipment(int);
+	UE(int);
+	UE(const UE&);
+	friend void swap(UE&, UE&);
+	UE& operator=(UE);
+	UE(UE&&);
 	unsigned long long generate_key(int);		
 	void authenticate(Client&);
 	unsigned long long get_autn_res(unsigned long long, unsigned long long);	
@@ -33,7 +37,7 @@ public:
 	void generate_data();
 	void send_detach_req(Client&);
 	void recv_detach_res(Client&);
-	~UserEquipment();		
+	~UE();		
 };
 
 #endif //UE_H

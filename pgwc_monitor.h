@@ -13,6 +13,10 @@ struct PGWcMonitor{
 	Packet pkt;
 
 	PGWcMonitor();
+	PGWcMonitor(const PGWcMonitor&);
+	friend void swap(PGWcMonitor&, PGWcMonitor&);
+	PGWcMonitor& operator=(PGWcMonitor);
+	PGWcMonitor(PGWcMonitor&&);
 	void attach_to_tun();
 	void read_tun();
 	void write_tun();

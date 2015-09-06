@@ -9,6 +9,29 @@ TunCdata::TunCdata(){
 	// Dummy
 }
 
+TunCdata::TunCdata(const TunCdata &src_obj){
+
+	sgw_cteid = src_obj.sgw_cteid;
+}
+
+void swap(TunCdata &src_obj, TunCdata &dst_obj){
+	using std::swap;
+
+	swap(src_obj.sgw_cteid, dst_obj.sgw_cteid);
+}
+
+TunCdata& TunCdata::operator=(TunCdata src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+TunCdata::TunCdata(TunCdata &&src_obj)
+	:TunCdata(){
+
+	swap(*this, src_obj);
+}
+
 TunCdata::~TunCdata(){
 
 	// Dummy
@@ -17,6 +40,37 @@ TunCdata::~TunCdata(){
 PGWc::PGWc(){
 
 	// Dummy
+}
+
+PGWc::PGWc(const PGWc &src_obj){
+
+	pkt = src_obj.pkt;
+	ue_num = src_obj.ue_num;
+	bearer_id = src_obj.bearer_id;
+	cteid = src_obj.cteid;
+	tun_cdata = src_obj.tun_cdata;
+}
+
+void swap(PGWc &src_obj, PGWc &dst_obj){
+	using std::swap;
+
+	swap(src_obj.pkt, dst_obj.pkt);
+	swap(src_obj.ue_num, dst_obj.ue_num);
+	swap(src_obj.bearer_id, dst_obj.bearer_id);
+	swap(src_obj.cteid, dst_obj.cteid);
+	swap(src_obj.tun_cdata, dst_obj.tun_cdata);
+}
+
+PGWc& PGWc::operator=(PGWc src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+PGWc::PGWc(PGWc &&src_obj)
+	:PGWc(){
+
+	swap(*this, src_obj);
 }
 
 void PGWc::create_session_request_from_sgw(Server &pgw_server, uint16_t &sgw_uteid){
