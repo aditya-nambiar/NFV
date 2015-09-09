@@ -6,6 +6,7 @@ void* process_reqs(void *arg){
 
 	entity = *(ClientDetails*)arg;
 	hss.startup_hss_server(entity);
+	hss.setup_db_client();
 	hss.recv_req_from_mme();
 	hss.set_key_id();
 	hss.set_autn_tokens();
