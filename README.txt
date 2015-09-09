@@ -5,6 +5,19 @@ Author:		Sadagopan N S
 				Dept. of Computer Science and Engineering
 				IIT Bombay
 
+Coding style - Traditional Coding style followed
+
+/* To be implemented in the source code */
+
+- Space after commas, semicolon, operators
+- Space around binary operator. No space around unary operator
+- braces on its own line
+- Spaces after keywords like "if", "while" eg. if (condition)
+- No spaces between function names and opening parenthesis eg. func() and NOT func ()
+- Blank lines to separate units of functionality
+- Make code to fit in 80-character column width
+- Use 3spaces for each tab
+
 Coding Convention followed:
 
  	-All data member and function declarations are placed in header files and their definitions are placed in corresponding cpp files

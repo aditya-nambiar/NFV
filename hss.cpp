@@ -1,96 +1,172 @@
 #include "hss.h"
 
-const char *g_query;
+UEData::UEData(){
 
-void* multithreading_func(void *arg){
-	int type;
-	unsigned long long imsi, msisdn;
-	ClientDetails mme = *(ClientDetails*)arg;
-	Server hss;
-	hss.fill_server_details(g_freeport, g_hss_addr);
-	hss.bind_server();
-	//setsockopt(hss.server_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&g_timeout, sizeof(timeval));		
-	hss.client_sock_addr = mme.client_sock_addr;
-	hss.client_num = mme.num;
-	hss.connect_with_client();
-	hss.read_data();
-	memcpy(&imsi, hss.pkt.data, sizeof(unsigned long long));
-	memcpy(&msisdn, hss.pkt.data + sizeof(unsigned long long), sizeof(unsigned long long));
-	authenticate_query(imsi, msisdn, hss.pkt);
-	hss.pkt.make_data_packet();
-	hss.write_data();
-	mysql_thread_end();
+
 }
 
-void authenticate_query(unsigned long long imsi, unsigned long long msisdn, Packet &pkt){
-	int num_fields;
-	MYSQL_ROW row;	
-	const char *res_str;
-	unsigned long long res, autn, rand, key_id;
-	int time_sec;
-	string inp_query = "", imsi_str, msisdn_str;
-	imsi_str = to_char_array(imsi);
-	msisdn_str = to_char_array(msisdn);
-	MySql db;
+UEData::UEData(const UEData &src_obj){
+
+	imsi = src_obj.imsi;
+	msisdn = src_obj.msisdn;
+	autn_num = src_obj.autn_num;
+	rand_num = src_obj.rand_num;
+	autn_xres = src_obj.autn_xres;
+	key_id = src_obj.key_id;
+}
+
+void swap(UEData &src_obj, UEData &dst_obj){
+	using std::swap;
+
+	swap(src_obj.imsi, dst_obj.imsi);
+	swap(src_obj.msisdn, dst_obj.msisdn);
+	swap(src_obj.autn_num, dst_obj.autn_num);
+	swap(src_obj.rand_num, dst_obj.rand_num);
+	swap(src_obj.autn_xres, dst_obj.autn_xres);
+	swap(src_obj.key_id, dst_obj.key_id);
+}
+
+UEData& UEData::operator=(UEData src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+UEData::UEData(UEData &&src_obj)
+	:UEData(){
+
+	swap(*this, src_obj);
+}
+
+UEData::~UEData(){
+
+
+}
+
+HSS::HSS(){
+
+}
+
+HSS::HSS(const HSS &src_obj){
+
+	hss_server = src_obj.hss_server;
+	ue_data = src_obj.ue_data;
+	db_client = src_obj.db_client;
+	query_res = src_obj.query_res;
+	query = src_obj.query;
+	res_row = src_obj.res_row;
+	curr_time = src_obj.curr_time;
+	local_time = src_obj.local_time;
+	curr_sec = src_obj.curr_sec;
+	num_fields = src_obj.num_fields;
+}
+
+void swap(HSS &src_obj, HSS &dst_obj){
+	using std::swap;
+
+	swap(src_obj.hss_server, dst_obj.hss_server);
+	swap(src_obj.ue_data, dst_obj.ue_data);
+	swap(src_obj.db_client, dst_obj.db_client);
+	swap(src_obj.query_res, dst_obj.query_res);
+	swap(src_obj.query, dst_obj.query);
+	swap(src_obj.res_row, dst_obj.res_row);
+	swap(src_obj.curr_time, dst_obj.curr_time);
+	swap(src_obj.local_time, dst_obj.local_time);
+	swap(src_obj.curr_sec, dst_obj.curr_sec);
+	swap(src_obj.num_fields, dst_obj.num_fields);
+}
+
+HSS& HSS::operator=(HSS src_obj){
+
+	swap(*this, src_obj);
+	return *this;
+}
+
+HSS::HSS(HSS &&src_obj)
+	:HSS(){
+
+	swap(*this, src_obj);
+}
+
+void HSS::startup_hss_server(ClientDetails &entity){
+
+	hss_server.fill_server_details(g_freeport, g_hss_addr);
+	hss_server.bind_server();
+	hss_server.client_sock_addr = entity.client_sock_addr;
+	hss_server.client_num = entity.num;
+	hss_server.connect_with_client();
+}
+
+void HSS::setup_db_client(){
+
 	MySql::set_conn_details();
-	connect_with_db(db);
-	inp_query = inp_query + "select key_id from ue_data where imsi = " + imsi_str + " and msisdn = " + msisdn_str;
-	g_query = inp_query.c_str();
-	db.perform_query(g_query);
-	row = mysql_fetch_row(db.result);
-	if(row == 0){
-		cout<<"ERROR: No rows fetched for this query "<<endl;
-		cout<<g_query<<endl;
+	db_client.setup_conn();	
+}
+
+void HSS::handle_db_error(){
+
+	if(query_res == 0){
+		cout<<"ERROR: No rows fetched for this query - ";
+		cout<<query<<endl;
 		exit(EXIT_FAILURE);
 	}
-	res_str = row[0];	
-	key_id = strtoull(res_str,NULL,10);
+}
 
-	time_t now = time(0);
-	tm *ltm = localtime(&now);
-	time_sec = ltm->tm_sec;
-	inp_query = (string)"select * from ue_autn where autn like '%" + to_char_array(time_sec) + "'";
-	g_query = inp_query.c_str();
-	db.perform_query(g_query);
-	num_fields = mysql_num_fields(db.result);
-	row = mysql_fetch_row(db.result);
-	if(row == 0){
-		cout<<"ERROR"<<endl;
-		exit(EXIT_FAILURE);
+void HSS::recv_req_from_mme(){
+
+	hss_server.read_data();
+	memcpy(&ue_data.imsi, hss_server.pkt.data, sizeof(unsigned long long));
+	memcpy(&ue_data.msisdn, hss_server.pkt.data + sizeof(unsigned long long), sizeof(unsigned long long));	
+}
+
+void HSS::set_key_id(){
+
+	query = "select key_id from ue_data where imsi = " + to_string(ue_data.imsi) + " and msisdn = " + to_string(ue_data.msisdn);
+	db_client.perform_query(query.c_str());
+	query_res = mysql_fetch_row(db_client.result);
+	handle_db_error();
+	res_row = query_res[0];	
+	ue_data.key_id = stoull(res_row);
+}
+
+void HSS::set_autn_tokens(){
+	int i;
+
+	curr_time = time(0);
+	local_time = localtime(&curr_time);
+	curr_sec = local_time->tm_sec;
+	query = "select * from ue_autn where autn like '%" + to_string(curr_sec) + "'";
+	db_client.perform_query(query.c_str());
+	num_fields = mysql_num_fields(db_client.result);
+	query_res = mysql_fetch_row(db_client.result);
+	handle_db_error();
+	for(i=0; i<num_fields; i++){
+		res_row = query_res[i];
+		if(i == 0){
+			ue_data.autn_num = stoull(res_row);
+		}
+		else{
+			ue_data.rand_num = stoull(res_row);
+		}
 	}
-	for(int i=0;i<num_fields;i++){
-		res_str = row[i];
-		if(i==0)
-			autn = strtoull(res_str,NULL,10);
-		else
-			rand = strtoull(res_str,NULL,10);
-	}
-	res = autn*key_id + rand*(key_id+1);
-	pkt.clear_data();
-	pkt.fill_data(0, sizeof(autn), autn);
-	pkt.fill_data(sizeof(autn), sizeof(rand), rand);
-	pkt.fill_data(sizeof(autn) + sizeof(rand), sizeof(res), res);
 }
 
-void connect_with_db(MySql &db){
-	db.setup_conn();
+void HSS::set_autn_xres(){
+
+	ue_data.autn_xres = (ue_data.autn_num * ue_data.key_id) + (ue_data.rand_num * (ue_data.key_id + 1));
 }
 
-void fetch_db_data(MySql &db, const char *query){	
-	db.perform_query(query);
-	db.fetch_result();
+void HSS::send_res_to_mme(){
+
+	hss_server.pkt.clear_data();
+	hss_server.pkt.fill_data(0, sizeof(unsigned long long), ue_data.autn_num);
+	hss_server.pkt.fill_data(sizeof(unsigned long long), sizeof(unsigned long long), ue_data.rand_num);
+	hss_server.pkt.fill_data(2 * sizeof(unsigned long long), sizeof(unsigned long long), ue_data.autn_xres);
+	hss_server.pkt.make_data_packet();
+	hss_server.write_data();	
 }
 
-int main(int argc, char *argv[]){
-	Server hss;
-	
-	usage(argc, argv);
-	if(mysql_library_init(0, NULL, NULL))
-		cout<<"ERROR: mysql library cannot be opened"<<endl;
-	hss.begin_thread_pool(atoi(argv[1]), multithreading_func);
-	hss.fill_server_details(g_hss_port, g_hss_addr);
-	hss.bind_server();
-	hss.listen_accept();
-	mysql_library_end();
-	return 0;
+HSS::~HSS(){
+
+
 }

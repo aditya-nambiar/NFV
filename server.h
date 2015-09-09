@@ -26,6 +26,7 @@ public:
 	friend void swap(Server&, Server&);
 	Server& operator=(Server);
 	Server(Server&&);
+
 	void begin_thread_pool(int, void*(*thread_func)(void*));
 	void set_total_connections(int);
 	void fill_server_details(int, const char*);

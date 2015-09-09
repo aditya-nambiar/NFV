@@ -15,8 +15,8 @@ RAN_CPP = utils.cpp packet.cpp client.cpp ue.cpp enodeb.cpp
 MME_H = utils.h packet.h thread_pool.h server.h client.h mme.h
 MME_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp client.cpp mme.cpp
 
-HSS_H = utils.h packet.h thread_pool.h server.h db_mysql.h
-HSS_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp db_mysql.cpp
+HSS_H = utils.h packet.h thread_pool.h server.h db_mysql.h hss.h
+HSS_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp db_mysql.cpp hss.cpp
 
 SGW_H = utils.h packet.h thread_pool.h server.h client.h sgwc.h sgwu.h
 SGW_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp client.cpp sgwc.cpp sgwu.cpp
@@ -40,8 +40,8 @@ MME_P = mme_server.h mme_server.cpp $(MME_H) $(MME_CPP)
 MME_R = $(G++) mme_server.cpp -w -o mme $(MME_CPP) -lpthread 
 
 
-HSS_P = hss.h hss.cpp $(HSS_H) $(HSS_CPP)
-HSS_R = $(G++) hss.cpp -w -o hss $(HSS_CPP) `mysql_config --cflags --libs`
+HSS_P = hss_server.h hss_server.cpp $(HSS_H) $(HSS_CPP)
+HSS_R = $(G++) hss_server.cpp -w -o hss $(HSS_CPP) `mysql_config --cflags --libs`
 
 
 SGW_P = sgw_server.h sgw_server.cpp $(SGW_H) $(SGW_CPP)
