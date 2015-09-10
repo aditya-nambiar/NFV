@@ -57,7 +57,7 @@ void detach_ue(MME &mme){
 int main(int argc, char *argv[]){
 	Server mme_server;
 
-	usage(argc, argv);
+	check_server_usage(argc, argv);
 	mme_server.begin_thread_pool(atoi(argv[1]), process_reqs);
 	mme_server.fill_server_details(g_mme_port, g_mme_addr);
 	mme_server.bind_server();

@@ -113,7 +113,7 @@ int main(int argc, char *argv[]){
 	pthread_t mon_tid;
 	vector<pthread_t> tid;
 
-	usage_client(argc, argv);
+	check_client_usage(argc, argv);
 	startup_ran(argv, ue_num, tid);
 	setup_tun();
 	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);

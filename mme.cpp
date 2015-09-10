@@ -306,7 +306,7 @@ void MME::delete_session_res_from_sgw(){
 	}
 	else{
 		cout<<"Detach process failure at SGW: Please disconnect and connect again"<<endl;
-		handle_exceptions();		
+		handle_exceptions();
 	}
 }
 

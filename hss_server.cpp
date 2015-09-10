@@ -18,7 +18,7 @@ void* process_reqs(void *arg){
 int main(int argc, char *argv[]){
 	Server hss_server;
 	
-	usage(argc, argv);
+	check_server_usage(argc, argv);
 	if(mysql_library_init(0, NULL, NULL))
 		cout<<"ERROR: mysql library cannot be opened"<<endl;
 	hss_server.begin_thread_pool(atoi(argv[1]), process_reqs);

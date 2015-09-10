@@ -93,7 +93,7 @@ int main(int argc, char *argv[]){
 	pthread_t mon_tid;
 	int status;
 
-	usage(argc, argv);
+	check_server_usage(argc, argv);
 	setup_tun();
 	setup_ip_table();
 	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);

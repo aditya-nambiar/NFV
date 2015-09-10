@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
 	int status;
 	int i;
 
-	usage(argc, argv);
+	check_server_usage(argc, argv);
 	startup_sink(argv, tnum, tid);
 	setup_interface();
 	setup_tun();

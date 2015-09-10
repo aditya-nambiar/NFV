@@ -163,7 +163,7 @@ uint8_t* allocate_uint8_mem(int len){
 	}
 }
 
-void usage(int argc, char *argv[]){
+void check_server_usage(int argc, char *argv[]){
 
 	if(argc < 2){
 		cout<<"Please try again with the number of threads to be spawn"<<endl;
@@ -175,7 +175,7 @@ void usage(int argc, char *argv[]){
 	}
 }
 
-void usage_client(int argc, char *argv[]){
+void check_client_usage(int argc, char *argv[]){
 
 	if(argc < 3){
 		cout<<"Please enter the correct number of arguments"<<endl;

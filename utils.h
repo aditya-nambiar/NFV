@@ -99,8 +99,8 @@ void print_message(string, unsigned long long);
 const char* to_char_array(unsigned long long);
 char* allocate_str_mem(int);
 uint8_t* allocate_uint8_mem(int);
-void usage(int, char*[]);
-void usage_client(int, char*[]);
+void check_server_usage(int, char*[]);
+void check_client_usage(int, char*[]);
 void time_check(time_t&, double&, bool&);
 void handle_exceptions();
 
