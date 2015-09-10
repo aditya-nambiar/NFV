@@ -7,7 +7,7 @@
 
 #define UDP_LINKS 10
 
-struct TunData{
+struct TunData {
 	uint16_t sgw_uteid;
 	int sgw_port;
 	string sgw_addr;
@@ -20,7 +20,7 @@ struct TunData{
 	~TunData();
 };
 
-struct EnodeB{
+struct EnodeB {
 	unordered_map<string, int> socket_table;
 	vector<Client> to_sgw;
 	Packet pkt;

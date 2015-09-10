@@ -2,19 +2,19 @@
 
 unordered_map<string, TunData> g_tun_table;
 
-TunData::TunData(){
+TunData::TunData() {
 
 
 }
 
-TunData::TunData(const TunData &src_obj){
+TunData::TunData(const TunData &src_obj) {
 
 	sgw_uteid = src_obj.sgw_uteid;
 	sgw_port = src_obj.sgw_port;
 	sgw_addr = src_obj.sgw_addr;
 }
 
-void swap(TunData &src_obj, TunData &dst_obj){
+void swap(TunData &src_obj, TunData &dst_obj) {
 	using std::swap;
 
 	swap(src_obj.sgw_uteid, dst_obj.sgw_uteid);
@@ -22,24 +22,24 @@ void swap(TunData &src_obj, TunData &dst_obj){
 	swap(src_obj.sgw_addr, dst_obj.sgw_addr);
 }
 
-TunData& TunData::operator=(TunData src_obj){
+TunData& TunData::operator=(TunData src_obj) {
 
 	swap(*this, src_obj);
 	return *this;
 }
 
 TunData::TunData(TunData &&src_obj)
-	:TunData(){
+	:TunData() {
 
 	swap(*this, src_obj);
 }
 
-TunData::~TunData(){
+TunData::~TunData() {
 
 
 }
 
-EnodeB::EnodeB(){
+EnodeB::EnodeB() {
 	
 	socket_table.clear();
 	to_sgw.resize(UDP_LINKS);
@@ -48,7 +48,7 @@ EnodeB::EnodeB(){
 	tun_name = allocate_str_mem(BUFFER_SIZE);
 }
 
-EnodeB::EnodeB(const EnodeB &src_obj){
+EnodeB::EnodeB(const EnodeB &src_obj) {
 
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
 	tun_name = allocate_str_mem(BUFFER_SIZE);
@@ -64,7 +64,7 @@ EnodeB::EnodeB(const EnodeB &src_obj){
 	tun_data = src_obj.tun_data;
 }
 
-void swap(EnodeB &src_obj, EnodeB &dst_obj){
+void swap(EnodeB &src_obj, EnodeB &dst_obj) {
 	using std::swap;
 
 	swap(src_obj.socket_table, dst_obj.socket_table);
@@ -79,24 +79,24 @@ void swap(EnodeB &src_obj, EnodeB &dst_obj){
 	swap(src_obj.tun_data, dst_obj.tun_data);
 }
 
-EnodeB& EnodeB::operator=(EnodeB src_obj){
+EnodeB& EnodeB::operator=(EnodeB src_obj) {
 
 	swap(*this, src_obj);
 	return *this;
 }
 
 EnodeB::EnodeB(EnodeB &&src_obj)
-	:EnodeB(){
+	:EnodeB() {
 
 	swap(*this, src_obj);
 }
 
-uint16_t EnodeB::generate_uteid(int ue_num){
+uint16_t EnodeB::generate_uteid(int ue_num) {
 	
 	return ue_num; //Dummy uteid
 }
 
-void EnodeB::attach_to_tun(){	
+void EnodeB::attach_to_tun() {	
 	struct ifreq ifr;
 	const char *dev = "/dev/net/tun";
 	int flags;
@@ -108,11 +108,11 @@ void EnodeB::attach_to_tun(){
 	report_error(tun_fd, "Opening /dev/net/tun");
 	memset(&ifr, 0, sizeof(ifr));
 	ifr.ifr_flags = flags;
-	if(*tun_name) {
+	if (*tun_name) {
 		strncpy(ifr.ifr_name, tun_name, IFNAMSIZ);
 	}
 	status = ioctl(tun_fd, TUNSETIFF, (void*)&ifr);
-	if(status<0){
+	if (status<0) {
 		cout<<"ioctl(TUNSETIFF)"<<" "<<errno<<endl;
 		close(tun_fd);
 		exit(-1);
@@ -121,7 +121,7 @@ void EnodeB::attach_to_tun(){
 	cout<<"Enodeb attached to tun device - "<<tun_name<<endl;
 }
 
-void EnodeB::read_tun(){
+void EnodeB::read_tun() {
 
 	pkt.clear_data();
 	count = read(tun_fd, pkt.data, BUFFER_SIZE);
@@ -129,13 +129,13 @@ void EnodeB::read_tun(){
 	pkt.data_len = count;
 }
 
-void EnodeB::write_tun(){
+void EnodeB::write_tun() {
 
 	count = write(tun_fd, pkt.data, pkt.data_len);
 	report_error(count);
 }
 
-void EnodeB::set_ue_ip(){
+void EnodeB::set_ue_ip() {
 	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
 
 	memcpy(iphdr, pkt.data, 20 * sizeof(uint8_t));
@@ -143,7 +143,7 @@ void EnodeB::set_ue_ip(){
 	// cout<<"Through tunnel: UE IP is "<<ue_ip<<endl;
 }
 
-void EnodeB::set_tun_data(){
+void EnodeB::set_tun_data() {
 	string ue_ip_str;
 
 	ue_ip_str.assign(ue_ip);
@@ -151,11 +151,11 @@ void EnodeB::set_tun_data(){
 	cout<<"Details fetched are: "<<"UE IP - "<<ue_ip_str<<" SGW - port "<<tun_data.sgw_port<<" SGW addr "<<tun_data.sgw_addr<<endl;
 }
 
-void EnodeB::set_sgw_num(){
+void EnodeB::set_sgw_num() {
 
-	if(socket_table.find(tun_data.sgw_addr) != socket_table.end())
+	if (socket_table.find(tun_data.sgw_addr) != socket_table.end())
 		num = socket_table[tun_data.sgw_addr];
-	else{	
+	else {	
 		connect_with_sgw();
 		socket_table[tun_data.sgw_addr] = pos;
 		pos++;
@@ -163,7 +163,7 @@ void EnodeB::set_sgw_num(){
 	}
 }
 
-void EnodeB::connect_with_sgw(){
+void EnodeB::connect_with_sgw() {
 
 	to_sgw[pos].bind_client();
 	to_sgw[pos].fill_server_details(tun_data.sgw_port, tun_data.sgw_addr.c_str());
@@ -171,7 +171,7 @@ void EnodeB::connect_with_sgw(){
 	handshake_with_sgw();
 }
 
-void EnodeB::handshake_with_sgw(){
+void EnodeB::handshake_with_sgw() {
 	int type = 2;
 
 	to_sgw[pos].pkt.clear_data();
@@ -180,13 +180,13 @@ void EnodeB::handshake_with_sgw(){
 	to_sgw[pos].write_data();	
 }
 
-void EnodeB::make_data(){
+void EnodeB::make_data() {
 
 	pkt.fill_gtpu_hdr(tun_data.sgw_uteid);
 	pkt.add_gtpu_hdr();
 }
 
-void EnodeB::send_data(){
+void EnodeB::send_data() {
 
 	to_sgw[num].pkt.clear_data();
 	to_sgw[num].pkt.fill_data(0, pkt.data_len, pkt.data);
@@ -194,7 +194,7 @@ void EnodeB::send_data(){
 	to_sgw[num].write_data();
 }
 
-void EnodeB::recv_data(int &sgw_num){
+void EnodeB::recv_data(int &sgw_num) {
 
 	to_sgw[sgw_num].read_data();
 	pkt.clear_data();	
@@ -202,7 +202,7 @@ void EnodeB::recv_data(int &sgw_num){
 	pkt.rem_gtpu_hdr();
 }
 
-EnodeB::~EnodeB(){
+EnodeB::~EnodeB() {
 
 	free(ue_ip);
 	free(tun_name);

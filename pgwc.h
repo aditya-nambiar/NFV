@@ -9,7 +9,7 @@
 
 #define MAX_IPS 200
 
-struct TunCdata{
+struct TunCdata {
 	uint16_t sgw_cteid;
 
 	TunCdata();
@@ -20,7 +20,7 @@ struct TunCdata{
 	~TunCdata();
 };
 
-struct PGWc{
+struct PGWc {
 	Packet pkt;
 	int ue_num;
 	int bearer_id;

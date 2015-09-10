@@ -5,7 +5,7 @@
 #include "packet.h"
 #include "client.h"
 
-class UE{
+class UE {
 public:
 	// UE data
 	int num;

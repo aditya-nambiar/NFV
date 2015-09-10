@@ -5,7 +5,7 @@
 #include "packet.h"
 #include <queue>
 
-struct ThreadPool{
+struct ThreadPool {
 	pthread_mutex_t conn_lock;
 	pthread_cond_t conn_req;
 	pthread_cond_t conn_full;

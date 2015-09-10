@@ -5,7 +5,7 @@
 #include "packet.h"
 #include "thread_pool.h"
 
-class Server{
+class Server {
 public:
 	int status;
 	int server_port;

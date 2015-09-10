@@ -7,7 +7,7 @@
 #include "server.h"
 #include "client.h"
 
-struct TunCdata{
+struct TunCdata {
 	uint16_t mme_cteid;
 	uint16_t pgw_cteid;
 	int pgw_port;
@@ -21,7 +21,7 @@ struct TunCdata{
 	~TunCdata();
 };
 
-struct SGWc{
+struct SGWc {
 	Client to_pgw;
 	Packet pkt;
 	int ue_num;

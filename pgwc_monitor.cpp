@@ -1,11 +1,11 @@
 #include "pgwc_monitor.h"
 
-PGWcMonitor::PGWcMonitor(){
+PGWcMonitor::PGWcMonitor() {
 
 	tun_name = allocate_str_mem(BUFFER_SIZE);
 }
 
-PGWcMonitor::PGWcMonitor(const PGWcMonitor &src_obj){
+PGWcMonitor::PGWcMonitor(const PGWcMonitor &src_obj) {
 
 	tun_name = allocate_str_mem(BUFFER_SIZE);
 	to_sink = src_obj.to_sink; 
@@ -15,7 +15,7 @@ PGWcMonitor::PGWcMonitor(const PGWcMonitor &src_obj){
 	pkt = src_obj.pkt;
 }
 
-void swap(PGWcMonitor &src_obj, PGWcMonitor &dst_obj){
+void swap(PGWcMonitor &src_obj, PGWcMonitor &dst_obj) {
 	using std::swap;
 
 	swap(src_obj.to_sink, dst_obj.to_sink); 
@@ -25,19 +25,19 @@ void swap(PGWcMonitor &src_obj, PGWcMonitor &dst_obj){
 	swap(src_obj.pkt, dst_obj.pkt);
 }
 
-PGWcMonitor& PGWcMonitor::operator=(PGWcMonitor src_obj){
+PGWcMonitor& PGWcMonitor::operator=(PGWcMonitor src_obj) {
 
 	swap(*this, src_obj);
 	return *this;
 }
 
 PGWcMonitor::PGWcMonitor(PGWcMonitor &&src_obj)
-	:PGWcMonitor(){
+	:PGWcMonitor() {
 
 	swap(*this, src_obj);
 }
 
-void PGWcMonitor::attach_to_tun(){	
+void PGWcMonitor::attach_to_tun() {	
 	struct ifreq ifr;
 	const char *dev = "/dev/net/tun";
 	int flags;
@@ -49,11 +49,11 @@ void PGWcMonitor::attach_to_tun(){
 	report_error(tun_fd, "Opening /dev/net/tun");
 	memset(&ifr, 0, sizeof(ifr));
 	ifr.ifr_flags = flags;
-	if(*tun_name) {
+	if (*tun_name) {
 		strncpy(ifr.ifr_name, tun_name, IFNAMSIZ);
 	}
 	status = ioctl(tun_fd, TUNSETIFF, (void*)&ifr);
-	if(status<0){
+	if (status<0) {
 		cout<<"ioctl(TUNSETIFF)"<<" "<<errno<<endl;
 		close(tun_fd);
 		exit(-1);
@@ -62,7 +62,7 @@ void PGWcMonitor::attach_to_tun(){
 	cout<<"Successfully attached to TUN device"<<endl;
 }
 
-void PGWcMonitor::read_tun(){
+void PGWcMonitor::read_tun() {
 
 	pkt.clear_data();
 	count = read(tun_fd, pkt.data, BUFFER_SIZE);
@@ -71,14 +71,14 @@ void PGWcMonitor::read_tun(){
 	cout<<endl<<"Successfully read data from the TUN device"<<endl;
 }
 
-void PGWcMonitor::write_tun(){
+void PGWcMonitor::write_tun() {
 
 	count = write(tun_fd, pkt.data, pkt.data_len);
 	report_error(count);
 	cout<<"Successfully written data into the TUN device"<<endl;
 }
 
-void PGWcMonitor::attach_to_sink(){
+void PGWcMonitor::attach_to_sink() {
 	int dummy_num = -1;
 
 	to_sink.bind_client();
@@ -87,7 +87,7 @@ void PGWcMonitor::attach_to_sink(){
 	cout<<"Successfully connected with the Sink server"<<endl;
 }
 
-void PGWcMonitor::write_sink(){
+void PGWcMonitor::write_sink() {
 	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
 	struct tcphdr *tcp_hdr = (tcphdr*)malloc(20 * sizeof(u_int8_t)); 
 	char *sink = (char*)malloc(INET_ADDRSTRLEN);
@@ -106,13 +106,13 @@ void PGWcMonitor::write_sink(){
 	cout<<"Successfully written data into the Sink"<<endl<<endl;
 }
 
-void PGWcMonitor::copy_to_sinkpkt(){
+void PGWcMonitor::copy_to_sinkpkt() {
 	
 	to_sink.pkt.clear_data();
 	to_sink.pkt.fill_data(0, pkt.data_len, pkt.data);
 }
 
-PGWcMonitor::~PGWcMonitor(){
+PGWcMonitor::~PGWcMonitor() {
 
 	free(tun_name);
 }

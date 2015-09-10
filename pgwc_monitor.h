@@ -5,7 +5,7 @@
 #include "packet.h"
 #include "client.h"
 
-struct PGWcMonitor{
+struct PGWcMonitor {
 	Client to_sink; 
 	int tun_fd;
 	int count;

@@ -1,13 +1,13 @@
 #include "server.h"
 
-Server::Server(){
+Server::Server() {
 	
 	server_socket = -1;
 	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	signal(SIGPIPE, SIG_IGN);	  
 }
 
-Server::Server(const Server &src_obj){
+Server::Server(const Server &src_obj) {
 
 	server_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	status = src_obj.status;
@@ -23,7 +23,7 @@ Server::Server(const Server &src_obj){
 	tpool = src_obj.tpool;
 }
 
-void swap(Server &src_obj, Server &dst_obj){
+void swap(Server &src_obj, Server &dst_obj) {
 	using std::swap;
 
 	swap(src_obj.status, dst_obj.status);
@@ -39,45 +39,45 @@ void swap(Server &src_obj, Server &dst_obj){
 	swap(src_obj.tpool, dst_obj.tpool);
 }
 
-Server& Server::operator=(Server src_obj){
+Server& Server::operator=(Server src_obj) {
 
 	swap(*this, src_obj);
 	return *this;	
 }
 
 Server::Server(Server&& src_obj)
-	:Server(){
+	:Server() {
 
 	swap(*this, src_obj);
 }
 
-void Server::begin_thread_pool(int count, void*(*thread_func)(void*)){
+void Server::begin_thread_pool(int count, void*(*thread_func)(void*)) {
 
 	tpool.set_max_threads(count);
 	tpool.set_thread_func(thread_func);
 	tpool.create_threads();
 }
 
-void Server::set_total_connections(int total_connections){
+void Server::set_total_connections(int total_connections) {
 
 	clients.resize(total_connections);
 	tid.resize(total_connections);
 }
 
-void Server::fill_server_details(int server_port, const char *server_addr){
+void Server::fill_server_details(int server_port, const char *server_addr) {
 	
 	strcpy(this->server_addr, server_addr);
 	bzero((char *) &server_sock_addr, sizeof(server_sock_addr));
 	server_sock_addr.sin_family = AF_INET;  	
 	server_sock_addr.sin_port = (server_port)?htons(server_port):server_port;
 	status = inet_aton(server_addr, &server_sock_addr.sin_addr);	
-	if(status == 0){
+	if (status == 0) {
 		cout<<"ERROR: Invalid IP address"<<endl;
 		exit(EXIT_FAILURE);
 	}
 }
 
-void Server::bind_server(){
+void Server::bind_server() {
 	
 	server_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	report_error(server_socket);	
@@ -90,16 +90,16 @@ void Server::bind_server(){
 	//cout<<"Server binded with port "<<server_port<<endl;
 }
 
-void Server::listen_accept(){
+void Server::listen_accept() {
 	ClientDetails entity;
 
-	while(1){
+	while (1) {
 		status = recvfrom(server_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&entity.client_sock_addr, &g_addr_len);
 		report_error(status);
 		memcpy(&entity.num, pkt.data, sizeof(int)); 		
 		status = pthread_mutex_lock(&tpool.conn_lock);
 		report_error(status, "Error in locking");
-		if(tpool.connections.size() == tpool.max_threads){
+		if (tpool.connections.size() == tpool.max_threads) {
 			status = pthread_cond_wait(&tpool.conn_full, &tpool.conn_lock);
 			report_error(status, "Error in conditional wait");
 		}
@@ -112,11 +112,11 @@ void Server::listen_accept(){
 	}
 }
 
-void Server::listen_accept(void*(*multithreading_func)(void*)){
+void Server::listen_accept(void*(*multithreading_func)(void*)) {
 	int i;
 	
 	i=0;
-	while(1){
+	while (1) {
 		status = recvfrom(server_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&clients[i].client_sock_addr, &g_addr_len);
 		memcpy(&clients[i].num, pkt.data, sizeof(int)); 		
 		report_error(status);
@@ -127,7 +127,7 @@ void Server::listen_accept(void*(*multithreading_func)(void*)){
 	}
 }
 
-void Server::connect_with_client(){
+void Server::connect_with_client() {
 	
 	pkt.clear_data();
 	pkt.fill_data(0, sizeof(int), server_port);
@@ -135,7 +135,7 @@ void Server::connect_with_client(){
 	write_data();
 }
 
-void Server::read_data(){
+void Server::read_data() {
 	
 	pkt.clear_data();
 	status = recvfrom(server_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&client_sock_addr, &g_addr_len);
@@ -144,13 +144,13 @@ void Server::read_data(){
 	//check_conn(status);
 }
 
-void Server::write_data(){
+void Server::write_data() {
 	
 	status = sendto(server_socket, pkt.packet, pkt.packet_len, 0, (sockaddr*)&client_sock_addr, g_addr_len);
 	report_error(status);
 }
 
-Server::~Server(){
+Server::~Server() {
 	
 	free(server_addr);
 	close(server_socket);

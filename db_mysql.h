@@ -7,7 +7,7 @@
 #include <mysql/mysql.h>
 #include <mysql/my_global.h>
 
-struct ConnDetails{
+struct ConnDetails {
 	char *server;
 	char *user;
 	char *password;
@@ -22,7 +22,7 @@ struct ConnDetails{
 	~ConnDetails();
 };
 
-class MySql{
+class MySql {
 public:
 	static struct ConnDetails conn_details;
 	MYSQL *conn;

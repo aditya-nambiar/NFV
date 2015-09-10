@@ -1,11 +1,11 @@
 #include "hss.h"
 
-UEData::UEData(){
+UEData::UEData() {
 
 
 }
 
-UEData::UEData(const UEData &src_obj){
+UEData::UEData(const UEData &src_obj) {
 
 	imsi = src_obj.imsi;
 	msisdn = src_obj.msisdn;
@@ -15,7 +15,7 @@ UEData::UEData(const UEData &src_obj){
 	key_id = src_obj.key_id;
 }
 
-void swap(UEData &src_obj, UEData &dst_obj){
+void swap(UEData &src_obj, UEData &dst_obj) {
 	using std::swap;
 
 	swap(src_obj.imsi, dst_obj.imsi);
@@ -26,28 +26,28 @@ void swap(UEData &src_obj, UEData &dst_obj){
 	swap(src_obj.key_id, dst_obj.key_id);
 }
 
-UEData& UEData::operator=(UEData src_obj){
+UEData& UEData::operator=(UEData src_obj) {
 
 	swap(*this, src_obj);
 	return *this;
 }
 
 UEData::UEData(UEData &&src_obj)
-	:UEData(){
+	:UEData() {
 
 	swap(*this, src_obj);
 }
 
-UEData::~UEData(){
+UEData::~UEData() {
 
 
 }
 
-HSS::HSS(){
+HSS::HSS() {
 
 }
 
-HSS::HSS(const HSS &src_obj){
+HSS::HSS(const HSS &src_obj) {
 
 	hss_server = src_obj.hss_server;
 	ue_data = src_obj.ue_data;
@@ -61,7 +61,7 @@ HSS::HSS(const HSS &src_obj){
 	num_fields = src_obj.num_fields;
 }
 
-void swap(HSS &src_obj, HSS &dst_obj){
+void swap(HSS &src_obj, HSS &dst_obj) {
 	using std::swap;
 
 	swap(src_obj.hss_server, dst_obj.hss_server);
@@ -76,19 +76,19 @@ void swap(HSS &src_obj, HSS &dst_obj){
 	swap(src_obj.num_fields, dst_obj.num_fields);
 }
 
-HSS& HSS::operator=(HSS src_obj){
+HSS& HSS::operator=(HSS src_obj) {
 
 	swap(*this, src_obj);
 	return *this;
 }
 
 HSS::HSS(HSS &&src_obj)
-	:HSS(){
+	:HSS() {
 
 	swap(*this, src_obj);
 }
 
-void HSS::startup_hss_server(ClientDetails &entity){
+void HSS::startup_hss_server(ClientDetails &entity) {
 
 	hss_server.fill_server_details(g_freeport, g_hss_addr);
 	hss_server.bind_server();
@@ -97,29 +97,29 @@ void HSS::startup_hss_server(ClientDetails &entity){
 	hss_server.connect_with_client();
 }
 
-void HSS::setup_db_client(){
+void HSS::setup_db_client() {
 
 	MySql::set_conn_details();
 	db_client.setup_conn();	
 }
 
-void HSS::handle_db_error(){
+void HSS::handle_db_error() {
 
-	if(query_res == 0){
+	 if (query_res == 0) {
 		cout<<"ERROR: No rows fetched for this query - ";
 		cout<<query<<endl;
 		exit(EXIT_FAILURE);
 	}
 }
 
-void HSS::recv_req_from_mme(){
+void HSS::recv_req_from_mme() {
 
 	hss_server.read_data();
 	memcpy(&ue_data.imsi, hss_server.pkt.data, sizeof(unsigned long long));
 	memcpy(&ue_data.msisdn, hss_server.pkt.data + sizeof(unsigned long long), sizeof(unsigned long long));	
 }
 
-void HSS::set_key_id(){
+void HSS::set_key_id() {
 
 	query = "select key_id from ue_data where imsi = " + to_string(ue_data.imsi) + " and msisdn = " + to_string(ue_data.msisdn);
 	db_client.perform_query(query.c_str());
@@ -129,7 +129,7 @@ void HSS::set_key_id(){
 	ue_data.key_id = stoull(res_row);
 }
 
-void HSS::set_autn_tokens(){
+void HSS::set_autn_tokens() {
 	int i;
 
 	curr_time = time(0);
@@ -140,23 +140,23 @@ void HSS::set_autn_tokens(){
 	num_fields = mysql_num_fields(db_client.result);
 	query_res = mysql_fetch_row(db_client.result);
 	handle_db_error();
-	for(i=0; i<num_fields; i++){
+	for (i = 0; i < num_fields; i++) {
 		res_row = query_res[i];
-		if(i == 0){
+		if (i == 0) {
 			ue_data.autn_num = stoull(res_row);
 		}
-		else{
+		else {
 			ue_data.rand_num = stoull(res_row);
 		}
 	}
 }
 
-void HSS::set_autn_xres(){
+void HSS::set_autn_xres() {
 
 	ue_data.autn_xres = (ue_data.autn_num * ue_data.key_id) + (ue_data.rand_num * (ue_data.key_id + 1));
 }
 
-void HSS::send_res_to_mme(){
+void HSS::send_res_to_mme() {
 
 	hss_server.pkt.clear_data();
 	hss_server.pkt.fill_data(0, sizeof(unsigned long long), ue_data.autn_num);
@@ -166,7 +166,7 @@ void HSS::send_res_to_mme(){
 	hss_server.write_data();	
 }
 
-HSS::~HSS(){
+HSS::~HSS() {
 
 
 }

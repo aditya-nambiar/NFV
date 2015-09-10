@@ -1,6 +1,6 @@
 #include "mme_server.h"
 
-void* process_req(void *arg){
+void* process_req(void *arg) {
 	ClientDetails entity;
 	MME mme;
 
@@ -11,26 +11,26 @@ void* process_req(void *arg){
 	detach_ue(mme);
 }
 
-void attach_ue(MME &mme){
+void attach_ue(MME &mme) {
 
 	recv_req_from_ue(mme);
 	authenticate_ue(mme);
 	setup_tunnel(mme);
 }
 
-void recv_req_from_ue(MME &mme){
+void recv_req_from_ue(MME &mme) {
 
 	mme.attach_req_from_ue();	
 }
 
-void authenticate_ue(MME &mme){
+void authenticate_ue(MME &mme) {
 
 	mme.setup_hss_client();
 	mme.fetch_ue_data();
 	mme.authenticate_ue();
 }
 
-void setup_tunnel(MME &mme){
+void setup_tunnel(MME &mme) {
 
 	mme.set_cteid();
 	mme.set_sgw();
@@ -45,7 +45,7 @@ void setup_tunnel(MME &mme){
 	mme.send_enodeb();
 }
 
-void detach_ue(MME &mme){
+void detach_ue(MME &mme) {
 
 	mme.detach_req_from_ue();
 	mme.delete_session_req_to_sgw();
@@ -55,7 +55,7 @@ void detach_ue(MME &mme){
 	mme.detach_res_to_ue();
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 	Server mme_server;
 
 	check_server_usage(argc, argv);
@@ -63,5 +63,5 @@ int main(int argc, char *argv[]){
 	mme_server.fill_server_details(g_mme_port, g_mme_addr);
 	mme_server.bind_server();
 	mme_server.listen_accept();
-  return 0;
+	return 0;
 }

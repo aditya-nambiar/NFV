@@ -1,6 +1,6 @@
 #include "pgw_server.h"
 
-void setup_tun(){
+void setup_tun() {
 
 	system("sudo openvpn --rmtun --dev tun1");
 	system("sudo openvpn --mktun --dev tun1");
@@ -8,19 +8,19 @@ void setup_tun(){
 	system("sudo ip addr add 192.168.100.1/24 dev tun1");
 }
 
-void* monitor_traffic(void *arg){
+void* monitor_traffic(void *arg) {
 	PGWcMonitor pgwc_monitor;
 
 	pgwc_monitor.attach_to_tun();
 	pgwc_monitor.attach_to_sink();
 	cout<<"PGW Monitoring started "<<endl;
-	while(1){
+	while (1) {
 		pgwc_monitor.read_tun();
 		pgwc_monitor.write_sink();		
 	}
 }
 
-void* process_traffic(void *arg){
+void* process_traffic(void *arg) {
 	int type;
 	ClientDetails entity = *(ClientDetails*)arg;
 	Server pgw_server;
@@ -32,15 +32,15 @@ void* process_traffic(void *arg){
 	pgw_server.connect_with_client();
 	pgw_server.read_data();
 	memcpy(&type, pgw_server.pkt.data, sizeof(int));
-	if(type == 1){
+	if (type == 1) {
 		handle_cdata(pgw_server);
 	}
-	if(type == 2){
+	if (type == 2) {
 		handle_udata(pgw_server);
 	}
 }
 
-void handle_cdata(Server &pgw_server){
+void handle_cdata(Server &pgw_server) {
 	PGWc pgwc;
 	PGWu pgwu;
 	uint16_t uteid;
@@ -58,7 +58,7 @@ void handle_cdata(Server &pgw_server){
 	cout<<"PGW has successfully deallocated resources for UE - "<<pgwc.ue_num<<endl;
 }
 
-void handle_udata(Server &pgw_server){
+void handle_udata(Server &pgw_server) {
 	PGWu pgwu;
 	fd_set read_set;
 	int max_fd;
@@ -68,18 +68,18 @@ void handle_udata(Server &pgw_server){
 	
 	pgwu.configure_raw_client();
 	pgwu.configure_server_for_sink();
-	while(1){
+	while (1) {
 		FD_ZERO(&read_set);
 		FD_SET(pgw_server.server_socket, &read_set); 
 		FD_SET(pgwu.for_sink.server_socket, &read_set); 
 		max_fd = max(pgw_server.server_socket, pgwu.for_sink.server_socket);
 		status = select(max_fd + 1, &read_set, NULL, NULL, NULL);
 		report_error(status, "Select-process failure\tTry again");		
-		if(FD_ISSET(pgw_server.server_socket, &read_set)){
+		if (FD_ISSET(pgw_server.server_socket, &read_set)) {
 			pgwu.recv_sgw(pgw_server);
 			pgwu.send_raw_socket();		
 		}
-		if(FD_ISSET(pgwu.for_sink.server_socket, &read_set)){
+		if (FD_ISSET(pgwu.for_sink.server_socket, &read_set)) {
 			pgwu.recv_sink();
 			pgwu.set_ue_ip();
 			pgwu.set_tun_udata();
@@ -88,7 +88,7 @@ void handle_udata(Server &pgw_server){
 	}
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 	Server pgw_server;
 	pthread_t mon_tid;
 	int status;

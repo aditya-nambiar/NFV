@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "packet.h"
 
-class RawSocket{
+class RawSocket {
 public:
 	static const int on = 1;
 	static const char *interface;

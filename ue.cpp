@@ -1,21 +1,21 @@
 #include "ue.h"
 
-UE::UE(int ue_num){
+UE::UE(int ue_num) {
 
 	num = ue_num;
 	key = generate_key(num);
-	imsi = key*1000;
+	imsi = key * 1000;
 	msisdn = 9000000000 + key;
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
-unsigned long long UE::generate_key(int ue_num){
+unsigned long long UE::generate_key(int ue_num) {
 
 	return ue_num;
 }
 
-UE::UE(const UE &src_obj){
+UE::UE(const UE &src_obj) {
 
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
@@ -30,7 +30,7 @@ UE::UE(const UE &src_obj){
 	strcpy(sink_addr, src_obj.sink_addr);
 }
 
-void swap(UE &src_obj, UE &dst_obj){
+void swap(UE &src_obj, UE &dst_obj) {
 	using std::swap;
 
 	swap(src_obj.num, dst_obj.num);
@@ -44,19 +44,19 @@ void swap(UE &src_obj, UE &dst_obj){
 	swap(src_obj.sink_addr, dst_obj.sink_addr);
 }
 
-UE& UE::operator=(UE src_obj){
+UE& UE::operator=(UE src_obj) {
 
 	swap(*this, src_obj);
 	return *this;
 }
 
 UE::UE(UE &&src_obj)
-	:UE(src_obj.num){
+	:UE(src_obj.num) {
 
 	swap(*this, src_obj);
 }
 
-void UE::authenticate(Client &to_mme){
+void UE::authenticate(Client &to_mme) {
 	unsigned long long autn, rand, res;
 	char *reply = allocate_str_mem(IP_MAXPACKET);
 
@@ -77,23 +77,23 @@ void UE::authenticate(Client &to_mme){
 	to_mme.read_data();
 	memcpy(reply, to_mme.pkt.data, to_mme.pkt.data_len);
 	cout<<"This is the message -"<<reply<<endl;
-	if(strcmp((const char*)reply, "OK") == 0)
+	if (strcmp((const char*)reply, "OK") == 0)
 		print_message("Authentication Successful for UE - ", num);
-	else{
+	else {
 		cout<<"Authentication is not successful for UE - "<<num<<endl;
 		handle_exceptions();
 	}
 		
 }
 
-unsigned long long UE::get_autn_res(unsigned long long autn, unsigned long long rand){
+unsigned long long UE::get_autn_res(unsigned long long autn, unsigned long long rand) {
 	unsigned long long res;
 
-	res = autn*key + rand*(key+1);
+	res = (autn * key) + (rand * (key + 1));
 	return res;
 }
 
-void UE::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, string &sgw_addr){
+void UE::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_uteid, int &sgw_port, string &sgw_addr) {
 
 	to_mme.pkt.clear_data();
 	to_mme.pkt.fill_data(0, sizeof(uint16_t), enodeb_uteid);
@@ -107,7 +107,7 @@ void UE::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_utei
 	cout<<"Data tunnel is formed from eNodeB to SGW(Both uplink & downlink direction) for UE - "<<key<<endl;
 }
 
-void UE::send_traffic(){	
+void UE::send_traffic() {	
 	string command;
 	string ip_addr_str;
 	string sink_addr_str;
@@ -138,7 +138,7 @@ void UE::send_traffic(){
 	// cout<<"Data sent successfully for UE - "<<num<<endl;
 }
 
-void UE::setup_interface(){
+void UE::setup_interface() {
 	string arg;
 
 	arg = "sudo ifconfig eth0:";
@@ -151,20 +151,20 @@ void UE::setup_interface(){
 	cout<<"Interface successfully created for UE - "<<num<<endl;
 }
 
-void UE::set_sink(){
+void UE::set_sink() {
 
 	// sink_port = g_private_sink_port;
 	sink_port = (num + 55000);
 	strcpy(sink_addr, g_private_sink_addr);
 }
 
-void UE::generate_data(){
+void UE::generate_data() {
 
 	pkt.clear_data();
 	pkt.fill_data(0, 19, "This is my traffic");
 }
 
-void UE::send_detach_req(Client &to_mme){
+void UE::send_detach_req(Client &to_mme) {
 	int type = 3;
 
 	to_mme.pkt.clear_data();
@@ -173,19 +173,19 @@ void UE::send_detach_req(Client &to_mme){
 	to_mme.write_data();
 }
 
-void UE::recv_detach_res(Client &to_mme){
+void UE::recv_detach_res(Client &to_mme) {
 	char *reply;
 
 	reply = allocate_str_mem(BUFFER_SIZE);
 	to_mme.read_data();
 	memcpy(reply, to_mme.pkt.data, to_mme.pkt.data_len);
-	if(strcmp((const char*)reply, "OK") == 0){
+	if (strcmp((const char*)reply, "OK") == 0) {
 		cout<<"UE - "<<num<<" has successfully detached from EPC"<<endl;
 	}
 	free(reply);
 }
 
-UE::~UE(){
+UE::~UE() {
 
 	free(ip_addr);
 	free(sink_addr);

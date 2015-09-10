@@ -1,6 +1,6 @@
 #include "hss_server.h"
 
-void* process_req(void *arg){
+void* process_req(void *arg) {
 	ClientDetails entity;
 	HSS hss;
 
@@ -15,7 +15,7 @@ void* process_req(void *arg){
 	mysql_thread_end();
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 	Server hss_server;
 	
 	check_server_usage(argc, argv);
