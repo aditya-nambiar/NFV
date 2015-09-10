@@ -64,7 +64,7 @@ void Client::bind_client() {
 	getsockname(client_socket, (struct sockaddr*)&client_sock_addr, &len);
 	client_port = ntohs(client_sock_addr.sin_port);	
 	strcpy(client_addr, inet_ntoa(client_sock_addr.sin_addr));
-	//cout<<"client binded with port "<<client_port<<endl;
+	//cout << "client binded with port " << client_port << endl;
 }
 
 void Client::fill_server_details(int server_port, const char *server_addr) {
@@ -76,7 +76,7 @@ void Client::fill_server_details(int server_port, const char *server_addr) {
 	server_sock_addr.sin_port = htons(server_port);
 	status = inet_aton(server_addr, &server_sock_addr.sin_addr);
 	if (status == 0) {
-		cout<<"ERROR: In filling server details - Invalid Server IP address"<<endl;
+		cout << "ERROR: In filling server details - Invalid Server IP address" << endl;
 		exit(EXIT_FAILURE);
 	}
 }
@@ -91,7 +91,7 @@ void Client::connect_with_server(int client_num) {
 	read_data();
 	memcpy(&new_server_port, pkt.data, sizeof(int));
 	fill_server_details(new_server_port, server_addr);
-	// cout<<"Client side: Client-"<<client_num<<" connected with server with port "<<new_server_port<<endl;	
+	// cout << "Client side: Client-" << client_num << " connected with server with port " << new_server_port << endl;	
 }
 
 void Client::read_data() {

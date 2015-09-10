@@ -127,6 +127,6 @@ int main(int argc, char *argv[]) {
 		pthread_join(tid[i],NULL);
 	}
 	// pthread_join(mon_tid, NULL);
-	cout<<"Requested duration has ended. Finishing the program."<<endl;
+	cout << "Requested duration has ended. Finishing the program." << endl;
 	return 0;
 }

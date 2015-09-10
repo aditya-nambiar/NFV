@@ -190,10 +190,10 @@ void MME::authenticate_ue() {
 		mme_server.pkt.fill_data(0, strlen(reply), reply);
 		mme_server.pkt.make_data_packet();
 		mme_server.write_data();
-		cout<<"Authentication is successful for UE - "<<ue_num<<endl;
+		cout << "Authentication is successful for UE - " << ue_num << endl;
 	}	
 	else {
-		cout<<"Authentication failed: Please disconnect and connect again with proper authentication"<<endl;
+		cout << "Authentication failed: Please disconnect and connect again with proper authentication" << endl;
 		handle_exceptions();
 	}
 }
@@ -224,10 +224,10 @@ void MME::create_session_res_from_sgw() {
 	memcpy(&tun_data.sgw_cteid, to_sgw.pkt.data, sizeof(uint16_t));
 	memcpy(reply, to_sgw.pkt.data + sizeof(uint16_t), to_sgw.pkt.data_len - sizeof(uint16_t));
 	if (strcmp((const char*)reply, "OK") == 0) {
-		cout<<"Create session request was successful for UE - "<<ue_num<<endl;
+		cout << "Create session request was successful for UE - " << ue_num << endl;
 	}
 	else {
-		cout<<"Create session request failed: Please disconnect and connect again"<<endl;
+		cout << "Create session request failed: Please disconnect and connect again" << endl;
 		handle_exceptions();
 	}
 }
@@ -256,10 +256,10 @@ void MME::modify_session_res_from_sgw() {
 	memcpy(ue_ip, to_sgw.pkt.data + sizeof(uint16_t), INET_ADDRSTRLEN);
 	memcpy(reply, to_sgw.pkt.data + sizeof(uint16_t) + INET_ADDRSTRLEN, to_sgw.pkt.data_len - sizeof(uint16_t) - INET_ADDRSTRLEN);
 	if (strcmp((const char*)reply, "OK") == 0) {
-		cout<<"Modify Session Request was successful for UE - "<<ue_num<<endl;
+		cout << "Modify Session Request was successful for UE - " << ue_num << endl;
 	}
 	else {
-		cout<<"Modify session request failed: Please disconnect and connect again"<<endl;
+		cout << "Modify session request failed: Please disconnect and connect again" << endl;
 		handle_exceptions();		
 	}
 }
@@ -278,10 +278,10 @@ void MME::detach_req_from_ue() {
 	mme_server.read_data();
 	memcpy(&type, mme_server.pkt.data, sizeof(int));	
 	if (type == 3) {
-		cout<<"Detach request has been received successfully at MME for UE - "<<ue_num<<endl;
+		cout << "Detach request has been received successfully at MME for UE - " << ue_num << endl;
 	}
 	else {
-		cout<<"Invalid Detach type num: Please disconnect and connect again"<<endl;
+		cout << "Invalid Detach type num: Please disconnect and connect again" << endl;
 		handle_exceptions();
 	}
 }
@@ -302,10 +302,10 @@ void MME::delete_session_res_from_sgw() {
 	to_sgw.pkt.rem_gtpc_hdr();
 	memcpy(reply, to_sgw.pkt.data, to_sgw.pkt.data_len);
 	if (strcmp((const char*)reply, "OK") == 0) {
-		cout<<"MME has received successful detach response for UE - "<<ue_num<<endl;
+		cout << "MME has received successful detach response for UE - " << ue_num << endl;
 	}
 	else {
-		cout<<"Detach process failure at SGW: Please disconnect and connect again"<<endl;
+		cout << "Detach process failure at SGW: Please disconnect and connect again" << endl;
 		handle_exceptions();
 	}
 }
@@ -317,7 +317,7 @@ void MME::detach_res_to_ue() {
 	mme_server.pkt.fill_data(0, strlen(reply), reply);
 	mme_server.pkt.make_data_packet();
 	mme_server.write_data();
-	cout<<"MME has successfully deallocated resources for UE - "<<ue_num<<endl;
+	cout << "MME has successfully deallocated resources for UE - " << ue_num << endl;
 }
 
 void MME::rem_bearer_id() {

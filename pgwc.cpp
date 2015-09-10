@@ -145,7 +145,7 @@ void PGWc::delete_session_req_from_sgw(Server &pgw_server) {
 	pgw_server.pkt.rem_gtpc_hdr();
 	memcpy(&type, pgw_server.pkt.data, sizeof(int));
 	if (type == 3) {
-		cout<<"Detach request for UE - "<<ue_num<<" has been received at PGW"<<endl;
+		cout << "Detach request for UE - " << ue_num << " has been received at PGW" << endl;
 	}
 }
 

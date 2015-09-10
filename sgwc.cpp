@@ -232,7 +232,7 @@ void SGWc::delete_session_req_from_mme(Server &sgw_server) {
 	memcpy(&type, sgw_server.pkt.data, sizeof(int));
 	copy_pkts(sgw_server.pkt, to_pgw.pkt);
 	if (type == 3) {
-		cout<<"Detach request for UE - "<<ue_num<<" has been received at SGW"<<endl;
+		cout << "Detach request for UE - " << ue_num << " has been received at SGW" << endl;
 	}
 }
 
@@ -263,9 +263,9 @@ void SGWc::delete_session_res_from_pgw() {
 	to_pgw.pkt.rem_gtpc_hdr();
 	memcpy(reply, to_pgw.pkt.data, to_pgw.pkt.data_len);
 	res.assign(reply);
-	cout<<"Response is "<<res<<" and reply is "<<reply<<endl;
+	cout << "Response is " << res << " and reply is " << reply << endl;
 	if (res == "OK") {
-		cout<<"PGW has successfully deallocated resources for UE - "<<ue_num<<endl;
+		cout << "PGW has successfully deallocated resources for UE - " << ue_num << endl;
 	}
 }
 

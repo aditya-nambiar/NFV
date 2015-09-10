@@ -34,7 +34,7 @@ public:
 ConnDetails MySql::details = {"localhost", "root", "mysql", "NFV"};
 
 MySql::MySql() {
-	
+
 	//Dummy constructor
 }
 
@@ -62,15 +62,15 @@ void MySql::fetch_result() {
 	while (row = mysql_fetch_row(result)) {
 		for (i = 0; i < num_fields; i++) {
 			inp = row[i];
-			cout<<inp<<" ";
+			cout << inp << " ";
 		}
-		cout<<endl;	
+		cout << endl;	
 	}
 }
 
 void MySql::report_error(MYSQL *conn) {
 
-	cout<<mysql_error(conn)<<endl;
+	cout << mysql_error(conn) << endl;
 	exit(EXIT_FAILURE);
 }
 
@@ -89,7 +89,7 @@ const char* to_char_array(unsigned long long arg) {
 	string tem;
 	stringstream out;
 
-	out<<arg;
+	out << arg;
 	tem = out.str();
 	const char *ans = tem.c_str();
 	return ans;

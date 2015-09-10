@@ -61,13 +61,13 @@ ClientDetails::~ClientDetails() {
 
 void check_conn(int &status) {
 
-	if (errno==EAGAIN || errno==EWOULDBLOCK || errno==EINPROGRESS)
+	if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINPROGRESS)
 		status = 1000;
 }
 
 void report_error(int arg) {
 
-	if (arg<0) {
+	if (arg < 0) {
 		perror("ERROR");
 		exit(EXIT_FAILURE);
 	}
@@ -75,7 +75,7 @@ void report_error(int arg) {
 
 void report_error(int arg, const char *message) {
 
-	if (arg<0) {
+	if (arg < 0) {
 		perror(message);
 		exit(EXIT_FAILURE);
 	}
@@ -83,45 +83,45 @@ void report_error(int arg, const char *message) {
 
 void print(string message) {
 
-	cout<<message<<endl;
+	cout << message << endl;
 }
 
 void print(int arg) {
 
-	cout<<arg<<endl;
+	cout << arg << endl;
 }
 
 void print(string message, int arg) {
 
-	cout<<message<<" "<<arg<<endl;
+	cout << message << " " << arg << endl;
 }
 
 void print_message(string message) {
 
-	cout<<"***********************"<<endl;
-	cout<<message<<endl;
-	cout<<"***********************"<<endl;
+	cout << "***********************" << endl;
+	cout << message << endl;
+	cout << "***********************" << endl;
 }
 
 void print_message(string message, int arg) {
 
-	cout<<"***********************"<<endl;
-	cout<<message<<" "<<arg<<endl;
-	cout<<"***********************"<<endl;
+	cout << "***********************" << endl;
+	cout << message << " " << arg << endl;
+	cout << "***********************" << endl;
 }
 
 void print_message(string message, unsigned long long arg) {
 
-	cout<<"***********************"<<endl;
-	cout<<message<<" "<<arg<<endl;
-	cout<<"***********************"<<endl;
+	cout << "***********************" << endl;
+	cout << message << " " << arg << endl;
+	cout << "***********************" << endl;
 }
 
 const char* to_char_array(unsigned long long arg) {
 	string tem;
 	stringstream out;
 
-	out<<arg;
+	out << arg;
 	tem = out.str();
 	const char *ans = tem.c_str();
 	return ans;
@@ -166,11 +166,11 @@ uint8_t* allocate_uint8_mem(int len) {
 void check_server_usage(int argc, char *argv[]) {
 
 	if (argc < 2) {
-		cout<<"Please try again with the number of threads to be spawn"<<endl;
+		cout << "Please try again with the number of threads to be spawn" << endl;
 		exit(-1);
 	}
 	if (atoi(argv[1]) == 0) {
-		cout<<"Please try again with a valid number of threads to be spawn"<<endl;
+		cout << "Please try again with a valid number of threads to be spawn" << endl;
 		exit(-1);
 	}
 }
@@ -178,15 +178,15 @@ void check_server_usage(int argc, char *argv[]) {
 void check_client_usage(int argc, char *argv[]) {
 
 	if (argc < 3) {
-		cout<<"Please enter the correct number of arguments"<<endl;
-		cout<<"Argument-1: Number of threads to be spawn"<<endl;
-		cout<<"Argument-2: Duration of simulation"<<endl;
+		cout << "Please enter the correct number of arguments" << endl;
+		cout << "Argument-1: Number of threads to be spawn" << endl;
+		cout << "Argument-2: Duration of simulation" << endl;
 		exit(-1);
 	}
 	if (atoi(argv[1]) == 0 || atof(argv[2]) == 0) {
-		cout<<"Please enter valid arguments"<<endl;
-		cout<<"Argument-1: Number of threads to be spawn"<<endl;
-		cout<<"Argument-2: Duration of simulation"<<endl;
+		cout << "Please enter valid arguments" << endl;
+		cout << "Argument-1: Number of threads to be spawn" << endl;
+		cout << "Argument-2: Duration of simulation" << endl;
 		exit(-1);
 	}
 }

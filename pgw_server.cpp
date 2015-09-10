@@ -13,7 +13,7 @@ void* monitor_traffic(void *arg) {
 
 	pgwc_monitor.attach_to_tun();
 	pgwc_monitor.attach_to_sink();
-	cout<<"PGW Monitoring started "<<endl;
+	cout << "PGW Monitoring started " << endl;
 	while (1) {
 		pgwc_monitor.read_tun();
 		pgwc_monitor.write_sink();		
@@ -51,11 +51,11 @@ void handle_cdata(Server &pgw_server) {
 	pgwc.create_session_response_to_sgw(pgw_server, uteid);
 	pgwc.fill_tun_ctable();
 	pgwu.fill_tun_utable(g_ip_table[pgwc.ue_num], tun_udata);
-	cout<<"Tunnel created from PGW to SGW for UE - "<<pgwc.ue_num<<endl;
+	cout << "Tunnel created from PGW to SGW for UE - " << pgwc.ue_num << endl;
 	pgwc.delete_session_req_from_sgw(pgw_server);
 	pgwc.delete_session_res_to_sgw(pgw_server);
 	pgwu.erase_tun_utable(g_ip_table[pgwc.ue_num]);
-	cout<<"PGW has successfully deallocated resources for UE - "<<pgwc.ue_num<<endl;
+	cout << "PGW has successfully deallocated resources for UE - " << pgwc.ue_num << endl;
 }
 
 void handle_udata(Server &pgw_server) {

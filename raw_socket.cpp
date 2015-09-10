@@ -73,8 +73,8 @@ void RawSocket::bind_client() {
 // 	src_port = ntohs(pkt.udp_hdr.source);
 // 	if (!inet_ntop(AF_INET, &(pkt.ip_hdr.ip_src), src_addr, INET_ADDRSTRLEN))
 // 		report_error(status, "this is the error");	
-// 	cout<<"Source port is "<<src_port<<endl;
-// 	cout<<"Source address is "<<src_addr<<endl;	
+// 	cout << "Source port is " << src_port << endl;
+// 	cout << "Source address is " << src_addr << endl;	
 // }
 
 // void RawSocket::fill_dst_details() {
@@ -85,11 +85,11 @@ void RawSocket::bind_client() {
 // 	dst_sock_addr.sin_port = htons(dst_port);
 // 	status = inet_aton(dst_addr, &dst_sock_addr.sin_addr);
 // 	if (status == 0) {
-// 		cout<<"ERROR: Invalid IP address"<<endl;
+// 		cout << "ERROR: Invalid IP address" << endl;
 // 		exit(EXIT_FAILURE);
 // 	}
-// 	cout<<"Destination port is "<<dst_port<<endl;
-// 	cout<<"Destination address is "<<dst_addr<<endl;	
+// 	cout << "Destination port is " << dst_port << endl;
+// 	cout << "Destination address is " << dst_addr << endl;	
 // }
 
 void RawSocket::fill_dst_details() {
@@ -101,7 +101,7 @@ void RawSocket::fill_dst_details() {
 	dst_sock_addr.sin_port = htons(ntohs(tcp_hdr->th_dport));
 	status = inet_aton(g_private_sink_addr, &dst_sock_addr.sin_addr);
 	if (status == 0) {
-		cout<<"ERROR: Invalid IP address"<<endl;
+		cout << "ERROR: Invalid IP address" << endl;
 		exit(EXIT_FAILURE);
 	}
 }

@@ -72,7 +72,7 @@ void Server::fill_server_details(int server_port, const char *server_addr) {
 	server_sock_addr.sin_port = (server_port)?htons(server_port):server_port;
 	status = inet_aton(server_addr, &server_sock_addr.sin_addr);	
 	if (status == 0) {
-		cout<<"ERROR: Invalid IP address"<<endl;
+		cout << "ERROR: Invalid IP address" << endl;
 		exit(EXIT_FAILURE);
 	}
 }
@@ -87,7 +87,7 @@ void Server::bind_server() {
 	report_error(status);	
 	getsockname(server_socket, (struct sockaddr*)&server_sock_addr, &len);
 	server_port = ntohs(server_sock_addr.sin_port);	
-	//cout<<"Server binded with port "<<server_port<<endl;
+	//cout << "Server binded with port " << server_port << endl;
 }
 
 void Server::listen_accept() {
@@ -108,21 +108,21 @@ void Server::listen_accept() {
 		report_error(status, "Error in signalling");
 		status = pthread_mutex_unlock(&tpool.conn_lock);
 		report_error(status, "Error in unlocking");
-		// cout<<"Server side: Connection made with Client "<<entity.num<<endl;
+		// cout << "Server side: Connection made with Client " << entity.num << endl;
 	}
 }
 
 void Server::listen_accept(void*(*multithreading_func)(void*)) {
 	int i;
 	
-	i=0;
+	i = 0;
 	while (1) {
 		status = recvfrom(server_socket, pkt.data, BUFFER_SIZE, 0, (sockaddr*)&clients[i].client_sock_addr, &g_addr_len);
 		memcpy(&clients[i].num, pkt.data, sizeof(int)); 		
 		report_error(status);
 		status = pthread_create(&tid[i], NULL, multithreading_func, &clients[i]);
 		report_error(status);
-		cout<<"Server side: Connection made with Client "<<clients[i].num<<endl;
+		cout << "Server side: Connection made with Client " << clients[i].num << endl;
 		i++;
 	}
 }

@@ -107,37 +107,37 @@ void Packet::fill_udp_hdr(int src_port, int dst_port) {
 void Packet::fill_data(int pos, int len, int &arg) {
 	
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
-	data_len+= len;
+	data_len += len;
 }
 
 void Packet::fill_data(int pos, int len, uint16_t &arg) {
 	
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
-	data_len+= len;
+	data_len += len;
 }
 
 void Packet::fill_data(int pos, int len, unsigned long long &arg) {
 	
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
-	data_len+= len;
+	data_len += len;
 }
 
 void Packet::fill_data(int pos, int len, uint8_t *message) {
 	
 	memcpy(data + pos, message, len * sizeof(uint8_t));
-	data_len+= len;
+	data_len += len;
 }
 
 void Packet::fill_data(int pos, int len, const char *message) {
 	
 	memcpy(data + pos, message, len * sizeof(uint8_t));
-	data_len+= len;
+	data_len += len;
 }
 
 void Packet::fill_data(int pos, int len, string &message) {
 	
 	memcpy(data + pos, message.c_str(), len * sizeof(uint8_t));
-	data_len+= len;
+	data_len += len;
 }
 
 void Packet::eval_udp_checksum() {
@@ -175,43 +175,43 @@ uint16_t Packet::udp_checksum() {
   	chk_sum_len = 0;
   	ptr = &buf[0];
   	memcpy(ptr, &ip_hdr.ip_src.s_addr, sizeof (ip_hdr.ip_src.s_addr));
-  	ptr+= sizeof(ip_hdr.ip_src.s_addr);
-  	chk_sum_len+= sizeof (ip_hdr.ip_src.s_addr);
+  	ptr += sizeof(ip_hdr.ip_src.s_addr);
+  	chk_sum_len += sizeof (ip_hdr.ip_src.s_addr);
   	memcpy(ptr, &ip_hdr.ip_dst.s_addr, sizeof (ip_hdr.ip_dst.s_addr));
   	ptr += sizeof(ip_hdr.ip_dst.s_addr);
-  	chk_sum_len+= sizeof (ip_hdr.ip_dst.s_addr);
+  	chk_sum_len += sizeof (ip_hdr.ip_dst.s_addr);
   	*ptr = 0; 
   	ptr++;
-  	chk_sum_len+= 1;
+  	chk_sum_len += 1;
   	memcpy(ptr, &ip_hdr.ip_p, sizeof (ip_hdr.ip_p));
-  	ptr+= sizeof (ip_hdr.ip_p);
-  	chk_sum_len+= sizeof (ip_hdr.ip_p);
-  	memcpy(ptr, &udp_hdr.len, sizeof (udp_hdr.len));
-  	ptr+= sizeof (udp_hdr.len);
-  	chk_sum_len+= sizeof (udp_hdr.len);
-  	memcpy(ptr, &udp_hdr.source, sizeof (udp_hdr.source));
-  	ptr+= sizeof (udp_hdr.source);
-  	chk_sum_len+= sizeof (udp_hdr.source);
-  	memcpy(ptr, &udp_hdr.dest, sizeof (udp_hdr.dest));
-  	ptr+= sizeof (udp_hdr.dest);
-  	chk_sum_len+= sizeof (udp_hdr.dest);
+  	ptr += sizeof (ip_hdr.ip_p);
+  	chk_sum_len += sizeof (ip_hdr.ip_p);
   	memcpy(ptr, &udp_hdr.len, sizeof (udp_hdr.len));
   	ptr += sizeof (udp_hdr.len);
-  	chk_sum_len+= sizeof (udp_hdr.len);
+  	chk_sum_len += sizeof (udp_hdr.len);
+  	memcpy(ptr, &udp_hdr.source, sizeof (udp_hdr.source));
+  	ptr += sizeof (udp_hdr.source);
+  	chk_sum_len += sizeof (udp_hdr.source);
+  	memcpy(ptr, &udp_hdr.dest, sizeof (udp_hdr.dest));
+  	ptr += sizeof (udp_hdr.dest);
+  	chk_sum_len += sizeof (udp_hdr.dest);
+  	memcpy(ptr, &udp_hdr.len, sizeof (udp_hdr.len));
+  	ptr += sizeof (udp_hdr.len);
+  	chk_sum_len += sizeof (udp_hdr.len);
   	*ptr = 0; 
   	ptr++;
   	*ptr = 0; 
   	ptr++;
-  	chk_sum_len+= 2;
+  	chk_sum_len += 2;
   	memcpy(ptr, data, data_len);
-  	ptr+= data_len;
-  	chk_sum_len+= data_len;
+  	ptr += data_len;
+  	chk_sum_len += data_len;
   	for (i = 0; i < data_len%2; i++, ptr++) {
   		*ptr = 0;
   		ptr++;
   		chk_sum_len++;
   	}
-  	cout<<"In checksum is "<<buf<<" "<<chk_sum_len<<endl;
+  	cout << "In checksum is " << buf << " " << chk_sum_len << endl;
   	return ip_checksum((uint16_t*)buf, chk_sum_len);
 }
 

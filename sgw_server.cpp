@@ -37,13 +37,13 @@ void handle_cdata(Server &sgw_server) {
 	sgwc.fill_pgw_addr(tun_udata.pgw_port, tun_udata.pgw_addr);
 	sgwc.fill_tun_ctable();
 	sgwu.fill_tun_utable(uteid, tun_udata);
-	cout<<"Tunnel is formed from eNodeB to PGW via SGW for UE - "<<sgwc.ue_num<<endl;
+	cout << "Tunnel is formed from eNodeB to PGW via SGW for UE - " << sgwc.ue_num << endl;
 	sgwc.delete_session_req_from_mme(sgw_server);
 	sgwc.delete_session_req_to_pgw();
 	sgwc.delete_session_res_from_pgw();
 	sgwc.delete_session_res_to_mme(sgw_server);
 	sgwu.erase_tun_utable(uteid);
-	cout<<"SGW has successfully deallocated resources for UE - "<<sgwc.ue_num<<endl;
+	cout << "SGW has successfully deallocated resources for UE - " << sgwc.ue_num << endl;
 }
 
 void handle_udata(Server &sgw_server) {

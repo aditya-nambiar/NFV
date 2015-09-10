@@ -53,13 +53,13 @@ void PGWcMonitor::attach_to_tun() {
 		strncpy(ifr.ifr_name, tun_name, IFNAMSIZ);
 	}
 	status = ioctl(tun_fd, TUNSETIFF, (void*)&ifr);
-	if (status<0) {
-		cout<<"ioctl(TUNSETIFF)"<<" "<<errno<<endl;
+	if (status < 0) {
+		cout << "ioctl(TUNSETIFF)" << " " << errno << endl;
 		close(tun_fd);
 		exit(-1);
 	}
 	strcpy(tun_name, ifr.ifr_name);
-	cout<<"Successfully attached to TUN device"<<endl;
+	cout << "Successfully attached to TUN device" << endl;
 }
 
 void PGWcMonitor::read_tun() {
@@ -68,14 +68,14 @@ void PGWcMonitor::read_tun() {
 	count = read(tun_fd, pkt.data, BUFFER_SIZE);
 	report_error(count);
 	pkt.data_len = count;
-	cout<<endl<<"Successfully read data from the TUN device"<<endl;
+	cout << endl << "Successfully read data from the TUN device" << endl;
 }
 
 void PGWcMonitor::write_tun() {
 
 	count = write(tun_fd, pkt.data, pkt.data_len);
 	report_error(count);
-	cout<<"Successfully written data into the TUN device"<<endl;
+	cout << "Successfully written data into the TUN device" << endl;
 }
 
 void PGWcMonitor::attach_to_sink() {
@@ -84,7 +84,7 @@ void PGWcMonitor::attach_to_sink() {
 	to_sink.bind_client();
 	to_sink.fill_server_details(g_public_sink_port, g_public_sink_addr);
 	to_sink.connect_with_server(dummy_num);
-	cout<<"Successfully connected with the Sink server"<<endl;
+	cout << "Successfully connected with the Sink server" << endl;
 }
 
 void PGWcMonitor::write_sink() {
@@ -97,13 +97,13 @@ void PGWcMonitor::write_sink() {
 	memcpy(iphdr, to_sink.pkt.data, 20 * sizeof(uint8_t));
 	memcpy(tcp_hdr, to_sink.pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
 	inet_ntop(AF_INET, &(iphdr->ip_dst), sink, INET_ADDRSTRLEN);
-	cout<<"At PGW: Sink IP is "<<sink<<endl;
-	cout<<"TCP destination port is "<<ntohs(tcp_hdr->th_dport)<<endl;	
-	cout<<"Size is "<<to_sink.pkt.data_len<<endl;
+	cout << "At PGW: Sink IP is " << sink << endl;
+	cout << "TCP destination port is " << ntohs(tcp_hdr->th_dport) << endl;	
+	cout << "Size is " << to_sink.pkt.data_len << endl;
 	
 	to_sink.pkt.make_data_packet();
 	to_sink.write_data();		
-	cout<<"Successfully written data into the Sink"<<endl<<endl;
+	cout << "Successfully written data into the Sink" << endl << endl;
 }
 
 void PGWcMonitor::copy_to_sinkpkt() {

@@ -6,9 +6,9 @@ void setup_interface() {
 	string arg;
 
 	arg = "sudo ifconfig eth0:0 192.168.100.2/16";
-	cout<<arg<<endl;
+	cout << arg << endl;
 	system(arg.c_str());
-	cout<<"Interface successfullly created for Sink"<<endl;
+	cout << "Interface successfullly created for Sink" << endl;
 }
 
 void setup_tun() {
@@ -39,7 +39,7 @@ void* process_traffic(void *arg) {
 	addr.assign(g_private_sink_addr);
 	mtu = " -M 1000";
 	command = "iperf3 -s -B " + addr + " -p " + to_string(port);
-	cout<<command<<endl;
+	cout << command << endl;
 	system(command.c_str());
 }
 
