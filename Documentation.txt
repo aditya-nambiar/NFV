@@ -156,7 +156,7 @@ RAN to MME(Plain)
 type = 3
 
 Step - 2:
-On receiving type-3 detach request from UE, MME would forward the Delete Session Request message(through GTP-C) to the concerned SGW for this UE and it would then remove the corresponding entry(Client num it has obtained when this UE requested for attach) in the bearer table for this UE.
+On receiving type-3 detach request from UE, MME would forward the Delete Session Request message(through GTP-C) to the concerned SGW for this UE and it would then remove the corresponding entry(Client num it has obtained when this UE requested for attach) in the bearer table for this UE. 
 
 MME to SGW(GTP-C)
 type = 3
@@ -168,23 +168,19 @@ SGW to PGW(GTP-C)
 type = 3
 
 Step - 4:
-On receiving Delete session request from SGW, PGW would remove the corresponding entry(Client num it has obtained when this UE requested for attach) in the bearer table for this UE and sends back Delete Session response to SGW.
+On receiving Delete session request from SGW, PGW would send back Delete Session response to SGW and then remove the corresponding entry(Client num it has obtained when this UE requested for attach) in the bearer table for this UE. It also removes the TUN data such as TEID specific to this UE.
 
 PGW to SGW(GTP-C)
 OK
 
 Step - 5:
-On receiving Delete session response from PGW, SGW sends back the Delete Session response message to the MME.
+On receiving Delete session response from PGW, SGW sends back the Delete Session response message to the MME and removes the TUN data such as TEID specific to this UE.
 
 SGW to MME(GTP-C)
 OK
 
 Step - 6:
-On receiving Delete session response from SGW, MME sends back the detach accept message to the UE.
+On receiving Delete session response from SGW, MME removes the TUN data such as TEID specific to this UE and then it sends back the detach accept message to the UE. 
 
 MME to RAN(Plain)
 OK
-
-
-
-

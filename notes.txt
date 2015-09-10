@@ -1,4 +1,4 @@
-Problems:
+Problems faced/facing:
 
 [Solved for now] - Too many open files (For connections < 100)
 [Solution]: Because a large number of sockets got created. This is because the constructor of Enodeb at UE side created an initial array of client sockets(10) for each UE and hence this alone created 100 * 10 = 1000 sockets for 100 UEs. This initial array creation is not necessary. Hence creating client sockets is moved while binding and a dummy value(-1) is assigned to client_socket in the constructor.
@@ -15,23 +15,19 @@ Problems:
 	2. Destructor
 	3. Assignment Operator
 	4. Move constructor
-
-In the future, rule of three should be changed to rule of Five, which includes to the above three rules the following
-	4. Move constructor
+In the future, I might have to add the following in addition to the "constructors" that I already added
 	5. Move assignment operator
 
 - RAN disconnected for no known reason without printing any error message for Threads = 70
-- Invalid IP address being received at SGW for some time when no. of simultaneous connections > 1
+- "ERROR: Invalid IP address" being received at SGW/RAN for some time when no. of simultaneous connections > 1
 - Invalid detach type request num received at MME for Threads = 15
 - PGW disconnected for no known reason without printing any error message for Threads = 2 and Time = 3s
-- SGW disconnected for no known reason without printing any error message for Threads = 20 and Time = 3s
+- SGW disconnected for no known reason without printing any error message for Threads = 2, 20 and Time = 3s
 
 Findings/Bugs Solved:
 
 - Number of sockets that can be opened simultaneously is 1021. Important thing is that this number(1021) might be fixed for a particular time, because other processes might increase the number of file descriptors at a later time, but I am not sure about this and I think this number should pretty much work fine. 
 - Changing "ulimit -n 4096" will reduce this problem. I can now create upto 1021 + (4096 - 1024) = 4093 connections!
-
-- When socket is created in the constructor, it is created multiple times(during some situations which coincide in my RAN case) and the reason is not known. Creating socket during bind section solves this problem.
 
 - Finding the CPU utilization for a particular process using "top" command:
 top -p $(pgrep process_name | tr \\n , | sed 's/,//')

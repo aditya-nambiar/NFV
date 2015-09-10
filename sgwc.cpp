@@ -248,17 +248,12 @@ void SGWc::delete_session_req_to_pgw(){
 	to_pgw.pkt.add_gtpc_hdr();
 	to_pgw.pkt.make_data_packet();
 	to_pgw.write_data();
-	erase_tun_ctable();
+	erase_bearer_table();
 }
 
-void SGWc::erase_bearer_table(){
+void SGWc::erase_bearer_table() {
 
 	g_bearer_table.erase(ue_num);
-}
-
-void SGWc::erase_tun_ctable(){
-
-	g_tun_ctable.erase(cteid);
 }
 
 void SGWc::delete_session_res_from_pgw(){
@@ -283,8 +278,13 @@ void SGWc::delete_session_res_to_mme(Server &sgw_server){
 	sgw_server.pkt.add_gtpc_hdr();
 	sgw_server.pkt.make_data_packet();
 	sgw_server.write_data();
+	erase_tun_ctable();
 }
 
+void SGWc::erase_tun_ctable() {
+
+	g_tun_ctable.erase(cteid);
+}
 
 SGWc::~SGWc(){
 

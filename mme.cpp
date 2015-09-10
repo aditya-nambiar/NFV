@@ -325,6 +325,13 @@ void MME::rem_bearer_id(){
 	bearer_id = -1; // Dummy statement
 }
 
+void MME::rem_tun_data() {
+
+	/*	Since this MME object is dedicated to this paricular UE, the moment it completes its job and goes out of scope,
+		all data related to the UE will automatically de deleted
+	*/
+}
+
 MME::~MME(){
 
 	free(ue_ip);

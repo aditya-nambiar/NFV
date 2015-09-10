@@ -8,7 +8,7 @@
 #include "client.h"
 #include "mme.h"
 
-void* process_reqs(void*);
+void* process_req(void*);
 void attach_ue(MME&);
 void recv_req_from_ue(MME&);
 void authenticate_ue(MME&);

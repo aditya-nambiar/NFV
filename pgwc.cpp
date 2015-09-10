@@ -147,17 +147,6 @@ void PGWc::delete_session_req_from_sgw(Server &pgw_server){
 	if(type == 3){
 		cout<<"Detach request for UE - "<<ue_num<<" has been received at PGW"<<endl;
 	}
-	erase_tun_ctable();
-}
-
-void PGWc::erase_bearer_table(){
-
-	g_bearer_table.erase(ue_num);
-}
-
-void PGWc::erase_tun_ctable(){
-
-	g_tun_ctable.erase(g_ip_table[ue_num]);
 }
 
 void PGWc::delete_session_res_to_sgw(Server &pgw_server){
@@ -169,6 +158,18 @@ void PGWc::delete_session_res_to_sgw(Server &pgw_server){
 	pgw_server.pkt.add_gtpc_hdr();
 	pgw_server.pkt.make_data_packet();
 	pgw_server.write_data();
+	erase_bearer_table();
+	erase_tun_ctable();
+}
+
+void PGWc::erase_bearer_table() {
+
+	g_bearer_table.erase(ue_num);
+}
+
+void PGWc::erase_tun_ctable() {
+
+	g_tun_ctable.erase(g_ip_table[ue_num]);
 }
 
 PGWc::~PGWc(){

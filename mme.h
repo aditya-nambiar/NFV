@@ -69,6 +69,7 @@ struct MME{
 	void delete_session_res_from_sgw();
 	void detach_res_to_ue();
 	void rem_bearer_id();
+	void rem_tun_data();
 	~MME();
 };
 

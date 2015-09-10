@@ -8,6 +8,6 @@
 #include "db_mysql.h"
 #include "hss.h"
 
-void* process_reqs(void*);
+void* process_req(void*);
 
 #endif //HSS_SERVER_H

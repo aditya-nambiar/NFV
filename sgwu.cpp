@@ -152,7 +152,7 @@ void SGWu::recv_enodeb(Server &sgw_server){
 	sgw_server.read_data();
 	copy_data(sgw_server.pkt);
 	pkt.rem_gtpu_hdr();
-	// cout<<endl<<"Received data from Enodeb successfully and removed the GTPu header"<<endl;
+	cout<<endl<<"Received data from Enodeb successfully and removed the GTPu header"<<endl;
 }
 
 void SGWu::send_enodeb(Server &sgw_server){
@@ -189,7 +189,7 @@ void SGWu::send_pgw(){
 	to_pgw[num].pkt.fill_data(0, pkt.data_len, pkt.data);
 	to_pgw[num].pkt.make_data_packet();
 	to_pgw[num].write_data();
-	// cout<<"Send data successfully to PGW with TEID - "<<tun_udata.pgw_uteid<<endl<<endl;
+	cout<<"Send data successfully to PGW with TEID - "<<tun_udata.pgw_uteid<<endl<<endl;
 }
 
 void SGWu::fill_tun_utable(uint16_t &uteid, TunUdata &tun_udata){

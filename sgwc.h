@@ -59,9 +59,9 @@ struct SGWc{
 	void copy_pkts(Packet&, Packet&);
 	void delete_session_req_to_pgw();
 	void erase_bearer_table();
-	void erase_tun_ctable();
 	void delete_session_res_from_pgw();
 	void delete_session_res_to_mme(Server&);
+	void erase_tun_ctable();
 
 	~SGWc();
 };
