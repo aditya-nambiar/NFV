@@ -9,11 +9,12 @@ Coding style - Traditional Coding style followed
 
 /* To be implemented in the source code */
 
+- Opening brace on the same line as the operation that initiates it. Closing brace on its own line
 - Space after commas, semicolon, operators
 - Space around binary operator. No space around unary operator
-- braces on its own line
 - Spaces after keywords like "if", "while" eg. if (condition)
-- No spaces between function names and opening parenthesis eg. func() and NOT func ()
+- Space before opening brace eg. "if () {" and NOT "if (){"
+- No spaces between function names and opening parenthesis eg. "func()" and NOT "func ()"
 - Blank lines to separate units of functionality
 - Make code to fit in 80-character column width
 - Use 3spaces for each tab
