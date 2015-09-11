@@ -8,15 +8,15 @@
 #define IP_LEN 20
 #define UDP_LEN 8
 
-struct GTPc{
+struct GTPc {
 	uint16_t cteid;
 };
 
-struct GTPu{
+struct GTPu { 
 	uint16_t uteid;
 };
 
-struct Packet{
+struct Packet {
 	static const int ip_flags[4];
 
 	char *src_ip;

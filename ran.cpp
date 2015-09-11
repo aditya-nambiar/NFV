@@ -4,7 +4,7 @@ int g_total_connections;
 double g_req_duration;
 time_t g_start_time;
 
-void setup_tun(){
+void setup_tun() {
 
 	system("sudo openvpn --rmtun --dev tun1");
 	system("sudo openvpn --mktun --dev tun1");
@@ -12,7 +12,7 @@ void setup_tun(){
 	system("sudo ip addr add 192.168.100.1/24 dev tun1");
 }
 
-void* monitor_traffic(void *arg){
+void* monitor_traffic(void *arg) {
 	EnodeB enodeb;
 	fd_set read_set;
 	int max_fd;
@@ -21,18 +21,18 @@ void* monitor_traffic(void *arg){
 	int status;
 
 	enodeb.attach_to_tun();
-	while(1){
+	while (1) {
 		FD_ZERO(&read_set);
 		FD_SET(enodeb.tun_fd, &read_set); 
 		max_fd = enodeb.tun_fd;
 		size = enodeb.pos;
-		for(i=0;i<size;i++){
+		for (i = 0; i < size; i++) {
 			FD_SET(enodeb.to_sgw[i].client_socket, &read_set); 
 			max_fd = max(max_fd, enodeb.to_sgw[i].client_socket);
 		}
 		status = select(max_fd + 1, &read_set, NULL, NULL, NULL);
 		report_error(status, "Select-process failure\tTry again");		
-		if(FD_ISSET(enodeb.tun_fd, &read_set)){
+		if (FD_ISSET(enodeb.tun_fd, &read_set)) {
 			enodeb.read_tun();
 			enodeb.set_ue_ip();
 			enodeb.set_tun_data();
@@ -40,8 +40,8 @@ void* monitor_traffic(void *arg){
 			enodeb.make_data();
 			enodeb.send_data();
 		}
-		for(i=0;i<size;i++){
-			if(FD_ISSET(enodeb.to_sgw[i].client_socket, &read_set)){
+		for (i = 0; i < size; i++) {
+			if (FD_ISSET(enodeb.to_sgw[i].client_socket, &read_set)) {
 				enodeb.recv_data(i);
 				enodeb.write_tun();
 			}
@@ -49,13 +49,13 @@ void* monitor_traffic(void *arg){
 	}
 }
 
-void* generate_traffic(void *arg){
+void* generate_traffic(void *arg) {
 	int ue_num;
 	bool time_exceeded;
 	
 	ue_num = *((int*)arg);
 	time_exceeded = false;
-	while(1){
+	while (1) {
 		Client to_mme;
 		UE ue(ue_num);
 				
@@ -67,14 +67,14 @@ void* generate_traffic(void *arg){
 		send_traffic(ue);
 		detach(ue, to_mme);
 		time_check(g_start_time, g_req_duration, time_exceeded);
-		if(time_exceeded){
+		if (time_exceeded) {
 			break;
 		}
 	}
 	return NULL;
 }
 
-void attach(UE &ue, Client &to_mme){
+void attach(UE &ue, Client &to_mme) {
 	EnodeB enodeb;
 	TunData tun_data;
 	uint16_t enodeb_uteid;
@@ -87,18 +87,18 @@ void attach(UE &ue, Client &to_mme){
 	g_tun_table[ue_ip_str] = tun_data;
 }
 
-void send_traffic(UE &ue){
+void send_traffic(UE &ue) {
 
 	ue.send_traffic();
 }
 
-void detach(UE &ue, Client &to_mme){
+void detach(UE &ue, Client &to_mme) {
 
 	ue.send_detach_req(to_mme);
 	ue.recv_detach_res(to_mme);
 }
 
-void startup_ran(char *argv[], vector<int> &ue_num, vector<pthread_t> &tid){
+void startup_ran(char *argv[], vector<int> &ue_num, vector<pthread_t> &tid) {
 
 	g_start_time = time(0);
 	g_total_connections = atoi(argv[1]);
@@ -107,7 +107,7 @@ void startup_ran(char *argv[], vector<int> &ue_num, vector<pthread_t> &tid){
 	tid.resize(g_total_connections);
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 	int status;
 	int i;
 	vector<int> ue_num;
@@ -119,15 +119,15 @@ int main(int argc, char *argv[]){
 	setup_tun();
 	status = pthread_create(&mon_tid, NULL, monitor_traffic, NULL);
 	report_error(status);
-	for(i=0;i<g_total_connections;i++){
+	for (i = 0; i < g_total_connections; i++) {
 		ue_num[i] = i;
 		status = pthread_create(&tid[i], NULL, generate_traffic, &ue_num[i]);
 		report_error(status);
 	}
-	for(int i=0;i<g_total_connections;i++){
+	for (i = 0; i < g_total_connections; i++) {
 		pthread_join(tid[i],NULL);
 	}
 	// pthread_join(mon_tid, NULL);
-	cout<<"Requested duration has ended. Finishing the program."<<endl;
+	cout << "Requested duration has ended. Finishing the program." << endl;
 	return 0;
 }

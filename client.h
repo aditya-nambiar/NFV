@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "packet.h"
 
-class Client{
+class Client {
 public:
 	int status;
 	int client_socket;

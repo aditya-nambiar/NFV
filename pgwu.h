@@ -7,7 +7,7 @@
 #include "server.h"
 #include "raw_socket.h"
 
-struct TunUdata{
+struct TunUdata {
 	uint16_t sgw_uteid;
 
 	TunUdata();
@@ -18,7 +18,7 @@ struct TunUdata{
 	~TunUdata();
 };
 
-struct PGWu{
+struct PGWu {
 	RawSocket raw_client;
 	Server for_sink;
 	char *ue_ip;

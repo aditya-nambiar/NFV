@@ -7,7 +7,7 @@
 #include "thread_pool.h"
 #include "client.h"
 
-struct TunData{
+struct TunData {
 	uint16_t mme_cteid;
 	uint16_t sgw_cteid;
 	uint16_t sgw_uteid;
@@ -25,7 +25,7 @@ struct TunData{
 	~TunData();
 };
 
-struct MME{	
+struct MME {	
 	Server mme_server;
 	Client to_hss;
 	Client to_sgw;

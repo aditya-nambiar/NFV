@@ -9,7 +9,7 @@
 
 #define UDP_LINKS 10
 
-struct TunUdata{
+struct TunUdata {
 	uint16_t enodeb_uteid;
 	uint16_t pgw_uteid;
 	int pgw_port;
@@ -23,7 +23,7 @@ struct TunUdata{
 	~TunUdata();
 };
 
-struct SGWu{
+struct SGWu {
 	unordered_map<uint16_t, int> socket_table;
 	vector<Client> to_pgw;
 	Packet pkt;

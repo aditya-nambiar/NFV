@@ -7,7 +7,7 @@
 #include "server.h"
 #include "db_mysql.h"
 
-struct UEData{
+struct UEData {
 	unsigned long long imsi;
 	unsigned long long msisdn;
 	unsigned long long autn_num;
@@ -23,7 +23,7 @@ struct UEData{
 	~UEData();
 };
 
-struct HSS{
+struct HSS {
 	Server hss_server;
 	UEData ue_data;
 	MySql db_client;

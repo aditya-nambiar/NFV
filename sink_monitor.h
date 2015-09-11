@@ -6,7 +6,7 @@
 #include "server.h"
 #include "client.h"
 
-struct SinkMonitor{
+struct SinkMonitor {
 	static Client to_pgw;
 	static int tun_fd;
 	static const char *tun_name;

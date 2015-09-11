@@ -75,7 +75,7 @@ extern socklen_t g_addr_len;
 extern timeval g_timeout;
 extern long long g_stack_buf;
 
-struct ClientDetails{
+struct ClientDetails {
 	int num;
 	struct sockaddr_in client_sock_addr;
 

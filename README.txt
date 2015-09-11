@@ -7,17 +7,15 @@ Author:		Sadagopan N S
 
 Coding style - Traditional Coding style followed
 
-/* To be implemented in the source code */
-
 - Opening brace on the same line as the operation that initiates it. Closing brace on its own line
 - Space after commas, semicolon, operators
-- Space around binary operator. No space around unary operator
+- Space around binary operator except operators "->" and ".". No space around unary operator
 - Spaces after keywords like "if", "while" eg. if (condition)
 - Space before opening brace eg. "if () {" and NOT "if (){"
 - No spaces between function names and opening parenthesis eg. "func()" and NOT "func ()"
 - Blank lines to separate units of functionality
-- Make code to fit in 80-character column width
 - Use 3spaces for each tab
+- [PENDING] Make code to fit in 80-character column width
 
 Coding Convention followed:
 

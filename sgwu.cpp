@@ -2,12 +2,12 @@
 
 unordered_map<uint16_t, TunUdata> g_tun_utable;
 
-TunUdata::TunUdata(){
+TunUdata::TunUdata() {
 	
 
 }
 
-TunUdata::TunUdata(const TunUdata &src_obj){
+TunUdata::TunUdata(const TunUdata &src_obj) {
 
 	enodeb_uteid = src_obj.enodeb_uteid;
 	pgw_uteid = src_obj.pgw_uteid;
@@ -15,7 +15,7 @@ TunUdata::TunUdata(const TunUdata &src_obj){
 	pgw_addr = src_obj.pgw_addr;
 }
 
-void swap(TunUdata &src_obj, TunUdata &dst_obj){
+void swap(TunUdata &src_obj, TunUdata &dst_obj) {
 	using std::swap;
 
 	swap(src_obj.enodeb_uteid, dst_obj.enodeb_uteid);
@@ -24,24 +24,24 @@ void swap(TunUdata &src_obj, TunUdata &dst_obj){
 	swap(src_obj.pgw_addr, dst_obj.pgw_addr);
 }
 
-TunUdata& TunUdata::operator=(TunUdata src_obj){
+TunUdata& TunUdata::operator=(TunUdata src_obj) {
 
 	swap(*this, src_obj);
 	return *this;
 }
 
 TunUdata::TunUdata(TunUdata &&src_obj)
-	:TunUdata(){
+	:TunUdata() {
 
 	swap(*this, src_obj);
 }
 
-TunUdata::~TunUdata(){
+TunUdata::~TunUdata() {
 	
 
 }
 
-SGWu::SGWu(){
+SGWu::SGWu() {
 	
 	socket_table.clear();
 	to_pgw.resize(UDP_LINKS);
@@ -49,7 +49,7 @@ SGWu::SGWu(){
 	type = 2;
 }
 
-SGWu::SGWu(const SGWu &src_obj){
+SGWu::SGWu(const SGWu &src_obj) {
 
 	socket_table = src_obj.socket_table; 
 	to_pgw = src_obj.to_pgw; 
@@ -61,7 +61,7 @@ SGWu::SGWu(const SGWu &src_obj){
 	tun_udata = src_obj.tun_udata; 
 }
 
-void swap(SGWu &src_obj, SGWu &dst_obj){
+void swap(SGWu &src_obj, SGWu &dst_obj) {
 	using std::swap;
 
 	swap(src_obj.socket_table, dst_obj.socket_table); 
@@ -74,44 +74,45 @@ void swap(SGWu &src_obj, SGWu &dst_obj){
 	swap(src_obj.tun_udata, dst_obj.tun_udata); 
 }
 
-SGWu& SGWu::operator=(SGWu src_obj){
+SGWu& SGWu::operator=(SGWu src_obj) {
 
 	swap(*this, src_obj);
 	return *this;
 }
 
 SGWu::SGWu(SGWu &&src_obj)
-	:SGWu(){
+	:SGWu() {
 
 	swap(*this, src_obj);
 }
 
-uint16_t SGWu::generate_uteid(int &ue_number){
+uint16_t SGWu::generate_uteid(int &ue_number) {
 	
 	return ue_number;
 }
 
-void SGWu::set_uteid(){
+void SGWu::set_uteid() {
 
 	uteid = pkt.gtpu_hdr.uteid;
 }
 
-void SGWu::set_tun_udata(){
+void SGWu::set_tun_udata() {
 
 	tun_udata = g_tun_utable[uteid];
 }
 
-void SGWu::set_pgw_num(){
+void SGWu::set_pgw_num() {
 
-	if(socket_table.find(uteid) != socket_table.end())
+	if (socket_table.find(uteid) != socket_table.end()) {
 		num = socket_table[uteid];
-	else{
+	}
+	else {
 		connect_with_pgw();
 		num = socket_table[uteid];
 	}
 }
 
-void SGWu::connect_with_pgw(){
+void SGWu::connect_with_pgw() {
 
 	to_pgw[pos].bind_client();
 	to_pgw[pos].fill_server_details(tun_udata.pgw_port, tun_udata.pgw_addr.c_str());
@@ -121,7 +122,7 @@ void SGWu::connect_with_pgw(){
 	pos++;	
 }
 
-void SGWu::handshake_with_pgw(){
+void SGWu::handshake_with_pgw() {
 
 	to_pgw[pos].pkt.clear_data();
 	to_pgw[pos].pkt.fill_data(0, sizeof(int), type);
@@ -129,42 +130,42 @@ void SGWu::handshake_with_pgw(){
 	to_pgw[pos].write_data();		
 }
 
-void SGWu::copy_data(Packet &arg){
+void SGWu::copy_data(Packet &arg) {
 
 	pkt.clear_data();
 	pkt.fill_data(0, arg.data_len, arg.data);
 }
 
-void SGWu::make_data_enodeb(){
+void SGWu::make_data_enodeb() {
 
 	pkt.fill_gtpu_hdr(tun_udata.enodeb_uteid);
 	pkt.add_gtpu_hdr();
 }
 
-void SGWu::make_data_pgw(){
+void SGWu::make_data_pgw() {
 
 	pkt.fill_gtpu_hdr(tun_udata.pgw_uteid);
 	pkt.add_gtpu_hdr();
 }
 
-void SGWu::recv_enodeb(Server &sgw_server){
+void SGWu::recv_enodeb(Server &sgw_server) {
 
 	sgw_server.read_data();
 	copy_data(sgw_server.pkt);
 	pkt.rem_gtpu_hdr();
-	cout<<endl<<"Received data from Enodeb successfully and removed the GTPu header"<<endl;
+	cout << endl << "Received data from Enodeb successfully and removed the GTPu header" << endl;
 }
 
-void SGWu::send_enodeb(Server &sgw_server){
+void SGWu::send_enodeb(Server &sgw_server) {
 
 	sgw_server.pkt.clear_data();
 	sgw_server.pkt.fill_data(0, pkt.data_len, pkt.data);
 	sgw_server.pkt.make_data_packet();
 	sgw_server.write_data();
-	// cout<<"Sent data to the Enodeb successfully"<<endl<<endl;
+	// cout << "Sent data to the Enodeb successfully" << endl << endl;
 }
 
-void SGWu::recv_pgw(int &pgw_num){
+void SGWu::recv_pgw(int &pgw_num) {
 
 	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
 	struct tcphdr *tcp_hdr = (tcphdr*)malloc(20 * sizeof(u_int8_t)); 
@@ -178,31 +179,31 @@ void SGWu::recv_pgw(int &pgw_num){
 	memcpy(iphdr, pkt.data, 20 * sizeof(uint8_t));
 	memcpy(tcp_hdr, pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
 	inet_ntop(AF_INET, &(iphdr->ip_dst), sink, INET_ADDRSTRLEN);
-	// cout<<endl<<"UE IP is "<<sink<<endl;
-	// cout<<"TCP destination port is "<<ntohs(tcp_hdr->th_dport)<<endl;	
-	// cout<<"Received data from PGW successfully and removed the GTPu header"<<endl;
+	// cout << endl << "UE IP is " << sink << endl;
+	// cout << "TCP destination port is " << ntohs(tcp_hdr->th_dport) << endl;	
+	// cout << "Received data from PGW successfully and removed the GTPu header" << endl;
 }
 
-void SGWu::send_pgw(){
+void SGWu::send_pgw() {
 
 	to_pgw[num].pkt.clear_data();
 	to_pgw[num].pkt.fill_data(0, pkt.data_len, pkt.data);
 	to_pgw[num].pkt.make_data_packet();
 	to_pgw[num].write_data();
-	cout<<"Send data successfully to PGW with TEID - "<<tun_udata.pgw_uteid<<endl<<endl;
+	cout << "Send data successfully to PGW with TEID - " << tun_udata.pgw_uteid << endl << endl;
 }
 
-void SGWu::fill_tun_utable(uint16_t &uteid, TunUdata &tun_udata){
+void SGWu::fill_tun_utable(uint16_t &uteid, TunUdata &tun_udata) {
 
 	g_tun_utable[uteid] = tun_udata;
 }
 
-void SGWu::erase_tun_utable(uint16_t &uteid){
+void SGWu::erase_tun_utable(uint16_t &uteid) {
 
 	g_tun_utable.erase(uteid);
 }
 
-SGWu::~SGWu(){
+SGWu::~SGWu() {
 
 	// Dummy
 }

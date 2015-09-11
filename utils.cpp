@@ -24,140 +24,140 @@ const char *g_pgw_server_for_sink_addr = "10.14.13.29";
 socklen_t g_addr_len = sizeof(sockaddr_in);
 timeval g_timeout = {2, 0};
 
-ClientDetails::ClientDetails(){
+ClientDetails::ClientDetails() {
 
 
 }
 
-ClientDetails::ClientDetails(const ClientDetails &src_obj){
+ClientDetails::ClientDetails(const ClientDetails &src_obj) {
 
 	num = src_obj.num;
 	client_sock_addr = src_obj.client_sock_addr;
 }
 
-void swap(ClientDetails &src_obj, ClientDetails &dst_obj){
+void swap(ClientDetails &src_obj, ClientDetails &dst_obj) {
 	using std::swap;
 
 	swap(src_obj.num, dst_obj.num);
 	swap(src_obj.client_sock_addr, dst_obj.client_sock_addr);
 }
 
-ClientDetails& ClientDetails::operator=(ClientDetails src_obj){
+ClientDetails& ClientDetails::operator=(ClientDetails src_obj) {
 
 	swap(*this, src_obj);
 	return *this;
 }
 
 ClientDetails::ClientDetails(ClientDetails &&src_obj)
-	:ClientDetails(){
+	:ClientDetails() {
 
 	swap(*this, src_obj);
 }
 
-ClientDetails::~ClientDetails(){
+ClientDetails::~ClientDetails() {
 
 
 }
 
-void check_conn(int &status){
+void check_conn(int &status) {
 
-	if(errno==EAGAIN || errno==EWOULDBLOCK || errno==EINPROGRESS)
+	if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINPROGRESS)
 		status = 1000;
 }
 
-void report_error(int arg){
+void report_error(int arg) {
 
-	if(arg<0){
+	if (arg < 0) {
 		perror("ERROR");
 		exit(EXIT_FAILURE);
 	}
 }
 
-void report_error(int arg, const char *message){
+void report_error(int arg, const char *message) {
 
-	if(arg<0){
+	if (arg < 0) {
 		perror(message);
 		exit(EXIT_FAILURE);
 	}
 }
 
-void print(string message){
+void print(string message) {
 
-	cout<<message<<endl;
+	cout << message << endl;
 }
 
-void print(int arg){
+void print(int arg) {
 
-	cout<<arg<<endl;
+	cout << arg << endl;
 }
 
-void print(string message, int arg){
+void print(string message, int arg) {
 
-	cout<<message<<" "<<arg<<endl;
+	cout << message << " " << arg << endl;
 }
 
-void print_message(string message){
+void print_message(string message) {
 
-	cout<<"***********************"<<endl;
-	cout<<message<<endl;
-	cout<<"***********************"<<endl;
+	cout << "***********************" << endl;
+	cout << message << endl;
+	cout << "***********************" << endl;
 }
 
-void print_message(string message, int arg){
+void print_message(string message, int arg) {
 
-	cout<<"***********************"<<endl;
-	cout<<message<<" "<<arg<<endl;
-	cout<<"***********************"<<endl;
+	cout << "***********************" << endl;
+	cout << message << " " << arg << endl;
+	cout << "***********************" << endl;
 }
 
-void print_message(string message, unsigned long long arg){
+void print_message(string message, unsigned long long arg) {
 
-	cout<<"***********************"<<endl;
-	cout<<message<<" "<<arg<<endl;
-	cout<<"***********************"<<endl;
+	cout << "***********************" << endl;
+	cout << message << " " << arg << endl;
+	cout << "***********************" << endl;
 }
 
-const char* to_char_array(unsigned long long arg){
+const char* to_char_array(unsigned long long arg) {
 	string tem;
 	stringstream out;
 
-	out<<arg;
+	out << arg;
 	tem = out.str();
 	const char *ans = tem.c_str();
 	return ans;
 }
 
-char* allocate_str_mem(int len){
+char* allocate_str_mem(int len) {
 	char *tem;
 
-	if(len <= 0){
+	if (len <= 0) {
 		print("ERROR: Given_memory_length<=0");
 		exit (EXIT_FAILURE);
 	}
 	tem = (char*)malloc(len * sizeof (char));
-	if(tem != NULL){
+	if (tem != NULL) {
 		memset(tem, 0, len * sizeof (char));
 		return tem;
 	}
-	else{
+	else {
 		print("ERROR: Memory allocation failure");
 		exit(EXIT_FAILURE);
 	}
 }
 
-uint8_t* allocate_uint8_mem(int len){
+uint8_t* allocate_uint8_mem(int len) {
 	uint8_t *tem;
 
-	if(len <= 0){
+	if (len <= 0) {
 		print("ERROR: Given_memory_length<=0");
 		exit(EXIT_FAILURE);
 	}
 	tem = (uint8_t*)malloc(len * sizeof (uint8_t));
-	if(tem != NULL){
+	if (tem != NULL) {
 		memset(tem, 0, len * sizeof (uint8_t));
 		return tem;
 	} 
-	else{
+	else {
 		print("ERROR: Memory allocation failure");
 		exit (EXIT_FAILURE);
 	}
@@ -165,44 +165,44 @@ uint8_t* allocate_uint8_mem(int len){
 
 void check_server_usage(int argc, char *argv[]) {
 
-	if(argc < 2){
-		cout<<"Please try again with the number of threads to be spawn"<<endl;
+	if (argc < 2) {
+		cout << "Please try again with the number of threads to be spawn" << endl;
 		exit(-1);
 	}
-	if(atoi(argv[1]) == 0){
-		cout<<"Please try again with a valid number of threads to be spawn"<<endl;
-		exit(-1);
-	}
-}
-
-void check_client_usage(int argc, char *argv[]){
-
-	if(argc < 3){
-		cout<<"Please enter the correct number of arguments"<<endl;
-		cout<<"Argument-1: Number of threads to be spawn"<<endl;
-		cout<<"Argument-2: Duration of simulation"<<endl;
-		exit(-1);
-	}
-	if(atoi(argv[1]) == 0 || atof(argv[2]) == 0){
-		cout<<"Please enter valid arguments"<<endl;
-		cout<<"Argument-1: Number of threads to be spawn"<<endl;
-		cout<<"Argument-2: Duration of simulation"<<endl;
+	if (atoi(argv[1]) == 0) {
+		cout << "Please try again with a valid number of threads to be spawn" << endl;
 		exit(-1);
 	}
 }
 
-void time_check(time_t &start_time, double &duration_time, bool &time_exceeded){
+void check_client_usage(int argc, char *argv[]) {
+
+	if (argc < 3) {
+		cout << "Please enter the correct number of arguments" << endl;
+		cout << "Argument-1: Number of threads to be spawn" << endl;
+		cout << "Argument-2: Duration of simulation" << endl;
+		exit(-1);
+	}
+	if (atoi(argv[1]) == 0 || atof(argv[2]) == 0) {
+		cout << "Please enter valid arguments" << endl;
+		cout << "Argument-1: Number of threads to be spawn" << endl;
+		cout << "Argument-2: Duration of simulation" << endl;
+		exit(-1);
+	}
+}
+
+void time_check(time_t &start_time, double &duration_time, bool &time_exceeded) {
 	double elapsed_time;
 
-	if((elapsed_time = difftime(time(0), start_time)) > duration_time){
+	if ((elapsed_time = difftime(time(0), start_time)) > duration_time) {
 		time_exceeded = true;
 	}
 }
 
-void handle_exceptions(){
+void handle_exceptions() {
 
 	exit(1);
-	while(1){
+	while(1) {
 
 	}
 }
