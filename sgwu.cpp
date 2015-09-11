@@ -96,19 +96,25 @@ void SGWu::set_uteid() {
 	uteid = pkt.gtpu_hdr.uteid;
 }
 
-void SGWu::set_tun_udata() {
+void SGWu::set_tun_udata(bool &data_invalid) {
 
-	tun_udata = g_tun_utable[uteid];
+	if (g_tun_utable.find(uteid) != g_tun_utable.end()) {
+		tun_udata = g_tun_utable[uteid];
+		data_invalid = false;
+	}
+	else {
+		data_invalid = true;
+	}
 }
 
 void SGWu::set_pgw_num() {
 
-	if (socket_table.find(uteid) != socket_table.end()) {
-		num = socket_table[uteid];
+	if (socket_table.find(tun_udata.pgw_addr) != socket_table.end()) {
+		num = socket_table[tun_udata.pgw_addr];
 	}
 	else {
 		connect_with_pgw();
-		num = socket_table[uteid];
+		num = socket_table[tun_udata.pgw_addr];
 	}
 }
 
@@ -118,7 +124,7 @@ void SGWu::connect_with_pgw() {
 	to_pgw[pos].fill_server_details(tun_udata.pgw_port, tun_udata.pgw_addr.c_str());
 	to_pgw[pos].connect_with_server(pos);
 	handshake_with_pgw();
-	socket_table[uteid] = pos;
+	socket_table[tun_udata.pgw_addr] = pos;
 	pos++;	
 }
 

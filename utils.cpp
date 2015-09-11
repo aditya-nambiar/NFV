@@ -177,6 +177,7 @@ void check_server_usage(int argc, char *argv[]) {
 		cout << "Please try again with a valid number of threads to be spawn" << endl;
 		exit(-1);
 	}
+	print_message("Server started");
 }
 
 void check_client_usage(int argc, char *argv[]) {
@@ -193,6 +194,7 @@ void check_client_usage(int argc, char *argv[]) {
 		cout << "Argument-2: Duration of simulation" << endl;
 		exit(-1);
 	}
+	print_message("Client started");
 }
 
 void time_check(time_t &start_time, double &duration_time, bool &time_exceeded) {

@@ -136,8 +136,8 @@ void SGWc::create_session_req_to_pgw(uint16_t &uteid) {
 	to_pgw.pkt.clear_data();
 	to_pgw.pkt.fill_data(0, sizeof(int), ue_num);
 	to_pgw.pkt.fill_data(sizeof(int), sizeof(int), bearer_id);
-	to_pgw.pkt.fill_data(2*sizeof(int), sizeof(uint16_t), cteid);
-	to_pgw.pkt.fill_data(2*sizeof(int) + sizeof(uint16_t), sizeof(uint16_t), uteid);
+	to_pgw.pkt.fill_data(2 * sizeof(int), sizeof(uint16_t), cteid);
+	to_pgw.pkt.fill_data(2 * sizeof(int) + sizeof(uint16_t), sizeof(uint16_t), uteid);
 	to_pgw.pkt.make_data_packet();
 	to_pgw.write_data();
 }
@@ -146,8 +146,10 @@ void SGWc::connect_with_pgw() {
 
 	to_pgw.bind_client();
 	to_pgw.fill_server_details(g_pgw_port, g_pgw_addr);
+	cout << "Connecting with PGW..." << endl;
 	to_pgw.connect_with_server(ue_num);
 	handshake_with_pgw();
+	cout << "Connected with PGW" << endl;
 }
 
 void SGWc::handshake_with_pgw() {
@@ -160,6 +162,7 @@ void SGWc::handshake_with_pgw() {
 
 void SGWc::create_session_res_from_pgw(uint16_t &pgw_uteid) {
 
+	cout << "Waiting to get Create session response from PGW" << endl;
 	to_pgw.read_data();
 	to_pgw.pkt.rem_gtpc_hdr();
 	set_tun_cdata();

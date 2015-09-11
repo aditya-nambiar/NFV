@@ -24,7 +24,7 @@ struct TunUdata {
 };
 
 struct SGWu {
-	unordered_map<uint16_t, int> socket_table;
+	unordered_map<string, int> socket_table;
 	vector<Client> to_pgw;
 	Packet pkt;
 	uint16_t uteid;
@@ -40,7 +40,7 @@ struct SGWu {
 	SGWu(SGWu&&);
 	uint16_t generate_uteid(int&);
 	void set_uteid();
-	void set_tun_udata();
+	void set_tun_udata(bool&);
 	void set_pgw_num();
 	void connect_with_pgw();
 	void handshake_with_pgw();

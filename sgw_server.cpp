@@ -53,6 +53,7 @@ void handle_udata(Server &sgw_server) {
 	int size;
 	int i;
 	int status;
+	bool data_invalid;
 
 	while (1) {
 		FD_ZERO(&read_set);
@@ -68,7 +69,9 @@ void handle_udata(Server &sgw_server) {
 		if (FD_ISSET(sgw_server.server_socket, &read_set)) {
 			sgwu.recv_enodeb(sgw_server);
 			sgwu.set_uteid();
-			sgwu.set_tun_udata();
+			sgwu.set_tun_udata(data_invalid);
+			if (data_invalid)
+				continue;
 			sgwu.set_pgw_num();
 			sgwu.make_data_pgw();
 			sgwu.send_pgw();
@@ -77,7 +80,9 @@ void handle_udata(Server &sgw_server) {
 			if (FD_ISSET(sgwu.to_pgw[i].client_socket, &read_set)) {
 				sgwu.recv_pgw(i);
 				sgwu.set_uteid();
-				sgwu.set_tun_udata();
+				sgwu.set_tun_udata(data_invalid);
+				if (data_invalid)
+					continue;				
 				sgwu.make_data_enodeb();
 				sgwu.send_enodeb(sgw_server);
 			}

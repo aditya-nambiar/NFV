@@ -76,7 +76,7 @@ void Client::fill_server_details(int server_port, const char *server_addr) {
 	server_sock_addr.sin_port = htons(server_port);
 	status = inet_aton(server_addr, &server_sock_addr.sin_addr);
 	if (status == 0) {
-		cout << "ERROR: In filling server details - Invalid Server IP address" << endl;
+		cout << "ERROR: In filling server details - Invalid Server IP address " << "***" << server_addr << "***" << endl;
 		exit(EXIT_FAILURE);
 	}
 }

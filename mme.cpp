@@ -219,6 +219,7 @@ void MME::create_session_req_to_sgw() {
 
 void MME::create_session_res_from_sgw() {
 
+	cout << "Waiting to read data from SGW for Create Session Request response" << endl;
 	to_sgw.read_data();
 	to_sgw.pkt.rem_gtpc_hdr();
 	memcpy(&tun_data.sgw_cteid, to_sgw.pkt.data, sizeof(uint16_t));

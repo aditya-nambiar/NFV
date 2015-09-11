@@ -63,7 +63,6 @@ void* generate_traffic(void *arg) {
 		to_mme.fill_server_details(g_mme_port, g_mme_addr);
 		to_mme.connect_with_server(ue_num);	
 		attach(ue, to_mme);
-		break;
 		send_traffic(ue);
 		detach(ue, to_mme);
 		time_check(g_start_time, g_req_duration, time_exceeded);
