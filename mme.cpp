@@ -273,15 +273,15 @@ void MME::send_enodeb(){
 	mme_server.write_data();
 }
 
-void MME::detach_req_from_ue(){
+void MME::detach_req_from_ue() {
 
 	mme_server.read_data();
 	memcpy(&type, mme_server.pkt.data, sizeof(int));	
-	if(type == 3){
+	if (type == 3) {
 		cout<<"Detach request has been received successfully at MME for UE - "<<ue_num<<endl;
 	}
-	else{
-		cout<<"Invalid Detach type num: Please disconnect and connect again"<<endl;
+	else {
+		cout<<"Invalid Detach type num - "<<type<<" : Please disconnect and connect again"<<endl;
 		handle_exceptions();
 	}
 }
