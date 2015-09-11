@@ -20,10 +20,11 @@ const char *g_sgw3_addr = "10.129.26.169";
 
 // const char *g_pgw_addr = "10.14.13.29";
 const char *g_pgw_addr = "10.196.109.41";
+const char *g_pgw_server_for_sink_addr = "10.196.109.41";
 
 const char *g_public_sink_addr = "10.129.45.90";
 const char *g_private_sink_addr = "192.168.100.2";
-const char *g_pgw_server_for_sink_addr = "10.14.13.29";
+// const char *g_pgw_server_for_sink_addr = "10.14.13.29";
 socklen_t g_addr_len = sizeof(sockaddr_in);
 timeval g_timeout = {2, 0};
 
