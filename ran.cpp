@@ -93,6 +93,7 @@ void send_traffic(UE &ue) {
 
 void detach(UE &ue, Client &to_mme) {
 
+	
 	ue.send_detach_req(to_mme);
 	ue.recv_detach_res(to_mme);
 }
