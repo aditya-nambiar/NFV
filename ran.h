@@ -7,6 +7,7 @@
 #include "ue.h"
 #include "enodeb.h"
 
+extern EnodeB g_enodeb;
 extern int g_total_connections;
 extern double g_req_duration;
 extern time_t g_start_time;

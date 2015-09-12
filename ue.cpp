@@ -102,6 +102,7 @@ void UE::setup_tunnel(Client &to_mme, uint16_t &enodeb_uteid, uint16_t &sgw_utei
 	to_mme.read_data();
 	memcpy(&sgw_uteid, to_mme.pkt.data, sizeof(uint16_t));
 	memcpy(ip_addr, to_mme.pkt.data + sizeof(uint16_t), INET_ADDRSTRLEN);
+	ip_addr_str.assign(ip_addr);
 	sgw_port = g_sgw1_port;
 	sgw_addr.assign(g_sgw1_addr);
 	cout << "Data tunnel is formed from eNodeB to SGW(Both uplink & downlink direction) for UE - " << key << endl;

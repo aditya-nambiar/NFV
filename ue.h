@@ -13,6 +13,7 @@ public:
 	unsigned long long imsi;
 	unsigned long long msisdn;
 	char *ip_addr;
+	string ip_addr_str;
 	Packet pkt;
 	
 	// Connection data

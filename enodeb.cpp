@@ -143,11 +143,17 @@ void EnodeB::set_ue_ip() {
 	// cout << "Through tunnel: UE IP is " << ue_ip << endl;
 }
 
-void EnodeB::set_tun_data() {
+void EnodeB::set_tun_data(bool &data_invalid) {
 	string ue_ip_str;
 
 	ue_ip_str.assign(ue_ip);
-	tun_data = g_tun_table[ue_ip_str];
+	if (g_tun_table.find(ue_ip_str) != g_tun_table.end()) {
+		tun_data = g_tun_table[ue_ip_str];
+		data_invalid = false;
+	}
+	else {
+		data_invalid = true;
+	}
 	// cout << "Details fetched are: " << "UE IP - " << ue_ip_str << " SGW - port " << tun_data.sgw_port << " SGW addr " << tun_data.sgw_addr << endl;
 }
 
@@ -200,6 +206,16 @@ void EnodeB::recv_data(int &sgw_num) {
 	pkt.clear_data();	
 	pkt.fill_data(0, to_sgw[sgw_num].pkt.data_len, to_sgw[sgw_num].pkt.data);
 	pkt.rem_gtpu_hdr();
+}
+
+void EnodeB::fill_tun_table(string &ue_ip_arg, TunData &tun_data_arg){
+
+	g_tun_table[ue_ip_arg] = tun_data_arg;
+}
+
+void EnodeB::erase_tun_table(string &ue_ip_arg){
+
+	g_tun_table.erase(ue_ip_arg);
 }
 
 EnodeB::~EnodeB() {

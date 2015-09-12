@@ -42,13 +42,15 @@ struct EnodeB {
 	void read_tun();
 	void write_tun();
 	void set_ue_ip();
-	void set_tun_data();
+	void set_tun_data(bool&);
 	void set_sgw_num();
 	void connect_with_sgw();
 	void handshake_with_sgw();
 	void make_data();
 	void send_data();
 	void recv_data(int&);
+	void fill_tun_table(string&, TunData&);
+	void erase_tun_table(string&);
 	~EnodeB();
 };
 

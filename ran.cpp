@@ -1,5 +1,6 @@
 #include "ran.h"
 
+EnodeB g_enodeb;
 int g_total_connections;
 double g_req_duration;
 time_t g_start_time;
@@ -13,37 +14,39 @@ void setup_tun() {
 }
 
 void* monitor_traffic(void *arg) {
-	EnodeB enodeb;
 	fd_set read_set;
 	int max_fd;
 	int size;
 	int i;
 	int status;
+	bool data_invalid;
 
-	enodeb.attach_to_tun();
+	g_enodeb.attach_to_tun();
 	while (1) {
 		FD_ZERO(&read_set);
-		FD_SET(enodeb.tun_fd, &read_set); 
-		max_fd = enodeb.tun_fd;
-		size = enodeb.pos;
+		FD_SET(g_enodeb.tun_fd, &read_set); 
+		max_fd = g_enodeb.tun_fd;
+		size = g_enodeb.pos;
 		for (i = 0; i < size; i++) {
-			FD_SET(enodeb.to_sgw[i].client_socket, &read_set); 
-			max_fd = max(max_fd, enodeb.to_sgw[i].client_socket);
+			FD_SET(g_enodeb.to_sgw[i].client_socket, &read_set); 
+			max_fd = max(max_fd, g_enodeb.to_sgw[i].client_socket);
 		}
 		status = select(max_fd + 1, &read_set, NULL, NULL, NULL);
 		report_error(status, "Select-process failure\tTry again");		
-		if (FD_ISSET(enodeb.tun_fd, &read_set)) {
-			enodeb.read_tun();
-			enodeb.set_ue_ip();
-			enodeb.set_tun_data();
-			enodeb.set_sgw_num();
-			enodeb.make_data();
-			enodeb.send_data();
+		if (FD_ISSET(g_enodeb.tun_fd, &read_set)) {
+			g_enodeb.read_tun();
+			g_enodeb.set_ue_ip();
+			g_enodeb.set_tun_data(data_invalid);
+			if (data_invalid)
+				continue;
+			g_enodeb.set_sgw_num();
+			g_enodeb.make_data();
+			g_enodeb.send_data();
 		}
 		for (i = 0; i < size; i++) {
-			if (FD_ISSET(enodeb.to_sgw[i].client_socket, &read_set)) {
-				enodeb.recv_data(i);
-				enodeb.write_tun();
+			if (FD_ISSET(g_enodeb.to_sgw[i].client_socket, &read_set)) {
+				g_enodeb.recv_data(i);
+				g_enodeb.write_tun();
 			}
 		}
 	}
@@ -74,16 +77,13 @@ void* generate_traffic(void *arg) {
 }
 
 void attach(UE &ue, Client &to_mme) {
-	EnodeB enodeb;
 	TunData tun_data;
 	uint16_t enodeb_uteid;
-	string ue_ip_str;
 
 	ue.authenticate(to_mme);
-	enodeb_uteid = enodeb.generate_uteid(ue.num);
+	enodeb_uteid = g_enodeb.generate_uteid(ue.num);
 	ue.setup_tunnel(to_mme, enodeb_uteid, tun_data.sgw_uteid, tun_data.sgw_port, tun_data.sgw_addr);
-	ue_ip_str.assign(ue.ip_addr);
-	g_tun_table[ue_ip_str] = tun_data;
+	g_enodeb.fill_tun_table(ue.ip_addr_str, tun_data);
 }
 
 void send_traffic(UE &ue) {
@@ -93,7 +93,7 @@ void send_traffic(UE &ue) {
 
 void detach(UE &ue, Client &to_mme) {
 
-	
+	g_enodeb.erase_tun_table(ue.ip_addr_str);
 	ue.send_detach_req(to_mme);
 	ue.recv_detach_res(to_mme);
 }
