@@ -33,7 +33,7 @@ struct PGWu {
 	void configure_raw_client();
 	void configure_server_for_sink();
 	void set_ue_ip();
-	void set_tun_udata();
+	void set_tun_udata(bool&);
 	void recv_sgw(Server&);
 	void copy_to_rawpkt(Packet&);
 	void send_sgw(Server&);

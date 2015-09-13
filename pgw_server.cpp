@@ -65,6 +65,7 @@ void handle_udata(Server &pgw_server) {
 	int size;
 	int i;
 	int status;
+	bool invalid_data;
 	
 	pgwu.configure_raw_client();
 	pgwu.configure_server_for_sink();
@@ -82,7 +83,9 @@ void handle_udata(Server &pgw_server) {
 		if (FD_ISSET(pgwu.for_sink.server_socket, &read_set)) {
 			pgwu.recv_sink();
 			pgwu.set_ue_ip();
-			pgwu.set_tun_udata();
+			pgwu.set_tun_udata(invalid_data);
+			if (invalid_data)
+				continue;
 			pgwu.send_sgw(pgw_server);	
 		}
 	}

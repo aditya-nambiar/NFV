@@ -149,11 +149,18 @@ void PGWu::set_ue_ip() {
 	inet_ntop(AF_INET, &(iphdr->ip_dst), ue_ip, INET_ADDRSTRLEN);
 }
 
-void PGWu::set_tun_udata() {
+void PGWu::set_tun_udata(bool &data_invalid) {
 	string ue_ip_str;
 
 	ue_ip_str.assign(ue_ip);
-	tun_udata = g_tun_utable[ue_ip_str];
+	if (g_tun_utable.find(ue_ip_str) != g_tun_utable.end()) {
+		tun_udata = g_tun_utable[ue_ip_str];
+		data_invalid = false;
+	}
+	else {
+		data_invalid = true;
+	}
+
 }
 
 void PGWu::fill_tun_utable(string ue_ip, TunUdata &tun_udata) {
