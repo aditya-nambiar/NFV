@@ -8,13 +8,10 @@ add = 'git add .'
 commit = "git commit -a -m " + "\"" +  time + "\""
 pull = "git pull -u origin master"
 os.system(status)
-proceed = raw_input('Proceed? (y/c/n): ')
+proceed = raw_input('Proceed? (y/n): ')
 if (proceed == 'y'):
-	os.system(pull)
-	os.system(make)
-elif (proceed == 'c'):
 	os.system(commit)
 	os.system(pull)
-	os.system("make")
+	os.system(make)
 else:
 	print "Aborting pull.."
