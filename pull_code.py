@@ -12,6 +12,6 @@ proceed = raw_input('Proceed? (y/n): ')
 if (proceed == 'y'):
 	os.system(commit)
 	os.system(pull)
-	os.system(make)
+	os.system("make")
 else:
 	print "Aborting pull.."
