@@ -15,6 +15,6 @@ if (proceed == 'y'):
 elif (proceed == 'c'):
 	os.system(commit)
 	os.system(pull)
-	os.system(make)
+	os.system("make")
 else:
 	print "Aborting pull.."
