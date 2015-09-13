@@ -160,7 +160,6 @@ void PGWu::set_tun_udata(bool &data_invalid) {
 	else {
 		data_invalid = true;
 	}
-
 }
 
 void PGWu::fill_tun_utable(string ue_ip, TunUdata &tun_udata) {
