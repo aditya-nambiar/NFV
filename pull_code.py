@@ -1,11 +1,20 @@
+#!/usr/bin/python
 import os, sys
 from datetime import datetime
-from sys import version_info
 
-py3 = version_info[0]
-
-res = raw_input("Please enter your name: ")
-if(res == 'y'):
-	print res
+time = datetime.now().strftime("%B %d %H:%M hours")
+status = "git status"
+add = 'git add .'
+commit = "git commit -a -m " + "\"" +  time + "\""
+pull = "git pull -u origin master"
+os.system(status)
+proceed = raw_input('Proceed? (y/c/n): ')
+if (proceed == 'y'):
+	os.system(pull)
+	os.system(make)
+elif (proceed == 'c'):
+	os.system(commit)
+	os.system(pull)
+	os.system(make)
 else:
-	print "wrong"
+	print "Aborting pull.."

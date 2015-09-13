@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os, sys
 from datetime import datetime
 
@@ -7,7 +8,7 @@ add = 'git add .'
 commit = "git commit -a -m " + "\"" +  time + "\""
 push = "git push -u origin master"
 os.system(status)
-proceed = raw_input('Proceed?')
+proceed = raw_input('Proceed? (y/a/n): ')
 if (proceed == 'y'):
 	os.system(commit)
 	os.system(push)
