@@ -98,9 +98,9 @@ void RawSocket::fill_dst_details() {
 	memcpy(tcp_hdr, pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
 	bzero((char*)&dst_sock_addr, sizeof(dst_sock_addr));
 	dst_sock_addr.sin_family = AF_INET;
-	dst_sock_addr.sin_port = htons(ntohs(tcp_hdr->th_dport));
+	dst_sock_addr.sin_port = tcp_hdr->th_dport;
 	status = inet_aton(g_private_sink_addr, &dst_sock_addr.sin_addr);
-	cout << "At Raw socket TCP dst port is " << tcp_hdr->th_dport << endl;
+	cout << "At Raw socket TCP dst port is " << ntohs(tcp_hdr->th_dport) << endl;
 	if (status == 0) {
 		cout << "ERROR: Invalid IP address" << endl;
 		exit(EXIT_FAILURE);
