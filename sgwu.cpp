@@ -206,7 +206,7 @@ void SGWu::fill_tun_utable(uint16_t &uteid, TunUdata &tun_udata) {
 
 void SGWu::erase_tun_utable(uint16_t &uteid) {
 
-	g_tun_utable.erase(uteid);
+	// g_tun_utable.erase(uteid); /* This is to make the leftover data traffic to reach its intended destination  */
 }
 
 SGWu::~SGWu() {

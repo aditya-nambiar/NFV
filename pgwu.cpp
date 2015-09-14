@@ -169,7 +169,7 @@ void PGWu::fill_tun_utable(string ue_ip, TunUdata &tun_udata) {
 
 void PGWu::erase_tun_utable(string ue_ip) {
 
-	g_tun_utable.erase(ue_ip);
+	// g_tun_utable.erase(ue_ip); /* This is to make the leftover data traffic to reach its intended destination  */
 }
 
 PGWu::~PGWu() {

@@ -161,7 +161,8 @@ void EnodeB::set_sgw_num() {
 
 	if (socket_table.find(tun_data.sgw_addr) != socket_table.end())
 		num = socket_table[tun_data.sgw_addr];
-	else {	
+	else {
+		cout << "At Enodeb: 	Trying to connect with a new SGW" << endl;
 		connect_with_sgw();
 		socket_table[tun_data.sgw_addr] = pos;
 		pos++;
@@ -215,7 +216,7 @@ void EnodeB::fill_tun_table(string &ue_ip_arg, TunData &tun_data_arg){
 
 void EnodeB::erase_tun_table(string &ue_ip_arg){
 
-	g_tun_table.erase(ue_ip_arg);
+	// g_tun_table.erase(ue_ip_arg); /* This is to make the leftover data traffic to reach its intended destination  */
 }
 
 EnodeB::~EnodeB() {

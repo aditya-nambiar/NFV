@@ -162,7 +162,7 @@ void SGWc::handshake_with_pgw() {
 
 void SGWc::create_session_res_from_pgw(uint16_t &pgw_uteid) {
 
-	cout << "Waiting to get Create session response from PGW" << endl;
+	cout << "Waiting to read Create session response from PGW" << endl;
 	to_pgw.read_data();
 	to_pgw.pkt.rem_gtpc_hdr();
 	set_tun_cdata();
@@ -262,6 +262,7 @@ void SGWc::erase_bearer_table() {
 void SGWc::delete_session_res_from_pgw() {
 	string res;
 
+	cout << "Waiting to read Delete session response from PGW" << endl;
 	to_pgw.read_data();
 	to_pgw.pkt.rem_gtpc_hdr();
 	memcpy(reply, to_pgw.pkt.data, to_pgw.pkt.data_len);
