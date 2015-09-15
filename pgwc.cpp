@@ -75,7 +75,9 @@ PGWc::PGWc(PGWc &&src_obj)
 
 void PGWc::create_session_request_from_sgw(Server &pgw_server, uint16_t &sgw_uteid) {
 
+	cout << "Waiting to read Create session request from SGW" << endl;
 	pgw_server.read_data();
+	cout << "Create session response has been received from SGW" << endl;
 	copy_to_pkt(pgw_server.pkt);
 	set_ue_num();
 	set_bearer_id();
@@ -141,6 +143,7 @@ void PGWc::fill_tun_ctable() {
 void PGWc::delete_session_req_from_sgw(Server &pgw_server) {
 	int type;
 
+	cout << "Waiting to read delete session request from SGW" << endl;
 	pgw_server.read_data();
 	pgw_server.pkt.rem_gtpc_hdr();
 	memcpy(&type, pgw_server.pkt.data, sizeof(int));

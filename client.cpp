@@ -115,5 +115,6 @@ Client::~Client() {
 	
 	free(client_addr);
 	free(server_addr);
-	close(client_socket);
+	if (client_socket >= 0)
+		close(client_socket);
 }
