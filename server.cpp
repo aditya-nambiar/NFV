@@ -153,5 +153,6 @@ void Server::write_data() {
 Server::~Server() {
 	
 	free(server_addr);
-	close(server_socket);
+	if (server_socket >= 0)
+		close(server_socket);
 }

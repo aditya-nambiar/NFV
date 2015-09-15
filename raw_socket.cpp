@@ -105,6 +105,7 @@ void RawSocket::fill_dst_details() {
 		cout << "ERROR: Invalid IP address" << endl;
 		exit(EXIT_FAILURE);
 	}
+	free(tcp_hdr);
 }
 
 void RawSocket::write_data() {
@@ -116,5 +117,6 @@ void RawSocket::write_data() {
 RawSocket::~RawSocket() {
 	// free(src_addr);
 	// free(dst_addr);
-	close(raw_socket);
+	if (raw_socket >= 0)
+		close(raw_socket);
 }
