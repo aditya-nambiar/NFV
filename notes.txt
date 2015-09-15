@@ -24,6 +24,8 @@ In the future, I might have to add the following in addition to the "constructor
 - PGW disconnected for no known reason without printing any error message for Threads = 2 and Time = 3s
 - SGW disconnected for no known reason without printing any error message for Threads = 2, 20 and Time = 3s
 - PGW is eratic in responding to SGW's Create Session request and Modify session request. In some cases, SGW is not even able to connect with the PGW for 'Create session request'.
+- "ERROR: Invalid argument" at PGW while writing data into the rawsocket
+- *** Error in `./pgw': corrupted double-linked list: 0x00007fc7d4080d00 ***
 
 Findings/Bugs Solved:
 
@@ -31,7 +33,7 @@ Findings/Bugs Solved:
 - Changing "ulimit -n 4096" will reduce this problem. I can now create upto 1021 + (4096 - 1024) = 4093 connections!
 
 - Finding the CPU utilization for a particular process using "top" command:
-top -p $(pgrep process_name | tr \\n , | sed 's/,//')
+top -p $(pgrep pgw | tr \\n , | sed 's/,//')
 	
 
 Things to do:

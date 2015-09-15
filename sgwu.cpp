@@ -168,7 +168,7 @@ void SGWu::send_enodeb(Server &sgw_server) {
 	sgw_server.pkt.fill_data(0, pkt.data_len, pkt.data);
 	sgw_server.pkt.make_data_packet();
 	sgw_server.write_data();
-	// cout << "Sent data to the Enodeb successfully" << endl << endl;
+	cout << "Sent data to Enodeb" << endl << endl;
 }
 
 void SGWu::recv_pgw(int &pgw_num) {
@@ -179,6 +179,7 @@ void SGWu::recv_pgw(int &pgw_num) {
 
 
 	to_pgw[pgw_num].read_data();
+	cout << "Received data from PGW" << endl;
 	copy_data(to_pgw[pgw_num].pkt);
 	pkt.rem_gtpu_hdr();
 

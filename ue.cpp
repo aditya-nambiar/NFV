@@ -82,8 +82,7 @@ void UE::authenticate(Client &to_mme) {
 	else {
 		cout << "Authentication is not successful for UE - " << num << endl;
 		handle_exceptions();
-	}
-		
+	}		
 }
 
 unsigned long long UE::get_autn_res(unsigned long long autn, unsigned long long rand) {
@@ -126,7 +125,7 @@ void UE::send_traffic() {
 	command = "iperf3 -B " + ip_addr_str + " -c " + sink_addr + " -p " + to_string(sink_port) + rate + mtu + time_limit; 
 	cout << command << endl;
 	system(command.c_str());
-	cout << "IPERF Traffic successfully sent" << endl;
+	cout << "IPERF Traffic successfully sent for UE - " << num << endl;
 	// generate_data();
 	// to_sink.fill_client_details(ip_addr);
 	// to_sink.bind_client();

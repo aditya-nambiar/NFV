@@ -53,7 +53,8 @@ void Client::bind_client() {
 	
 	client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	report_error(client_socket, "Error in creating sockets ");	
-	setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));	
+	status = setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, &g_reuse, sizeof(int));	
+	report_error(status, "At Client side - Error in setting socket options");
 	socklen_t len = sizeof(sockaddr_in);
 	bzero((char *) &client_sock_addr, sizeof(client_sock_addr));
 	client_sock_addr.sin_family = AF_INET;  
@@ -61,7 +62,8 @@ void Client::bind_client() {
 	client_sock_addr.sin_port = 0;
 	status = bind(client_socket, (struct sockaddr*)&client_sock_addr, sizeof(client_sock_addr));
 	report_error(status, "Error in binding");	
-	getsockname(client_socket, (struct sockaddr*)&client_sock_addr, &len);
+	status = getsockname(client_socket, (struct sockaddr*)&client_sock_addr, &len);
+	report_error(status, "At Client side - Error in getting socket name");
 	client_port = ntohs(client_sock_addr.sin_port);	
 	strcpy(client_addr, inet_ntoa(client_sock_addr.sin_addr));
 	//cout << "client binded with port " << client_port << endl;

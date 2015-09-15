@@ -193,8 +193,12 @@ void MME::authenticate_ue() {
 		cout << "Authentication is successful for UE - " << ue_num << endl;
 	}	
 	else {
-		cout << "Authentication failed: Please disconnect and connect again with proper authentication" << endl;
-		handle_exceptions();
+		strcpy(reply, "FAILED");
+		mme_server.pkt.clear_data();
+		mme_server.pkt.fill_data(0, strlen(reply), reply);
+		mme_server.pkt.make_data_packet();
+		mme_server.write_data();
+		cout << "Authentication is not successful for UE - " << ue_num << endl;
 	}
 }
 

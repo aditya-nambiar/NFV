@@ -96,6 +96,7 @@ void SGWc::create_session_req_from_mme(Server &sgw_server) {
 	set_ue_num();
 	set_bearer_id();
 	set_cteid();
+	cout << "Create session request has been received at SGW for UE - " << ue_num << endl;
 }
 
 void SGWc::copy_data(Packet &arg) {
@@ -162,7 +163,7 @@ void SGWc::handshake_with_pgw() {
 
 void SGWc::create_session_res_from_pgw(uint16_t &pgw_uteid) {
 
-	cout << "Waiting to read Create session response from PGW" << endl;
+	cout << "Waiting to read Create session response from PGW for UE - " << ue_num << endl;
 	to_pgw.read_data();
 	to_pgw.pkt.rem_gtpc_hdr();
 	set_tun_cdata();
@@ -193,6 +194,7 @@ void SGWc::create_session_res_to_mme(Server &sgw_server) {
 	sgw_server.pkt.add_gtpc_hdr();
 	sgw_server.pkt.make_data_packet();
 	sgw_server.write_data();
+	cout << "Create session response has been sent to MME for UE - " << ue_num << endl;
 }
 
 void SGWc::modify_session_req_from_mme(Server &sgw_server, uint16_t &enodeb_uteid) {
@@ -201,6 +203,7 @@ void SGWc::modify_session_req_from_mme(Server &sgw_server, uint16_t &enodeb_utei
 	sgw_server.pkt.rem_gtpc_hdr();
 	copy_data(sgw_server.pkt);
 	memcpy(&enodeb_uteid, pkt.data, sizeof(uint16_t));
+	cout << "Modify session request has been received at SGW for UE - " << ue_num << endl;
 }
 
 void SGWc::modify_session_res_to_mme(Server &sgw_server, uint16_t &sgw_uteid) {
@@ -214,6 +217,7 @@ void SGWc::modify_session_res_to_mme(Server &sgw_server, uint16_t &sgw_uteid) {
 	sgw_server.pkt.add_gtpc_hdr();
 	sgw_server.pkt.make_data_packet();
 	sgw_server.write_data();
+	cout << "Modify session response has been sent to MME for UE - " << ue_num << endl;
 }
 
 void SGWc::fill_pgw_addr(int &pgw_port, string &pgw_addr) {
@@ -262,7 +266,7 @@ void SGWc::erase_bearer_table() {
 void SGWc::delete_session_res_from_pgw() {
 	string res;
 
-	cout << "Waiting to read Delete session response from PGW" << endl;
+	cout << "Waiting to read Delete session response from PGW for UE - " << ue_num << endl;
 	to_pgw.read_data();
 	to_pgw.pkt.rem_gtpc_hdr();
 	memcpy(reply, to_pgw.pkt.data, to_pgw.pkt.data_len);
@@ -283,6 +287,7 @@ void SGWc::delete_session_res_to_mme(Server &sgw_server) {
 	sgw_server.pkt.make_data_packet();
 	sgw_server.write_data();
 	erase_tun_ctable();
+	cout << "Delete session response has been sent to MME for UE - " << ue_num << endl;
 }
 
 void SGWc::erase_tun_ctable() {
