@@ -35,6 +35,12 @@ Findings/Bugs Solved:
 - Finding the CPU utilization for a particular process using "top" command:
 top -p $(pgrep pgw | tr \\n , | sed 's/,//')
 	
+- To create a mysql_dump file:
+mysqldump -p -u root --databases NFV > nfv.sql
+
+- To recover a database:
+	Create a database - NFV(Database which is contained in the restore file i.e."nfv.sql")
+	Run the following command - "mysql -p -u root NFV < nfv.sql"
 
 Things to do:
 
