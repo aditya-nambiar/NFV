@@ -12,18 +12,26 @@ int g_public_sink_port = 5000;
 int g_private_sink_port = 5000;
 int g_pgw_server_for_sink_port = 6000;
 
-const char *g_mme_addr = "10.129.26.169";
-const char *g_hss_addr = "10.129.26.169";
-const char *g_sgw1_addr = "10.129.26.169";
-const char *g_sgw2_addr = "10.129.26.169";
-const char *g_sgw3_addr = "10.129.26.169";
-const char *g_pgw_addr = "10.14.13.29";
-
+// const char *g_mme_addr = "10.129.26.169";
+// const char *g_hss_addr = "10.129.26.169";
+// const char *g_sgw1_addr = "10.129.26.169";
+// const char *g_sgw2_addr = "10.129.26.169";
+// const char *g_sgw3_addr = "10.129.26.169";
+// const char *g_pgw_addr = "10.14.13.29";
+// const char *g_pgw_server_for_sink_addr = "10.14.13.29";
 // const char *g_public_sink_addr = "10.129.45.90";
-const char *g_public_sink_addr = "10.129.2.134";
+// const char *g_private_sink_addr = "192.168.100.2";
 
+const char *g_mme_addr = "192.168.1.70";
+const char *g_hss_addr = "192.168.1.70";
+const char *g_sgw1_addr = "192.168.1.70";
+const char *g_sgw2_addr = "192.168.1.70";
+const char *g_sgw3_addr = "192.168.1.70";
+const char *g_pgw_addr = "192.168.1.76";
+const char *g_pgw_server_for_sink_addr = "192.168.1.76";
+const char *g_public_sink_addr = "192.168.1.78";
 const char *g_private_sink_addr = "192.168.100.2";
-const char *g_pgw_server_for_sink_addr = "10.14.13.29";
+
 socklen_t g_addr_len = sizeof(sockaddr_in);
 timeval g_timeout = {2, 0};
 
