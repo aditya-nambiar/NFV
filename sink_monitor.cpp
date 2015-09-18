@@ -67,14 +67,14 @@ void SinkMonitor::read_tun() {
 	count = read(tun_fd, pkt.data, BUFFER_SIZE);
 	report_error(count);
 	pkt.data_len = count;
-	cout << "Successfully read data from the TUN device" << endl;
+	// cout << "Successfully read data from the TUN device" << endl;
 }
 
 void SinkMonitor::write_tun() {
 
 	count = write(tun_fd, pkt.data, pkt.data_len);
 	report_error(count);
-	cout << "Successfully written data into the TUN device" << endl;
+	// cout << "Successfully written data into the TUN device" << endl;
 }
 
 void SinkMonitor::configure_topgw() {
