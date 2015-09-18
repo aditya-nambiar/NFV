@@ -82,7 +82,8 @@ void UE::authenticate(Client &to_mme) {
 	else {
 		cout << "Authentication is not successful for UE - " << num << endl;
 		handle_exceptions();
-	}		
+	}
+	free(reply);
 }
 
 unsigned long long UE::get_autn_res(unsigned long long autn, unsigned long long rand) {
@@ -171,6 +172,7 @@ void UE::send_detach_req(Client &to_mme) {
 	to_mme.pkt.fill_data(0, sizeof(int), type);
 	to_mme.pkt.make_data_packet();
 	to_mme.write_data();
+	cout << "Detach request sent to MME for UE - " << num << endl;
 }
 
 void UE::recv_detach_res(Client &to_mme) {

@@ -18,14 +18,14 @@ Problems faced/facing:
 In the future, I might have to add the following in addition to the "constructors" that I already added
 	5. Move assignment operator
 
-- RAN disconnected for no known reason without printing any error message for Threads = 70
-- "ERROR: Invalid IP address" being received at SGW/RAN for some time when no. of simultaneous connections > 1
-- Invalid detach type request num received at MME for Threads = 15
-- PGW disconnected for no known reason without printing any error message for Threads = 2 and Time = 3s
-- SGW disconnected for no known reason without printing any error message for Threads = 2, 20 and Time = 3s
+- Garbage values being received SOMETIMES(Threads - 10, Time - 100s) at MME/HSS instead of correctly sent values e.g Detach type number = 3 but MME received 1.
+- Error "ctrl+c" - RAN disconnected for no known reason without printing any error message for Threads = 70
+- Error "ctrl+c" - PGW disconnected for no known reason without printing any error message for Threads = 2 and Time = 3s
+- Error "ctrl+c" - SGW disconnected for no known reason without printing any error message for Threads = 2, 20 and Time = 3s
 - PGW is eratic in responding to SGW's Create Session request and Modify session request. In some cases, SGW is not even able to connect with the PGW for 'Create session request'.
-- "ERROR: Invalid argument" at PGW while writing data into the rawsocket
 - *** Error in `./pgw': corrupted double-linked list: 0x00007fc7d4080d00 *** at PGW for Threads = 2 and Time = 100s
+- "ERROR: Invalid argument" at PGW while writing data into the rawsocket
+- "ERROR: Invalid IP address" being received at SGW/RAN for some time when no. of simultaneous connections > 1
 
 Findings/Bugs Solved:
 

@@ -311,7 +311,7 @@ void MME::delete_session_res_from_sgw() {
 		cout << "MME has received successful detach response for UE - " << ue_num << endl;
 	}
 	else {
-		cout << "Detach process failure at SGW: Please disconnect and connect again" << endl;
+		cout << "Detach process failure at SGW: UE - " << ue_num << ", Reply = " << reply << ". Please disconnect and connect again" << endl;
 		handle_exceptions();
 	}
 }
