@@ -64,12 +64,12 @@ void Server::set_total_connections(int total_connections) {
 	tid.resize(total_connections);
 }
 
-void Server::fill_server_details(int server_port, const char *server_addr) {
+void Server::fill_server_details(int arg_server_port, const char *arg_server_addr) {
 	
-	strcpy(this->server_addr, server_addr);
+	strcpy(server_addr, arg_server_addr);
 	bzero((char *) &server_sock_addr, sizeof(server_sock_addr));
 	server_sock_addr.sin_family = AF_INET;  	
-	server_sock_addr.sin_port = (server_port)?htons(server_port):server_port;
+	server_sock_addr.sin_port = (arg_server_port)?htons(arg_server_port):arg_server_port;
 	status = inet_aton(server_addr, &server_sock_addr.sin_addr);	
 	if (status == 0) {
 		cout << "ERROR: Invalid IP address" << endl;

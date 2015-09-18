@@ -95,12 +95,12 @@ void Packet::fill_ip_hdr(const char *src_ip, const char *dst_ip) {
 	ip_hdr.ip_sum = ip_checksum((uint16_t*)&ip_hdr, IP_LEN);		
 }
 
-void Packet::fill_udp_hdr(int src_port, int dst_port) {
+void Packet::fill_udp_hdr(int arg_src_port, int arg_dst_port) {
 	
-	this->src_port = src_port;
-	this->dst_port = dst_port;
-	udp_hdr.source = htons(this->src_port);
-	udp_hdr.dest = htons(this->dst_port);
+	src_port = arg_src_port;
+	dst_port = arg_dst_port;
+	udp_hdr.source = htons(src_port);
+	udp_hdr.dest = htons(dst_port);
 	udp_hdr.len = htons(UDP_LEN + data_len);
 }
 

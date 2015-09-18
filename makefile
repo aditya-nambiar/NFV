@@ -27,33 +27,35 @@ PGW_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp client.cpp raw_socket.
 SINK_H = utils.h packet.h thread_pool.h server.h client.h sink_monitor.h
 SINK_CPP = utils.cpp packet.cpp thread_pool.cpp server.cpp client.cpp sink_monitor.cpp
 
+TAGS = -w -o
+
 #-------------------------------------------#
 
 
 #---------Prerequisites and Recipes---------#
 
 RAN_P = ran.h ran.cpp $(RAN_H) $(RAN_CPP)
-RAN_R = $(G++) ran.cpp -w -o ran $(RAN_CPP) -lpthread 
+RAN_R = $(G++) ran.cpp $(TAGS) ran $(RAN_CPP) -lpthread 
 
 
 MME_P = mme_server.h mme_server.cpp $(MME_H) $(MME_CPP)
-MME_R = $(G++) mme_server.cpp -w -o mme $(MME_CPP) -lpthread 
+MME_R = $(G++) mme_server.cpp $(TAGS) mme $(MME_CPP) -lpthread 
 
 
 HSS_P = hss_server.h hss_server.cpp $(HSS_H) $(HSS_CPP)
-HSS_R = $(G++) hss_server.cpp -w -o hss $(HSS_CPP) `mysql_config --cflags --libs`
+HSS_R = $(G++) hss_server.cpp $(TAGS) hss $(HSS_CPP) `mysql_config --cflags --libs`
 
 
 SGW_P = sgw_server.h sgw_server.cpp $(SGW_H) $(SGW_CPP)
-SGW_R = $(G++) sgw_server.cpp -w -o sgw $(SGW_CPP) -lpthread 
+SGW_R = $(G++) sgw_server.cpp $(TAGS) sgw $(SGW_CPP) -lpthread 
 
 
 PGW_P = pgw_server.h pgw_server.cpp $(PGW_H) $(PGW_CPP)
-PGW_R = $(G++) pgw_server.cpp -w -o pgw $(PGW_CPP) -lpthread 
+PGW_R = $(G++) pgw_server.cpp $(TAGS) pgw $(PGW_CPP) -lpthread 
 
 
 SINK_P = sink_server.h sink_server.cpp $(SINK_H) $(SINK_CPP)
-SINK_R = $(G++) sink_server.cpp -w -o sink $(SINK_CPP) -lpthread
+SINK_R = $(G++) sink_server.cpp $(TAGS) sink $(SINK_CPP) -lpthread
 
 #-------------------------------------------#
 
