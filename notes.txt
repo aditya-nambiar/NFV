@@ -25,7 +25,7 @@ In the future, I might have to add the following in addition to the "constructor
 - SGW disconnected for no known reason without printing any error message for Threads = 2, 20 and Time = 3s
 - PGW is eratic in responding to SGW's Create Session request and Modify session request. In some cases, SGW is not even able to connect with the PGW for 'Create session request'.
 - "ERROR: Invalid argument" at PGW while writing data into the rawsocket
-- *** Error in `./pgw': corrupted double-linked list: 0x00007fc7d4080d00 ***
+- *** Error in `./pgw': corrupted double-linked list: 0x00007fc7d4080d00 *** at PGW for Threads = 2 and Time = 100s
 
 Findings/Bugs Solved:
 

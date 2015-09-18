@@ -93,7 +93,7 @@ void RawSocket::bind_client() {
 // }
 
 void RawSocket::fill_dst_details() {
-	struct tcphdr *tcp_hdr = (tcphdr*)malloc(20 * sizeof(u_int8_t)); 
+	struct tcphdr *tcp_hdr = allocate_tcp_mem(20);
 
 	memcpy(tcp_hdr, pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
 	bzero((char*)&dst_sock_addr, sizeof(dst_sock_addr));

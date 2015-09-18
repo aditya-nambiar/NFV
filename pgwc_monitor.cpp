@@ -88,9 +88,9 @@ void PGWcMonitor::attach_to_sink() {
 }
 
 void PGWcMonitor::write_sink() {
-	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
-	struct tcphdr *tcp_hdr = (tcphdr*)malloc(20 * sizeof(u_int8_t)); 
-	char *sink = (char*)malloc(INET_ADDRSTRLEN);
+	struct ip *iphdr = allocate_ip_mem(20);
+	struct tcphdr *tcp_hdr = allocate_tcp_mem(20);
+	char *sink = allocate_str_mem(INET_ADDRSTRLEN);
 
 	copy_to_sinkpkt();
 
@@ -104,6 +104,9 @@ void PGWcMonitor::write_sink() {
 	to_sink.pkt.make_data_packet();
 	to_sink.write_data();		
 	cout << "Successfully written data into the Sink" << endl << endl;
+	free(iphdr);
+	free(tcp_hdr);
+	free(sink);
 }
 
 void PGWcMonitor::copy_to_sinkpkt() {

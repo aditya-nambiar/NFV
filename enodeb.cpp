@@ -136,11 +136,12 @@ void EnodeB::write_tun() {
 }
 
 void EnodeB::set_ue_ip() {
-	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
+	struct ip *iphdr = allocate_ip_mem(20);
 
 	memcpy(iphdr, pkt.data, 20 * sizeof(uint8_t));
 	inet_ntop(AF_INET, &(iphdr->ip_src), ue_ip, INET_ADDRSTRLEN);
 	// cout << "Through tunnel: UE IP is " << ue_ip << endl;
+	free(iphdr);
 }
 
 void EnodeB::set_tun_data(bool &data_invalid) {

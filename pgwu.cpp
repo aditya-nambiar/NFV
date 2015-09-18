@@ -104,9 +104,9 @@ void PGWu::copy_to_rawpkt(Packet &arg) {
 }
 
 void PGWu::send_sgw(Server &pgw_server) {
-	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
-	struct tcphdr *tcp_hdr = (tcphdr*)malloc(20 * sizeof(u_int8_t)); 
-	char *sink = (char*)malloc(INET_ADDRSTRLEN);
+	struct ip *iphdr = allocate_ip_mem(20);
+	struct tcphdr *tcp_hdr = allocate_tcp_mem(20);
+	char *sink = allocate_str_mem(INET_ADDRSTRLEN);
 
 	memcpy(iphdr, for_sink.pkt.data, 20 * sizeof(uint8_t));
 	memcpy(tcp_hdr, for_sink.pkt.data + 20 * sizeof(uint8_t), 20 * sizeof(uint8_t));	
@@ -120,6 +120,9 @@ void PGWu::send_sgw(Server &pgw_server) {
 	pgw_server.pkt.make_data_packet();
 	pgw_server.write_data();
 	//cout << "Sent data to SGW successfully" << endl << endl;
+	free(iphdr);
+	free(tcp_hdr);
+	free(sink);
 }
 
 void PGWu::copy_sinkpkt_to_pgwpkt(Packet &arg) {
@@ -143,10 +146,11 @@ void PGWu::recv_sink() {
 }
 
 void PGWu::set_ue_ip() {
-	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
+	struct ip *iphdr = allocate_ip_mem(20);
 
 	memcpy(iphdr, for_sink.pkt.data, 20 * sizeof(uint8_t));
 	inet_ntop(AF_INET, &(iphdr->ip_dst), ue_ip, INET_ADDRSTRLEN);
+	free(iphdr);
 }
 
 void PGWu::set_tun_udata(bool &data_invalid) {

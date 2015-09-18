@@ -174,6 +174,42 @@ uint8_t* allocate_uint8_mem(int len) {
 	}
 }
 
+struct ip* allocate_ip_mem(int len) {
+	struct ip *ip_hdr;
+
+	if (len <= 0) {
+		print("ERROR: Given_memory_length<=0");
+		exit(EXIT_FAILURE);
+	}
+	ip_hdr = (ip*)malloc(len * sizeof (uint8_t));
+	if (ip_hdr != NULL) {
+		memset(ip_hdr, 0, len * sizeof (uint8_t));
+		return ip_hdr;
+	} 
+	else {
+		print("ERROR: Memory allocation failure");
+		exit (EXIT_FAILURE);
+	}
+}
+
+struct tcphdr* allocate_tcp_mem(int len) {
+	struct tcphdr *tcp_hdr;
+
+	if (len <= 0) {
+		print("ERROR: Given_memory_length<=0");
+		exit(EXIT_FAILURE);
+	}
+	tcp_hdr = (tcphdr*)malloc(len * sizeof (uint8_t));
+	if (tcp_hdr != NULL) {
+		memset(tcp_hdr, 0, len * sizeof (uint8_t));
+		return tcp_hdr;
+	} 
+	else {
+		print("ERROR: Memory allocation failure");
+		exit (EXIT_FAILURE);
+	}
+}
+
 void check_server_usage(int argc, char *argv[]) {
 
 	if (argc < 2) {

@@ -172,11 +172,9 @@ void SGWu::send_enodeb(Server &sgw_server) {
 }
 
 void SGWu::recv_pgw(int &pgw_num) {
-
-	struct ip *iphdr = (ip*)malloc(20 * sizeof(u_int8_t));
-	struct tcphdr *tcp_hdr = (tcphdr*)malloc(20 * sizeof(u_int8_t)); 
-	char *sink = (char*)malloc(INET_ADDRSTRLEN);
-
+	struct ip *iphdr = allocate_ip_mem(20);
+	struct tcphdr *tcp_hdr = allocate_tcp_mem(20);
+	char *sink = allocate_str_mem(INET_ADDRSTRLEN);
 
 	to_pgw[pgw_num].read_data();
 	cout << "Received data from PGW" << endl;
@@ -189,6 +187,9 @@ void SGWu::recv_pgw(int &pgw_num) {
 	// cout << endl << "UE IP is " << sink << endl;
 	// cout << "TCP destination port is " << ntohs(tcp_hdr->th_dport) << endl;	
 	// cout << "Received data from PGW successfully and removed the GTPu header" << endl;
+	free(iphdr);
+	free(tcp_hdr);
+	free(sink);
 }
 
 void SGWu::send_pgw() {
