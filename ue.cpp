@@ -79,10 +79,10 @@ void UE::authenticate(Client &to_mme) {
 	cout << "This is the message -" << reply << endl;
 	if (strcmp((const char*)reply, "OK") == 0)
 		print_message("Authentication Successful for UE - ", num);
-	else {
-		cout << "Authentication is not successful for UE - " << num << endl;
-		handle_exceptions();
-	}
+	// else {
+	// 	cout << "Authentication is not successful for UE - " << num << endl;
+	// 	handle_exceptions();
+	// }
 	free(reply);
 }
 
