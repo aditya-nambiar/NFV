@@ -58,7 +58,7 @@ UE::UE(UE &&src_obj)
 
 void UE::authenticate(Client &to_mme) {
 	unsigned long long autn, rand, res;
-	char *reply = allocate_str_mem(IP_MAXPACKET);
+	string reply;
 
 	to_mme.pkt.clear_data();
 	to_mme.pkt.fill_data(0, sizeof(unsigned long long), imsi);
@@ -75,15 +75,14 @@ void UE::authenticate(Client &to_mme) {
 	to_mme.pkt.make_data_packet();
 	to_mme.write_data();
 	to_mme.read_data();
-	memcpy(reply, to_mme.pkt.data, to_mme.pkt.data_len);
+	memcpy(&reply, to_mme.pkt.data, to_mme.pkt.data_len);
 	cout << "This is the message -" << reply << endl;
-	if (strcmp((const char*)reply, "OK") == 0)
+	if (reply == "OK")
 		print_message("Authentication Successful for UE - ", num);
 	// else {
 	// 	cout << "Authentication is not successful for UE - " << num << endl;
 	// 	handle_exceptions();
 	// }
-	free(reply);
 }
 
 unsigned long long UE::get_autn_res(unsigned long long autn, unsigned long long rand) {
@@ -176,15 +175,13 @@ void UE::send_detach_req(Client &to_mme) {
 }
 
 void UE::recv_detach_res(Client &to_mme) {
-	char *reply;
+	string reply;
 
-	reply = allocate_str_mem(BUFFER_SIZE);
 	to_mme.read_data();
-	memcpy(reply, to_mme.pkt.data, to_mme.pkt.data_len);
-	if (strcmp((const char*)reply, "OK") == 0) {
+	memcpy(&reply, to_mme.pkt.data, to_mme.pkt.data_len);
+	if (reply == "OK") {
 		cout << "UE - " << num << " has successfully detached from EPC" << endl;
 	}
-	free(reply);
 }
 
 UE::~UE() {

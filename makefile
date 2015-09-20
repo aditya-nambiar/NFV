@@ -7,7 +7,7 @@ all:	ran mme hss sgw pgw sink
 
 #-----------------Variables-----------------#
 
-G++ = g++ -std=c++0x -std=gnu++0x
+G++ = g++ -std=c++0x -std=gnu++0x -ggdb
 
 RAN_H	= utils.h packet.h client.h ue.h enodeb.h
 RAN_CPP = utils.cpp packet.cpp client.cpp ue.cpp enodeb.cpp

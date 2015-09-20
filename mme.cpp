@@ -54,13 +54,11 @@ TunData::~TunData() {
 MME::MME() {
 
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
-	reply = allocate_str_mem(BUFFER_SIZE);
 }
 
 MME::MME(const MME &src_obj) {
 
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
-	reply = allocate_str_mem(BUFFER_SIZE);
 	mme_server = src_obj.mme_server;
 	to_hss = src_obj.to_hss;
 	to_sgw = src_obj.to_sgw;
@@ -68,7 +66,7 @@ MME::MME(const MME &src_obj) {
 	bearer_id = src_obj.bearer_id;
 	type = src_obj.type;
 	strcpy(ue_ip, src_obj.ue_ip);
-	strcpy(reply, src_obj.reply);
+	reply = src_obj.reply;
 	autn_num = src_obj.autn_num;
 	rand_num = src_obj.rand_num;
 	autn_xres = src_obj.autn_xres;
@@ -185,17 +183,17 @@ void MME::authenticate_ue() {
 	mme_server.read_data();
 	memcpy(&autn_res, mme_server.pkt.data, sizeof(unsigned long long));
 	if (autn_xres == autn_res) {
-		strcpy(reply, "OK");
+		reply = "OK";
 		mme_server.pkt.clear_data();
-		mme_server.pkt.fill_data(0, strlen(reply), reply);
+		mme_server.pkt.fill_data(0, reply.size(), reply);
 		mme_server.pkt.make_data_packet();
 		mme_server.write_data();
 		cout << "Authentication is successful for UE - " << ue_num << endl;
 	}	
 	else {
-		strcpy(reply, "FAILED");
+		reply = "FAILED";
 		mme_server.pkt.clear_data();
-		mme_server.pkt.fill_data(0, strlen(reply), reply);
+		mme_server.pkt.fill_data(0, reply.size(), reply);
 		mme_server.pkt.make_data_packet();
 		mme_server.write_data();
 		cout << "Authentication is not successful for UE - " << ue_num << endl;
@@ -227,8 +225,8 @@ void MME::create_session_res_from_sgw() {
 	to_sgw.read_data();
 	to_sgw.pkt.rem_gtpc_hdr();
 	memcpy(&tun_data.sgw_cteid, to_sgw.pkt.data, sizeof(uint16_t));
-	memcpy(reply, to_sgw.pkt.data + sizeof(uint16_t), to_sgw.pkt.data_len - sizeof(uint16_t));
-	if (strcmp((const char*)reply, "OK") == 0) {
+	memcpy(&reply, to_sgw.pkt.data + sizeof(uint16_t), to_sgw.pkt.data_len - sizeof(uint16_t));
+	if (reply == "OK") {
 		cout << "Create session request was successful for UE - " << ue_num << endl;
 	}
 	// else {
@@ -259,8 +257,8 @@ void MME::modify_session_res_from_sgw() {
 	to_sgw.pkt.rem_gtpc_hdr();
 	memcpy(&tun_data.sgw_uteid, to_sgw.pkt.data, sizeof(uint16_t));
 	memcpy(ue_ip, to_sgw.pkt.data + sizeof(uint16_t), INET_ADDRSTRLEN);
-	memcpy(reply, to_sgw.pkt.data + sizeof(uint16_t) + INET_ADDRSTRLEN, to_sgw.pkt.data_len - sizeof(uint16_t) - INET_ADDRSTRLEN);
-	if (strcmp((const char*)reply, "OK") == 0) {
+	memcpy(&reply, to_sgw.pkt.data + sizeof(uint16_t) + INET_ADDRSTRLEN, to_sgw.pkt.data_len - sizeof(uint16_t) - INET_ADDRSTRLEN);
+	if (reply == "OK") {
 		cout << "Modify Session Request was successful for UE - " << ue_num << endl;
 	}
 	// else {
@@ -306,8 +304,8 @@ void MME::delete_session_res_from_sgw() {
 	cout << "Waiting to read Detach session response from SGW" << endl;
 	to_sgw.read_data();
 	to_sgw.pkt.rem_gtpc_hdr();
-	memcpy(reply, to_sgw.pkt.data, to_sgw.pkt.data_len);
-	if (strcmp((const char*)reply, "OK") == 0) {
+	memcpy(&reply, to_sgw.pkt.data, to_sgw.pkt.data_len);
+	if (reply == "OK") {
 		cout << "MME has received successful detach response for UE - " << ue_num << endl;
 	}
 	// else {
@@ -318,9 +316,9 @@ void MME::delete_session_res_from_sgw() {
 
 void MME::detach_res_to_ue() {
 
-	strcpy(reply, "OK");
+	reply = "OK";
 	mme_server.pkt.clear_data();
-	mme_server.pkt.fill_data(0, strlen(reply), reply);
+	mme_server.pkt.fill_data(0, reply.size(), reply);
 	mme_server.pkt.make_data_packet();
 	mme_server.write_data();
 	cout << "MME has successfully deallocated resources for UE - " << ue_num << endl;
@@ -341,5 +339,4 @@ void MME::rem_tun_data() {
 MME::~MME() {
 
 	free(ue_ip);
-	free(reply);
 }

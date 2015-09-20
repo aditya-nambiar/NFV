@@ -46,13 +46,11 @@ SGWc::SGWc() {
 
 	type = 1;
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
-	reply = allocate_str_mem(BUFFER_SIZE);
 }
 
 SGWc::SGWc(const SGWc &src_obj) {
 
 	ue_ip = allocate_str_mem(INET_ADDRSTRLEN);
-	reply = allocate_str_mem(BUFFER_SIZE);
 	to_pgw = src_obj.to_pgw;
 	pkt = src_obj.pkt;
 	ue_num = src_obj.ue_num;
@@ -60,7 +58,7 @@ SGWc::SGWc(const SGWc &src_obj) {
 	bearer_id = src_obj.bearer_id;
 	type = src_obj.type;
 	strcpy(ue_ip, src_obj.ue_ip);
-	strcpy(reply, src_obj.reply);
+	reply = src_obj.reply;
 	tun_cdata = src_obj.tun_cdata;
 }
 
@@ -186,10 +184,10 @@ void SGWc::set_ue_ip() {
 
 void SGWc::create_session_res_to_mme(Server &sgw_server) {
 
-	strcpy(reply, "OK");
+	reply = "OK";
 	sgw_server.pkt.clear_data();
 	sgw_server.pkt.fill_data(0, sizeof(uint16_t), cteid);
-	sgw_server.pkt.fill_data(sizeof(uint16_t), strlen(reply), reply);
+	sgw_server.pkt.fill_data(sizeof(uint16_t), reply.size(), reply);
 	sgw_server.pkt.fill_gtpc_hdr(tun_cdata.mme_cteid);
 	sgw_server.pkt.add_gtpc_hdr();
 	sgw_server.pkt.make_data_packet();
@@ -208,11 +206,11 @@ void SGWc::modify_session_req_from_mme(Server &sgw_server, uint16_t &enodeb_utei
 
 void SGWc::modify_session_res_to_mme(Server &sgw_server, uint16_t &sgw_uteid) {
 
-	strcpy(reply, "OK");
+	reply = "OK";
 	sgw_server.pkt.clear_data();
 	sgw_server.pkt.fill_data(0, sizeof(uint16_t), sgw_uteid);
 	sgw_server.pkt.fill_data(sizeof(uint16_t), INET_ADDRSTRLEN, ue_ip);
-	sgw_server.pkt.fill_data(sizeof(uint16_t) + INET_ADDRSTRLEN, strlen(reply), reply);
+	sgw_server.pkt.fill_data(sizeof(uint16_t) + INET_ADDRSTRLEN, reply.size(), reply);
 	sgw_server.pkt.fill_gtpc_hdr(tun_cdata.mme_cteid);
 	sgw_server.pkt.add_gtpc_hdr();
 	sgw_server.pkt.make_data_packet();
@@ -264,24 +262,22 @@ void SGWc::erase_bearer_table() {
 }
 
 void SGWc::delete_session_res_from_pgw() {
-	string res;
 
 	cout << "Waiting to read Delete session response from PGW for UE - " << ue_num << endl;
 	to_pgw.read_data();
 	to_pgw.pkt.rem_gtpc_hdr();
-	memcpy(reply, to_pgw.pkt.data, to_pgw.pkt.data_len);
-	res.assign(reply);
-	cout << "Response is " << res << " and reply is " << reply << endl;
-	if (res == "OK") {
+	memcpy(&reply, to_pgw.pkt.data, to_pgw.pkt.data_len);
+	cout << "Response is " << reply << endl;
+	if (reply == "OK") {
 		cout << "PGW has successfully deallocated resources for UE - " << ue_num << endl;
 	}
 }
 
 void SGWc::delete_session_res_to_mme(Server &sgw_server) {
-	string res = "OK";
 
+	reply = "OK";
 	sgw_server.pkt.clear_data();
-	sgw_server.pkt.fill_data(0, res.size(), res);
+	sgw_server.pkt.fill_data(0, reply.size(), reply);
 	sgw_server.pkt.fill_gtpc_hdr(tun_cdata.mme_cteid);
 	sgw_server.pkt.add_gtpc_hdr();
 	sgw_server.pkt.make_data_packet();
@@ -292,11 +288,10 @@ void SGWc::delete_session_res_to_mme(Server &sgw_server) {
 
 void SGWc::erase_tun_ctable() {
 
-	g_tun_ctable.erase(cteid);
+	// g_tun_ctable.erase(cteid);
 }
 
 SGWc::~SGWc() {
 
 	free(ue_ip);
-	free(reply);
 }
