@@ -104,19 +104,19 @@ void Packet::fill_udp_hdr(int arg_src_port, int arg_dst_port) {
 	udp_hdr.len = htons(UDP_LEN + data_len);
 }
 
-void Packet::fill_data(int pos, int len, int &arg) {
+void Packet::fill_data(int pos, int len, int arg) {
 	
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len += len;
 }
 
-void Packet::fill_data(int pos, int len, uint16_t &arg) {
+void Packet::fill_data(int pos, int len, uint16_t arg) {
 	
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len += len;
 }
 
-void Packet::fill_data(int pos, int len, unsigned long long &arg) {
+void Packet::fill_data(int pos, int len, unsigned long long arg) {
 	
 	memcpy(data + pos, &arg, len * sizeof(uint8_t));
 	data_len += len;
@@ -134,7 +134,7 @@ void Packet::fill_data(int pos, int len, const char *message) {
 	data_len += len;
 }
 
-void Packet::fill_data(int pos, int len, string &message) {
+void Packet::fill_data(int pos, int len, string message) {
 	
 	memcpy(data + pos, message.c_str(), len * sizeof(uint8_t));
 	data_len += len;

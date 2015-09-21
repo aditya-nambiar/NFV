@@ -7,6 +7,7 @@ UE::UE(int ue_num) {
 	imsi = key * 1000;
 	msisdn = 9000000000 + key;
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	res = allocate_str_mem(BUFFER_SIZE);
 	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
@@ -76,7 +77,7 @@ void UE::authenticate(Client &to_mme) {
 	to_mme.write_data();
 	to_mme.read_data();
 	memcpy(&reply, to_mme.pkt.data, to_mme.pkt.data_len);
-	cout << "This is the message -" << reply << endl;
+	cout << "This is the message - " << reply << "and the data len is " << to_mme.pkt.data_len << endl;
 	if (reply == "OK")
 		print_message("Authentication Successful for UE - ", num);
 	// else {
@@ -188,4 +189,5 @@ UE::~UE() {
 
 	free(ip_addr);
 	free(sink_addr);
+	free(res);
 }
