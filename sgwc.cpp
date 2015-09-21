@@ -296,4 +296,5 @@ void SGWc::erase_tun_ctable() {
 SGWc::~SGWc() {
 
 	free(ue_ip);
+	free(reply);
 }
