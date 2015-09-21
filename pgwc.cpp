@@ -39,16 +39,18 @@ TunCdata::~TunCdata() {
 
 PGWc::PGWc() {
 
-	// Dummy
+	reply = allocate_str_mem(BUFFER_SIZE);
 }
 
 PGWc::PGWc(const PGWc &src_obj) {
 
+	reply = allocate_str_mem(BUFFER_SIZE);
 	pkt = src_obj.pkt;
 	ue_num = src_obj.ue_num;
 	bearer_id = src_obj.bearer_id;
 	cteid = src_obj.cteid;
 	tun_cdata = src_obj.tun_cdata;
+	strcpy(reply, src_obj.reply);
 }
 
 void swap(PGWc &src_obj, PGWc &dst_obj) {
@@ -59,6 +61,7 @@ void swap(PGWc &src_obj, PGWc &dst_obj) {
 	swap(src_obj.bearer_id, dst_obj.bearer_id);
 	swap(src_obj.cteid, dst_obj.cteid);
 	swap(src_obj.tun_cdata, dst_obj.tun_cdata);
+	swap(src_obj.reply, dst_obj.reply);
 }
 
 PGWc& PGWc::operator=(PGWc src_obj) {
@@ -153,10 +156,10 @@ void PGWc::delete_session_req_from_sgw(Server &pgw_server) {
 }
 
 void PGWc::delete_session_res_to_sgw(Server &pgw_server) {
-	string res = "OK";
 
+	strcpy(reply, "OK");
 	pgw_server.pkt.clear_data();
-	pgw_server.pkt.fill_data(0, res.size(), res);
+	pgw_server.pkt.fill_data(0, strlen(reply), reply);
 	pgw_server.pkt.fill_gtpc_hdr(tun_cdata.sgw_cteid);
 	pgw_server.pkt.add_gtpc_hdr();
 	pgw_server.pkt.make_data_packet();
@@ -177,7 +180,7 @@ void PGWc::erase_tun_ctable() {
 
 PGWc::~PGWc() {
 
-	// Dummy
+	free(reply);
 }
 
 void setup_ip_table() {

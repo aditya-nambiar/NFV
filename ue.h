@@ -17,6 +17,7 @@ public:
 	string ip_addr_str;
 	string res_str();
 	Packet pkt;
+	char *reply;
 	
 	// Connection data
 	int type;

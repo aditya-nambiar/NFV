@@ -33,7 +33,7 @@ struct MME {
 	int bearer_id;
 	int type;
 	char *ue_ip;
-	string reply;
+	char *reply;
 	unsigned long long autn_num;
 	unsigned long long rand_num;
 	unsigned long long autn_xres;
