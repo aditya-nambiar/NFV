@@ -26,6 +26,7 @@ struct PGWc {
 	int bearer_id;
 	uint16_t cteid;
 	TunCdata tun_cdata;
+	char *reply;
 
 	PGWc();
 	PGWc(const PGWc&);

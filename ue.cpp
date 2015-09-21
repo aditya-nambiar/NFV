@@ -7,6 +7,7 @@ UE::UE(int ue_num) {
 	imsi = key * 1000;
 	msisdn = 9000000000 + key;
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	reply = allocate_str_mem(BUFFER_SIZE);
 	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
 }
 
@@ -18,12 +19,14 @@ unsigned long long UE::generate_key(int ue_num) {
 UE::UE(const UE &src_obj) {
 
 	ip_addr = allocate_str_mem(INET_ADDRSTRLEN);
+	reply = allocate_str_mem(BUFFER_SIZE);
 	sink_addr = allocate_str_mem(INET_ADDRSTRLEN);
 	num = src_obj.num;
 	key = src_obj.key;
 	imsi = src_obj.imsi;
 	msisdn = src_obj.msisdn;
 	strcpy(ip_addr, src_obj.ip_addr);
+	strcpy(reply, src_obj.reply);
 	pkt = src_obj.pkt;
 	type = src_obj.type;
 	sink_port = src_obj.sink_port;
@@ -39,6 +42,7 @@ void swap(UE &src_obj, UE &dst_obj) {
 	swap(src_obj.msisdn, dst_obj.msisdn);
 	swap(src_obj.ip_addr, dst_obj.ip_addr);
 	swap(src_obj.pkt, dst_obj.pkt);
+	swap(src_obj.reply, dst_obj.reply);
 	swap(src_obj.type, dst_obj.type);
 	swap(src_obj.sink_port, dst_obj.sink_port);
 	swap(src_obj.sink_addr, dst_obj.sink_addr);
@@ -58,7 +62,6 @@ UE::UE(UE &&src_obj)
 
 void UE::authenticate(Client &to_mme) {
 	unsigned long long autn, rand, res;
-	string reply;
 
 	to_mme.pkt.clear_data();
 	to_mme.pkt.fill_data(0, sizeof(unsigned long long), imsi);
@@ -75,9 +78,9 @@ void UE::authenticate(Client &to_mme) {
 	to_mme.pkt.make_data_packet();
 	to_mme.write_data();
 	to_mme.read_data();
-	memcpy(&reply, to_mme.pkt.data, to_mme.pkt.data_len);
-	cout << "This is the message -" << reply << endl;
-	if (reply == "OK")
+	memcpy(reply, to_mme.pkt.data, to_mme.pkt.data_len);
+	cout << "This is the message - " << reply << endl;
+	if (strcmp((const char*)reply, "OK") == 0)
 		print_message("Authentication Successful for UE - ", num);
 	// else {
 	// 	cout << "Authentication is not successful for UE - " << num << endl;
@@ -175,11 +178,10 @@ void UE::send_detach_req(Client &to_mme) {
 }
 
 void UE::recv_detach_res(Client &to_mme) {
-	string reply;
 
 	to_mme.read_data();
-	memcpy(&reply, to_mme.pkt.data, to_mme.pkt.data_len);
-	if (reply == "OK") {
+	memcpy(reply, to_mme.pkt.data, to_mme.pkt.data_len);
+	if (strcmp((const char*)reply, "OK") == 0) {
 		cout << "UE - " << num << " has successfully detached from EPC" << endl;
 	}
 }
@@ -187,5 +189,6 @@ void UE::recv_detach_res(Client &to_mme) {
 UE::~UE() {
 
 	free(ip_addr);
+	free(reply);
 	free(sink_addr);
 }

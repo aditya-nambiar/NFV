@@ -29,7 +29,7 @@ struct SGWc {
 	int bearer_id;
 	int type;
 	char *ue_ip;
-	string reply;
+	char *reply;
 	TunCdata tun_cdata;
 
 	SGWc();
